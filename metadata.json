@@ -1,0 +1,15 @@
+{
+  "name": "AssurAdvancé - Santé & Gestion",
+  "description": "Plateforme avancée de gestion d'assurance santé multi-tenancy avec interface Windows 11 Orange.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "HEALH_INSURANCE_MANAGEMENT",
+    "MULTI_TENANCY",
+    "CLAIMS_TRACKING",
+    "TELEMEDICINE_INTEGRATION"
+  ]
+}
