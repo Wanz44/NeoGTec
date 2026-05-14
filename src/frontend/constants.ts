@@ -17,7 +17,14 @@ import {
   Calculator, // Icône pour les algorithmes de prix | 🔗 Module: lucide-react
   Lock, // Icône pour l'accès restreint | 🔗 Module: lucide-react
   FileCheck, // Icône pour la validation documentaire | 🔗 Module: lucide-react
-  ShieldAlert // Icône pour les alertes critiques | 🔗 Module: lucide-react
+  ShieldAlert, // Icône pour les alertes critiques | 🔗 Module: lucide-react
+  FileText, // Icône pour les contrats
+  AlertCircle, // Icône pour les réclamations
+  CreditCard, // Icône pour les paiements
+  UserCheck, // Icône pour le CRM
+  Stethoscope, // Icône pour la télémédecine
+  BarChart3, // Icône pour le BI
+  Shield // Icône pour l'administration système
 } from 'lucide-react'; // Import global des icônes pour l'UI | 🔗 Fichier lié: package.json
 
 // Contrat d'interface pour la définition technique d'un module applicatif
@@ -32,6 +39,7 @@ export interface Module {
 // Registre des 15 modules constituant le cadre applicatif AssurAdvancé
 export const MODULES: Module[] = [
   { id: 'dashboard', name: 'Tableau de Bord', icon: LayoutDashboard, category: 'core', description: "Pilotage général et KPIs" },
+  { id: 'users-mgmt', name: 'Utilisateurs', icon: Users, category: 'core', description: "Gestion des accès et comptes" },
   { id: 'governance', name: 'Gouvernance & SAAS', icon: Settings, category: 'system', description: "Gestion multi-tenancy" },
   { id: 'pricing', name: 'Tarification', icon: Calculator, category: 'core', description: "Moteur de calcul de primes" },
   { id: 'medical', name: 'Assurés & Médical', icon: Users, category: 'core', description: "Gestion des dossiers santé" },
@@ -41,7 +49,16 @@ export const MODULES: Module[] = [
   { id: 'telecom', name: 'Com & Télécom', icon: PhoneCall, category: 'core', description: "Canaux de communication" },
   { id: 'security', name: 'Sécurité & Accès', icon: Lock, category: 'system', description: "Contrôle RBAC" },
   { id: 'audit', name: 'Conformité & Audit', icon: ShieldCheck, category: 'system', description: "Logs immuables" },
-  { id: 'alerts', name: 'Alertes Critiques', icon: ShieldAlert, category: 'system', description: "Notifications temps-réel" }
+  { id: 'alerts', name: 'Alertes Critiques', icon: ShieldAlert, category: 'system', description: "Notifications temps-réel" },
+  { id: 'contracts', name: 'Gestion Polices & Sinistres', icon: FileText, category: 'core', description: "Contrats et dossiers sinistres" },
+  { id: 'reclamation', name: 'Module Réclamation', icon: AlertCircle, category: 'core', description: "Gestion des litiges" },
+  { id: 'payment', name: 'Module de Paiement', icon: CreditCard, category: 'core', description: "Passerelle de paiement" },
+  { id: 'crm', name: 'CRM & Commercial', icon: UserCheck, category: 'core', description: "Gestion relation client" },
+  { id: 'telemedicine', name: 'Module Télémédecine', icon: Stethoscope, category: 'core', description: "Consultations à distance" },
+  { id: 'bi', name: 'Business Intelligence', icon: BarChart3, category: 'system', description: "Analyse de données avancée" },
+  { id: 'admin', name: 'Administration Système', icon: Shield, category: 'system', description: "Paramétrages critiques" },
+  { id: 'privileges', name: 'Privilèges', icon: ShieldCheck, category: 'system', description: "Gestion des droits fins" },
+  { id: 'settings', name: 'Paramètres', icon: Settings, category: 'system', description: "Configuration globale du système" }
 ];
 
 // Interface pour les indicateurs de performance (KPIs)
@@ -57,7 +74,7 @@ export const MOCK_METRICS: Metric[] = [
   { label: 'Indice Mutuelle', value: '0', change: 0, trend: 'up' },
   { label: 'Claims Latence', value: '0', change: 0, trend: 'down' },
   { label: 'CA Consolidé', value: '0.00 $', change: 0, trend: 'up' },
-  { label: 'Uptime Système', value: '100.00%', change: 0, trend: 'up' }
+  { label: 'Uptime Système', value: '0.00%', change: 0, trend: 'up' }
 ];
 
 // Liste simulée des sinistres récents pour l'interface de suivi

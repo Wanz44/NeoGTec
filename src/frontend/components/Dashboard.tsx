@@ -7,6 +7,7 @@
 import React from 'react'; // Bibliothèque UI
 import { motion } from 'motion/react'; // Animations de composants | 🔗 Fichier lié: package.json
 import { MOCK_METRICS, MOCK_CLAIMS } from '../constants'; // Données simulées | 🔗 Fichier lié: /src/constants.ts
+import { cn } from '../lib/utils';
 import { 
   ArrowUpRight, // Indicateur de tendance positive
   ArrowDownRight, // Indicateur de tendance negative
@@ -43,14 +44,14 @@ export const Dashboard: React.FC = () => {
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-orange-950">Tableau de Bord</h2>
-          <p className="text-orange-900/60 font-medium">Bienvenue sur votre espace de pilotage AssurAdvancé.</p>
+          <p className="text-orange-950/40 font-medium">Bienvenue sur votre espace de pilotage AssurAdvancé.</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-orange-100 text-orange-900 text-sm font-semibold hover:bg-orange-50 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-orange-100 text-orange-900 text-sm font-semibold hover:bg-orange-50 transition-colors">
             <Filter className="w-4 h-4" />
             Filtrer
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 rounded-xl shadow-lg shadow-orange-200 text-white text-sm font-bold hover:bg-orange-600 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 rounded-lg shadow-lg shadow-orange-200 text-white text-sm font-bold hover:bg-orange-600 transition-colors">
             <Plus className="w-4 h-4" />
             Nouveau Dossier
           </button>
@@ -70,7 +71,7 @@ export const Dashboard: React.FC = () => {
             <div className="flex justify-between items-start mb-4">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{metric.label}</span>
               <div className={cn(
-                "p-2 rounded-[8px] flex items-center gap-1 transition-colors",
+                "p-2 rounded-sm flex items-center gap-1 transition-colors",
                 metric.trend === 'up' ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
               )}>
                 {metric.trend === 'up' ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
@@ -97,7 +98,7 @@ export const Dashboard: React.FC = () => {
                 <div className="w-1 h-4 bg-orange-500 rounded-full" />
                 <h3 className="text-sm font-bold text-orange-950 uppercase tracking-widest">Activité des Réclamations</h3>
              </div>
-            <select className="bg-white/50 border border-black/5 text-[11px] font-bold text-orange-950/60 rounded-[6px] px-2 py-1 outline-none focus:ring-2 focus:ring-orange-200">
+            <select className="bg-white/50 border border-black/5 text-[11px] font-bold text-orange-950/60 rounded-xs px-2 py-1 outline-none focus:ring-2 focus:ring-orange-200">
               <option>7 derniers jours</option>
               <option>30 derniers jours</option>
             </select>
@@ -107,8 +108,8 @@ export const Dashboard: React.FC = () => {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#ff9800" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#ff9800" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#00000005" />
@@ -135,7 +136,7 @@ export const Dashboard: React.FC = () => {
                     fontWeight: 700
                   }} 
                 />
-                <Area type="monotone" dataKey="value" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" dot={{ r: 4, fill: '#f97316', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                <Area type="monotone" dataKey="value" stroke="#ff9800" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" dot={{ r: 4, fill: '#ff9800', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, strokeWidth: 0 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -150,7 +151,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="space-y-3">
               {MOCK_CLAIMS.map((claim) => (
-                <div key={claim.id} className="flex items-center gap-3 p-2 rounded-[10px] hover:bg-white/60 transition-all cursor-pointer border border-transparent hover:border-orange-100 group">
+                <div key={claim.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-white/60 transition-all cursor-pointer border border-transparent hover:border-orange-100 group">
                   <div className={cn(
                     "w-1 h-3 rounded-full",
                     claim.status === 'Approuvé' ? "bg-emerald-400" : 
@@ -175,7 +176,7 @@ export const Dashboard: React.FC = () => {
                 </div>
               ))}
             </div>
-            <button className="mt-6 w-full py-2.5 text-[11px] font-bold text-orange-600 bg-orange-50/50 rounded-[8px] hover:bg-orange-50 transition-all border border-orange-100/30">
+            <button className="mt-6 w-full py-2.5 text-[11px] font-bold text-orange-600 bg-orange-50/50 rounded-sm hover:bg-orange-50 transition-all border border-orange-100/30">
               Explorer tout l'historique
             </button>
           </div>
@@ -203,6 +204,3 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-
-// Fonction utilitaire locale pour la gestion conditionnelle des classes Tailwind
-const cn = (...inputs: any[]) => inputs.filter(Boolean).join(' ');
