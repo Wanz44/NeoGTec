@@ -39,26 +39,17 @@ export interface Module {
 // Registre des 15 modules constituant le cadre applicatif AssurAdvancé
 export const MODULES: Module[] = [
   { id: 'dashboard', name: 'Tableau de Bord', icon: LayoutDashboard, category: 'core', description: "Pilotage général et KPIs" },
-  { id: 'users-mgmt', name: 'Utilisateurs', icon: Users, category: 'core', description: "Gestion des accès et comptes" },
-  { id: 'governance', name: 'Gouvernance & SAAS', icon: Settings, category: 'system', description: "Gestion multi-tenancy" },
-  { id: 'pricing', name: 'Tarification', icon: Calculator, category: 'core', description: "Moteur de calcul de primes" },
-  { id: 'medical', name: 'Assurés & Médical', icon: Users, category: 'core', description: "Gestion des dossiers santé" },
-  { id: 'operational', name: 'Opérationnel', icon: Activity, category: 'core', description: "Traitement des sinistres" },
-  { id: 'network', name: 'Réseau de Soins', icon: Network, category: 'core', description: "Gestion des prestataires" },
-  { id: 'financial', name: 'Financier', icon: Wallet, category: 'core', description: "Flux de trésorerie" },
-  { id: 'telecom', name: 'Com & Télécom', icon: PhoneCall, category: 'core', description: "Canaux de communication" },
-  { id: 'security', name: 'Sécurité & Accès', icon: Lock, category: 'system', description: "Contrôle RBAC" },
-  { id: 'audit', name: 'Conformité & Audit', icon: ShieldCheck, category: 'system', description: "Logs immuables" },
-  { id: 'alerts', name: 'Alertes Critiques', icon: ShieldAlert, category: 'system', description: "Notifications temps-réel" },
   { id: 'contracts', name: 'Gestion Polices & Sinistres', icon: FileText, category: 'core', description: "Contrats et dossiers sinistres" },
   { id: 'reclamation', name: 'Module Réclamation', icon: AlertCircle, category: 'core', description: "Gestion des litiges" },
   { id: 'payment', name: 'Module de Paiement', icon: CreditCard, category: 'core', description: "Passerelle de paiement" },
   { id: 'crm', name: 'CRM & Commercial', icon: UserCheck, category: 'core', description: "Gestion relation client" },
   { id: 'telemedicine', name: 'Module Télémédecine', icon: Stethoscope, category: 'core', description: "Consultations à distance" },
-  { id: 'bi', name: 'Business Intelligence', icon: BarChart3, category: 'system', description: "Analyse de données avancée" },
+  { id: 'bi', name: 'Intelligence d\'Affaires', icon: BarChart3, category: 'system', description: "Analyse de données avancée" },
+  { id: 'system-config', name: 'Système', icon: LayoutDashboard, category: 'system', description: "Configuration système critique" },
+  { id: 'governance', name: 'Gouvernance & Multi-Entités', icon: Settings, category: 'system', description: "Gestion mutualisée" },
+  { id: 'alerts', name: 'Alertes Critiques', icon: ShieldAlert, category: 'system', description: "Notifications temps-réel" },
   { id: 'admin', name: 'Administration Système', icon: Shield, category: 'system', description: "Paramétrages critiques" },
-  { id: 'privileges', name: 'Privilèges', icon: ShieldCheck, category: 'system', description: "Gestion des droits fins" },
-  { id: 'settings', name: 'Paramètres', icon: Settings, category: 'system', description: "Configuration globale du système" }
+  { id: 'settings', name: 'Module Système', icon: Settings, category: 'system', description: "Configuration globale, monitoring et administration" }
 ];
 
 // Interface pour les indicateurs de performance (KPIs)
@@ -71,16 +62,16 @@ export interface Metric {
 
 // Données statiques pour l'initialisation du dashboard
 export const MOCK_METRICS: Metric[] = [
-  { label: 'Indice Mutuelle', value: '0', change: 0, trend: 'up' },
-  { label: 'Claims Latence', value: '0', change: 0, trend: 'down' },
-  { label: 'CA Consolidé', value: '0.00 $', change: 0, trend: 'up' },
-  { label: 'Uptime Système', value: '0.00%', change: 0, trend: 'up' }
+  { label: 'Indice Mutuelle', value: '1,248', change: 12.5, trend: 'up' },
+  { label: 'Sinistres Actifs', value: '432', change: 4.2, trend: 'down' },
+  { label: 'Flux Financier', value: '1.24 M$', change: 8.1, trend: 'up' },
+  { label: 'Uptime Système', value: '99.98%', change: 0.1, trend: 'up' }
 ];
 
 // Liste simulée des sinistres récents pour l'interface de suivi
 export const MOCK_CLAIMS = [
-  { id: 'CL-0001', user: 'Attente Données', status: 'En attente', date: '2024-00-00', amount: '0.00 $' },
-  { id: 'CL-0002', user: 'Attente Données', status: 'Approuvé', date: '2024-00-00', amount: '0.00 $' },
-  { id: 'CL-0003', user: 'Attente Données', status: 'Payé', date: '2024-00-00', amount: '0.00 $' },
-  { id: 'CL-0004', user: 'Attente Données', status: 'Rejeté', date: '2024-00-00', amount: '0.00 $' }
+  { id: 'CL-8842', user: 'Adonaï WANZAMBI', status: 'Approuvé', date: '2024-05-12', amount: '1,250.00 $' },
+  { id: 'CL-8843', user: 'Marie Curie', status: 'En attente', date: '2024-05-14', amount: '3,420.00 $' },
+  { id: 'CL-8844', user: 'Thomas Edison', status: 'Payé', date: '2024-05-15', amount: '890.00 $' },
+  { id: 'CL-8845', user: 'Albert Einstein', status: 'Rejeté', date: '2024-05-18', amount: '12,000.00 $' }
 ];

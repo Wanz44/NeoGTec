@@ -28,7 +28,7 @@ async function startServer() {
     res.json({
       activeUsers: 128450, // Donnée simulée : nombre d'assurés
       pendingClaims: 1240, // Donnée simulée : sinistres en attente
-      revenueToday: "1.2M €" // Donnée simulée : CA du jour
+      revenueToday: "1.2M $" // Donnée simulée : CA du jour
     });
   });
 

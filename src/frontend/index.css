@@ -4,41 +4,63 @@
 @theme {
   --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   
-  /* Brand Colors */
-  --color-orange-50: #fff3e0;
-  --color-orange-100: #ffe0b2;
-  --color-orange-200: #ffcc80;
-  --color-orange-300: #ffb74d;
-  --color-orange-400: #ffa726;
-  --color-orange-500: #ff9800;
-  --color-orange-600: #fb8c00;
-  --color-orange-700: #f57c00;
-  --color-orange-800: #ef6c00;
-  --color-orange-900: #e65100;
-  --color-orange-950: #3e2723;
+  /* Brand Colors (Updated to Green #117F02) */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #117F02;
+  --color-green-700: #166534;
+  --color-green-800: #14532d;
+  --color-green-900: #064e3b;
+  --color-green-950: #022c22;
+
+  --color-orange-50: var(--color-green-50);
+  --color-orange-100: var(--color-green-100);
+  --color-orange-200: var(--color-green-200);
+  --color-orange-300: var(--color-green-300);
+  --color-orange-400: var(--color-green-400);
+  --color-orange-500: var(--color-green-500);
+  --color-orange-600: var(--color-green-600);
+  --color-orange-700: var(--color-green-700);
+  --color-orange-800: var(--color-green-800);
+  --color-orange-900: var(--color-green-900);
+  --color-orange-950: var(--color-green-950);
   
-  --color-brand-beige: #CCC0AD;
+  --color-brand-beige: #f1f5f1;
   
   /* Material Colors & Opacities */
-  --color-mica: rgba(251, 251, 251, 0.85);
+  --color-mica: rgba(251, 255, 251, 0.85);
   --color-acrylic: rgba(255, 255, 255, 0.4);
   
   /* Fluent Border Radius System (8px base at 96 DPI) */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
   --radius-fluent: var(--radius-sm);
+}
+
+@layer base {
+  button, input, select, textarea {
+    @apply border-green-200/60 transition-all;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    @apply border-green-500/50 ring-4 ring-green-500/10;
+  }
 }
 
 @layer base {
   body {
     @apply antialiased text-slate-900 bg-brand-beige transition-colors duration-300;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(255, 152, 0, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(204, 192, 173, 0.5) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(17, 127, 2, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(241, 245, 241, 0.5) 0px, transparent 50%);
   }
 }
 
