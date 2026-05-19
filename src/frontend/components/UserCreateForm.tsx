@@ -72,7 +72,7 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onClose }) => {
 
             {/* Roles Selection */}
             <div className="space-y-4 pt-4 border-t border-slate-100">
-               <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+               <p className="text-[10px] font-black text-green-600 uppercase tracking-widest flex items-center gap-2">
                  <ShieldCheck className="w-4 h-4" /> Attribution de Rôle Système
                </p>
                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
@@ -83,7 +83,7 @@ export const UserCreateForm: React.FC<UserCreateFormProps> = ({ onClose }) => {
                     { id: 'prest', label: 'Prestataire', desc: 'Hôpital / Labo' },
                     { id: 'support', label: 'Support L1/L2', desc: 'Assistance' }
                   ].map(role => (
-                     <button key={role.id} className="p-4 border border-slate-100 rounded-lg text-left hover:border-indigo-400 hover:bg-slate-50 transition-all group shadow-sm bg-white">
+                     <button key={role.id} className="p-4 border border-slate-100 rounded-lg text-left hover:border-green-400 hover:bg-slate-50 transition-all group shadow-sm bg-white">
                         <p className="text-[10px] font-black text-slate-900 uppercase">{role.label}</p>
                         <p className="text-[8px] font-bold text-slate-400 uppercase mt-0.5">{role.desc}</p>
                      </button>

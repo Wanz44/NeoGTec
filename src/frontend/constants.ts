@@ -23,6 +23,7 @@ import {
   CreditCard, // Icône pour les paiements
   UserCheck, // Icône pour le CRM
   Stethoscope, // Icône pour la télémédecine
+  Building2, // Icône pour les partenaires
   BarChart3, // Icône pour le BI
   Shield // Icône pour l'administration système
 } from 'lucide-react'; // Import global des icônes pour l'UI | 🔗 Fichier lié: package.json
@@ -41,10 +42,13 @@ export const MODULES: Module[] = [
   { id: 'dashboard', name: 'Tableau de Bord', icon: LayoutDashboard, category: 'core', description: "Pilotage général et KPIs" },
   { id: 'contracts', name: 'Gestion Polices & Sinistres', icon: FileText, category: 'core', description: "Contrats et dossiers sinistres" },
   { id: 'reclamation', name: 'Module Réclamation', icon: AlertCircle, category: 'core', description: "Gestion des litiges" },
-  { id: 'payment', name: 'Module de Paiement', icon: CreditCard, category: 'core', description: "Passerelle de paiement" },
+  { id: 'payment', name: 'Gestion Financière', icon: CreditCard, category: 'core', description: "Cotisations, Mobile Money & Comptabilité" },
   { id: 'crm', name: 'CRM & Commercial', icon: UserCheck, category: 'core', description: "Gestion relation client" },
   { id: 'telemedicine', name: 'Module Télémédecine', icon: Stethoscope, category: 'core', description: "Consultations à distance" },
-  { id: 'bi', name: 'Intelligence d\'Affaires', icon: BarChart3, category: 'system', description: "Analyse de données avancée" },
+  { id: 'claims', name: 'Sinistres & Contentieux', icon: ShieldCheck, category: 'core', description: "Déclarations, Litiges & Expertise" },
+  { id: 'partners', name: 'Partenaires Hospitaliers', icon: Building2, category: 'core', description: "Réseau de soins et prestataires" },
+  { id: 'integrations', name: 'Interopérabilité', icon: Network, category: 'system', description: "Connexions SNIS, APIs & Télémédecine" },
+  { id: 'bi', name: 'Business Intelligence', icon: BarChart3, category: 'system', description: "Analyse de données avancée" },
   { id: 'system-config', name: 'Système', icon: LayoutDashboard, category: 'system', description: "Configuration système critique" },
   { id: 'governance', name: 'Gouvernance & Multi-Entités', icon: Settings, category: 'system', description: "Gestion mutualisée" },
   { id: 'alerts', name: 'Alertes Critiques', icon: ShieldAlert, category: 'system', description: "Notifications temps-réel" },

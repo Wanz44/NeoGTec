@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, UserPlus, Target, MessageSquare, Megaphone, 
-  Gift, History, TrendingUp, Users2, HelpCircle, 
+  Gift, History as HistoryIcon, TrendingUp, Users2, HelpCircle, 
   Search, Filter, Plus, ChevronRight, Download, 
   Star, Mail, Phone, MapPin, DollarSign, 
   Calendar, Zap, Award, BarChart3, PieChart as PieIcon,
@@ -158,7 +158,7 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
                               <h4 className="text-sm font-black text-green-950">{client.name}</h4>
                               <span className={cn(
                                 "text-[8px] font-black uppercase px-2 py-0.5 rounded-full",
-                                client.type === 'Entreprise' ? "bg-indigo-100 text-indigo-600" : "bg-emerald-100 text-emerald-600"
+                                client.type === 'Entreprise' ? "bg-green-100 text-green-600" : "bg-emerald-100 text-emerald-600"
                               )}>{client.type}</span>
                            </div>
                            <p className="text-[10px] font-bold text-slate-400">{client.email}</p>
@@ -291,16 +291,16 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
                    <AreaChart data={PERFORMANCE_DATA}>
                       <defs>
                         <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#117F02" stopOpacity={0.2}/>
-                          <stop offset="95%" stopColor="#117F02" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#4ba32c" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="#4ba32c" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                       <Tooltip />
-                      <Area type="monotone" dataKey="sales" name="Volume Ventes" stroke="#117F02" strokeWidth={3} fill="url(#colorSales)" />
-                      <Area type="monotone" dataKey="conversion" name="% Résolution" stroke="#6366f1" strokeWidth={2} fill="transparent" />
+                      <Area type="monotone" dataKey="sales" name="Volume Ventes" stroke="#4ba32c" strokeWidth={3} fill="url(#colorSales)" />
+                      <Area type="monotone" dataKey="conversion" name="% Résolution" stroke="#5cc936" strokeWidth={2} fill="transparent" />
                    </AreaChart>
                 </ResponsiveContainer>
              </div>
@@ -401,10 +401,10 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
     <div className="space-y-6">
        <div className="flex items-center justify-between">
           <div>
-             <h3 className="text-xl font-black text-orange-950 uppercase italic tracking-tighter">Campagnes & Publicité</h3>
-             <p className="text-[10px] font-bold text-orange-950/40 uppercase tracking-widest">Gestion des bannières in-app et emailing ciblé</p>
+             <h3 className="text-xl font-black text-green-950 uppercase italic tracking-tighter">Campagnes & Publicité</h3>
+             <p className="text-[10px] font-bold text-green-950/40 uppercase tracking-widest">Gestion des bannières in-app et emailing ciblé</p>
           </div>
-          <button className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20">
+          <button className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-600/20">
              <Megaphone className="w-4 h-4" /> Créer une Campagne
           </button>
        </div>
@@ -466,12 +466,12 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
              <div className="fluent-card p-6">
                 <h4 className="text-[11px] font-black text-slate-400 uppercase mb-6 tracking-widest">Parrainage & Récompenses</h4>
                 <div className="space-y-6">
-                   <div className="flex items-center justify-between p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
+                   <div className="flex items-center justify-between p-4 bg-green-50 border border-green-100 rounded-2xl">
                       <div>
-                         <p className="text-[9px] font-black text-indigo-400 uppercase">Invités Totaux</p>
-                         <p className="text-2xl font-black text-indigo-600">342</p>
+                         <p className="text-[9px] font-black text-green-400 uppercase">Invités Totaux</p>
+                         <p className="text-2xl font-black text-green-600">342</p>
                       </div>
-                      <Share2 className="w-10 h-10 text-indigo-200" />
+                      <Share2 className="w-10 h-10 text-green-200" />
                    </div>
                    <div className="space-y-3">
                       <p className="text-[10px] font-black text-slate-400 uppercase italic">Dernières Récompenses</p>
@@ -481,14 +481,14 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
                       ].map((r, i) => (
                         <div key={i} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl">
                            <div className="flex items-center gap-2">
-                              <Gift className="w-3.5 h-3.5 text-orange-500" />
+                              <Gift className="w-3.5 h-3.5 text-green-500" />
                               <span className="text-[10px] font-bold text-slate-900">{r.user}</span>
                            </div>
                            <span className="text-[9px] font-black text-emerald-600 uppercase italic">{r.reward}</span>
                         </div>
                       ))}
                    </div>
-                   <button className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20">Configurer les Offres</button>
+                   <button className="w-full py-2.5 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-600/20">Configurer les Offres</button>
                 </div>
              </div>
 
@@ -561,10 +561,10 @@ export const CRM: React.FC<{ subModule?: string }> = ({ subModule }) => {
              {activeTab === 'dashboard' && (
                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   {[
-                    { label: 'Conversion Leads', val: '24%', icon: Zap, color: 'text-indigo-600' },
+                    { label: 'Conversion Leads', val: '24%', icon: Zap, color: 'text-green-600' },
                     { label: 'CAC Moyen', val: '42$', icon: DollarSign, color: 'text-emerald-600' },
-                    { label: 'Retention Rate', val: '94%', icon: ShieldCheck, color: 'text-orange-600' },
-                    { label: 'Referral ROI', val: '12.4x', icon: Share2, color: 'text-rose-600' }
+                    { label: 'Retention Rate', val: '94%', icon: ShieldCheck, color: 'text-green-700' },
+                    { label: 'Referral ROI', val: '12.4x', icon: Share2, color: 'text-green-800' }
                   ].map((kpi, i) => (
                     <div key={i} className="fluent-card p-6 flex items-center justify-between">
                        <div>

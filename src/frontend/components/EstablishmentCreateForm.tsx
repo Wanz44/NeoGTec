@@ -111,21 +111,21 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
 
           {/* Infrastructure & Quotas */}
           <div className="space-y-4 pt-4 border-t border-slate-50">
-            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+            <p className="text-green-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
               <Server className="w-4 h-4" /> Configuration SaaS & Quotas
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Capacité Patients (Quota)</label>
                 <input 
-                  type="number" 
-                  placeholder="ex: 10000" 
-                  className="w-full px-4 py-3 bg-slate-50 border border-indigo-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm" 
+                   type="number" 
+                   placeholder="ex: 10000" 
+                   className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm" 
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Régime de Facturation</label>
-                <select className="w-full px-4 py-3 bg-slate-50 border border-indigo-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
+                <select className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm">
                   <option>Standard (Commission 5%)</option>
                   <option>Premium (Commission 3%)</option>
                   <option>Forfait Mensuel</option>

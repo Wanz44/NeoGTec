@@ -187,7 +187,7 @@ export const Governance: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { title: 'Facture Client', icon: FileText, color: 'text-green-600' },
-          { title: 'Contrat Individuel', icon: Shield, color: 'text-indigo-600' },
+          { title: 'Contrat Individuel', icon: Shield, color: 'text-green-600' },
           { title: 'Devis Santé', icon: Clock, color: 'text-emerald-600' },
           { title: 'Reçu de Paiement', icon: CheckSquare, color: 'text-rose-600' }
         ].map((doc, i) => (
@@ -204,7 +204,7 @@ export const Governance: React.FC = () => {
       <div className="fluent-card p-0 overflow-hidden rounded-lg border border-green-200 mt-6">
         <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white">
           <h5 className="text-xs font-black text-green-950 uppercase flex items-center gap-2">
-            <Languages className="w-4 h-4 text-indigo-600" /> Support Multilingue & Traductions
+            <Languages className="w-4 h-4 text-green-600" /> Support Multilingue & Traductions
           </h5>
           <button className="px-4 py-2 border border-green-300 rounded-md text-[10px] font-black text-slate-400 uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">Gérer les Lexiques</button>
         </div>

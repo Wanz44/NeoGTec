@@ -37,7 +37,7 @@ export const SystemConfig: React.FC = () => {
        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             { label: 'Utilisation CPU', val: '32%', icon: Cpu, color: 'text-green-600' },
-            { label: 'Mémoire Vive', val: '5.2 GB', icon: HardDrive, color: 'text-indigo-600' },
+            { label: 'Mémoire Vive', val: '5.2 GB', icon: HardDrive, color: 'text-green-600' },
             { label: 'Latence API', val: '124ms', icon: Activity, color: 'text-emerald-600' },
           ].map((stat, i) => (
              <div key={i} className="fluent-card p-6 flex items-center justify-between rounded-lg border border-green-200 bg-white shadow-sm">
@@ -64,15 +64,15 @@ export const SystemConfig: React.FC = () => {
                 <AreaChart data={MOCK_STATS}>
                    <defs>
                       <linearGradient id="colorPerf" x1="0" y1="0" x2="0" y2="1">
-                         <stop offset="5%" stopColor="#117F02" stopOpacity={0.2}/>
-                         <stop offset="95%" stopColor="#117F02" stopOpacity={0}/>
+                         <stop offset="5%" stopColor="#4ba32c" stopOpacity={0.2}/>
+                         <stop offset="95%" stopColor="#4ba32c" stopOpacity={0}/>
                       </linearGradient>
                    </defs>
                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                    <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                    <Tooltip />
-                   <Area type="monotone" dataKey="cpu" stroke="#117F02" strokeWidth={3} fillOpacity={1} fill="url(#colorPerf)" />
+                   <Area type="monotone" dataKey="cpu" stroke="#4ba32c" strokeWidth={3} fillOpacity={1} fill="url(#colorPerf)" />
                 </AreaChart>
              </ResponsiveContainer>
           </div>
@@ -100,7 +100,7 @@ export const SystemConfig: React.FC = () => {
        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="fluent-card p-6 rounded-lg border border-green-200 bg-white shadow-sm">
              <h4 className="text-sm font-black text-green-950 uppercase mb-6 flex items-center gap-2 italic">
-                <Database className="w-5 h-5 text-indigo-600" /> Sauvegardes Automatiques
+                <Database className="w-5 h-5 text-green-600" /> Sauvegardes Automatiques
              </h4>
              <div className="space-y-4">
                 <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 shadow-inner">
@@ -110,7 +110,7 @@ export const SystemConfig: React.FC = () => {
                    </div>
                    <div className="flex items-center justify-between">
                       <p className="text-[10px] font-black text-slate-500 uppercase">Destination</p>
-                      <span className="text-xs font-black text-indigo-600">Google Cloud / S3</span>
+                      <span className="text-xs font-black text-green-600">Google Cloud / S3</span>
                    </div>
                 </div>
                 <button className="w-full py-3 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-600/30">Lancer une sauvegarde manuelle</button>
@@ -220,7 +220,7 @@ export const SystemConfig: React.FC = () => {
 
        <div className="fluent-card p-6">
           <h4 className="text-sm font-black text-green-950 uppercase mb-6 flex items-center gap-2">
-             <Key className="w-5 h-5 text-indigo-600" /> Gestion des Clés API
+             <Key className="w-5 h-5 text-green-600" /> Gestion des Clés API
           </h4>
           <div className="space-y-4">
              {[

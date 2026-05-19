@@ -72,7 +72,7 @@ export const UsersList: React.FC = () => {
           {[
             { label: 'Utilisateurs Totaux', val: '1,284', color: 'text-green-600' },
             { label: 'Sessions Actives', val: '42', color: 'text-emerald-600' },
-            { label: 'Rôles Définis', val: '5', color: 'text-indigo-600' },
+            { label: 'Rôles Définis', val: '5', color: 'text-green-600' },
             { label: 'Tentatives Rejetées', val: '12', color: 'text-rose-600' },
           ].map((s, i) => (
              <div key={i} className="p-4 bg-white border border-green-200 rounded-xl shadow-sm">
@@ -134,7 +134,7 @@ export const UsersList: React.FC = () => {
                          <p className="text-[10px] font-bold text-slate-400 italic font-medium">{user.email}</p>
                          <div className="flex items-center gap-4 mt-1">
                             <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest font-mono">#{user.id}</span>
-                            <span className="text-[8px] font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full uppercase italic border border-indigo-100 shadow-sm">{user.role}</span>
+                            <span className="text-[8px] font-black text-green-500 bg-green-50 px-2 py-0.5 rounded-full uppercase italic border border-green-100 shadow-sm">{user.role}</span>
                          </div>
                       </div>
                    </div>
@@ -146,7 +146,7 @@ export const UsersList: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-center gap-4">
                          <div className="p-2 border border-slate-100 rounded-xl text-slate-300 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm"><Edit3 className="w-4 h-4" /></div>
-                         <div className="p-2 border border-slate-100 rounded-xl text-slate-300 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"><Lock className="w-4 h-4" /></div>
+                         <div className="p-2 border border-slate-100 rounded-xl text-slate-300 hover:text-green-600 hover:border-green-200 transition-all shadow-sm"><Lock className="w-4 h-4" /></div>
                          <div className="p-2 border border-slate-100 rounded-xl text-slate-300 hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm"><Ban className="w-4 h-4" /></div>
                       </div>
                       <button className="hidden lg:flex items-center gap-2 px-4 py-2 border border-green-200 rounded-xl text-[10px] font-black text-green-600 uppercase tracking-widest hover:bg-green-50 transition-all shadow-sm bg-white">
@@ -171,7 +171,7 @@ export const UsersList: React.FC = () => {
                 {[
                   { role: 'Administrateur', access: 'Accès Total', color: 'text-rose-400' },
                   { role: 'Gestionnaire', access: 'Modules Métiers + Rapports', color: 'text-orange-400' },
-                  { role: 'Prestataire', access: 'Dossiers Patients + Prestations', color: 'text-indigo-400' },
+                  { role: 'Prestataire', access: 'Dossiers Patients + Prestations', color: 'text-green-400' },
                 ].map((r, i) => (
                    <div key={i} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
                       <div>

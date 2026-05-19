@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { 
   Activity, Wallet, AlertTriangle, TrendingUp, TrendingDown,
   Info, Shield, Users, Search, Download, Filter, 
-  ChevronRight, ArrowUpRight, BarChart3, BellRing, ShieldCheck, ClipboardCheck, History
+  ChevronRight, ArrowUpRight, BarChart3, BellRing, ShieldCheck, ClipboardCheck, History as HistoryIcon
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { EligibilityCheck } from './consumptions/EligibilityCheck';
@@ -349,7 +349,7 @@ export const Consumptions: React.FC = () => {
               activeTab === 'validation' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
             )}
           >
-            <ClipboardCheck className="w-4 h-4 text-indigo-600" /> Validation
+            <ClipboardCheck className="w-4 h-4 text-green-600" /> Validation
           </button>
           <button 
             onClick={() => setActiveTab('history')}
@@ -358,7 +358,7 @@ export const Consumptions: React.FC = () => {
               activeTab === 'history' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
             )}
           >
-            <History className="w-4 h-4 text-slate-900" /> Historique
+            <HistoryIcon className="w-4 h-4 text-slate-900" /> Historique
           </button>
         </div>
       </div>

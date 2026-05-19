@@ -26,10 +26,10 @@ const REVENUE_DATA = [
 ];
 
 const CLAIM_TYPE_DATA = [
-  { name: 'Santé', value: 45, color: '#117F02' },
+  { name: 'Santé', value: 45, color: '#4ba32c' },
   { name: 'Auto', value: 25, color: '#0ea5e9' },
-  { name: 'Prévoyance', value: 20, color: '#10b981' },
-  { name: 'Habitation', value: 10, color: '#6366f1' },
+  { name: 'Prévoyance', value: 20, color: '#5cc936' },
+  { name: 'Habitation', value: 10, color: '#3a7d22' },
 ];
 
 const PERFORMANCE_DATA = [
@@ -94,7 +94,7 @@ export const Analytics: React.FC = () => {
          {[
            { label: 'Sinistres Ouverts', value: '42', change: '+12%', icon: BarChart3, color: 'text-green-600', trend: 'up' },
            { label: 'Taux de Remboursement', value: '89.4%', change: '-0.5%', icon: TrendingUp, color: 'text-emerald-600', trend: 'down' },
-           { label: 'Montant Approuvé', value: '450K$', change: '+24%', icon: Wallet, color: 'text-indigo-600', trend: 'up' },
+           { label: 'Montant Approuvé', value: '450K$', change: '+24%', icon: Wallet, color: 'text-green-600', trend: 'up' },
            { label: 'Alertes Fraude', value: '7', change: '+3', icon: ShieldAlert, color: 'text-rose-600', trend: 'up' }
          ].map((kpi, idx) => (
            <motion.div 
@@ -152,7 +152,7 @@ export const Analytics: React.FC = () => {
                       contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '10px' }}
                     />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 700, paddingTop: '20px' }} />
-                    <Bar dataKey="approved" name="Approuvés" fill="#117F02" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="approved" name="Approuvés" fill="#4ba32c" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="rejected" name="Rejetés" fill="#ef4444" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="pending" name="En attente" fill="#94a3b8" radius={[4, 4, 0, 0]} />
                   </BarChart>
@@ -200,18 +200,18 @@ export const Analytics: React.FC = () => {
             </div>
 
             {/* API & Sharing Info Card */}
-            <div className="p-6 bg-indigo-950 rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
+            <div className="p-6 bg-green-950 rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
                <div className="absolute bottom-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
                   <Share2 className="w-16 h-16" />
                </div>
                <div className="relative z-10 flex flex-col gap-6">
                   <div className="flex items-center justify-between">
                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-indigo-500/20 rounded-xl border border-indigo-400/30 flex items-center justify-center">
-                           <Share2 className="w-5 h-5 text-indigo-400" />
+                        <div className="w-10 h-10 bg-green-500/20 rounded-xl border border-green-400/30 flex items-center justify-center">
+                           <Share2 className="w-5 h-5 text-green-400" />
                         </div>
                         <div>
-                           <h4 className="text-[11px] font-black uppercase tracking-widest text-indigo-400">Share & Integration API</h4>
+                           <h4 className="text-[11px] font-black uppercase tracking-widest text-green-400">Share & Integration API</h4>
                            <p className="text-[10px] font-medium opacity-40">Documentation OAuth 2.0 active</p>
                         </div>
                      </div>
@@ -223,21 +223,21 @@ export const Analytics: React.FC = () => {
                   <div className="space-y-3">
                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 group-hover:border-white/20 transition-all cursor-pointer">
                         <div className="flex items-center gap-3">
-                           <Key className="w-4 h-4 text-indigo-300" />
+                           <Key className="w-4 h-4 text-green-300" />
                            <p className="text-[11px] font-bold">Gérer les Clés API (4 actives)</p>
                         </div>
                         <ChevronRight className="w-4 h-4 opacity-40" />
                      </div>
                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 group-hover:border-white/20 transition-all cursor-pointer">
                         <div className="flex items-center gap-3">
-                           <TrendingUp className="w-4 h-4 text-indigo-300" />
+                           <TrendingUp className="w-4 h-4 text-green-300" />
                            <p className="text-[11px] font-bold">Logs Synchronisation Partenaires</p>
                         </div>
                         <ChevronRight className="w-4 h-4 opacity-40" />
                      </div>
                   </div>
 
-                  <button className="w-full py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-600/30 hover:bg-indigo-500 transition-all">
+                  <button className="w-full py-2.5 bg-green-600 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-green-600/30 hover:bg-green-500 transition-all">
                      Ouvrir le portail développeur
                   </button>
                </div>
@@ -259,7 +259,7 @@ export const Analytics: React.FC = () => {
                   <Tooltip 
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '10px' }}
                   />
-                  <Line type="monotone" dataKey="claims" name="Sinistres traités/h" stroke="#117F02" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} />
+                  <Line type="monotone" dataKey="claims" name="Sinistres traités/h" stroke="#4ba32c" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} />
                   <Line type="monotone" dataKey="risk" name="Alertes critiques" stroke="#ef4444" strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} strokeDasharray="5 5" />
                </LineChart>
             </ResponsiveContainer>

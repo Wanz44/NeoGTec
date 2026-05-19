@@ -14,8 +14,8 @@ export const PricingCalculator: React.FC = () => {
   return (
     <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-slate-900/20 border border-slate-800">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-indigo-500/20 rounded-2xl border border-indigo-500/30">
-          <Calculator className="w-6 h-6 text-indigo-400" />
+        <div className="p-3 bg-green-500/20 rounded-2xl border border-green-500/30">
+          <Calculator className="w-6 h-6 text-green-400" />
         </div>
         <div>
           <h2 className="text-xl font-black italic">Calculateur de Frais</h2>
@@ -28,7 +28,7 @@ export const PricingCalculator: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-2 px-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Montant Total de l'Acte</label>
-            <span className="text-xs font-black text-indigo-400">{baseAmount} $</span>
+            <span className="text-xs font-black text-green-400">{baseAmount} $</span>
           </div>
           <input 
             type="range"
@@ -37,7 +37,7 @@ export const PricingCalculator: React.FC = () => {
             step="10"
             value={baseAmount}
             onChange={(e) => setBaseAmount(Number(e.target.value))}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-green-500"
           />
         </div>
 
@@ -53,7 +53,7 @@ export const PricingCalculator: React.FC = () => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold text-slate-500 uppercase">Franchise (Fixe)</span>
-              <span className="text-xs font-black text-blue-400">{deductible} $</span>
+              <span className="text-xs font-black text-green-400">{deductible} $</span>
             </div>
           </div>
           <div className="w-px bg-slate-700 h-full" />
@@ -83,7 +83,7 @@ export const PricingCalculator: React.FC = () => {
         </div>
 
         <div className="relative pt-4 overflow-hidden group">
-          <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent group-hover:scale-x-110 transition-transform duration-700" />
+          <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-green-500/40 to-transparent group-hover:scale-x-110 transition-transform duration-700" />
           <p className="text-[10px] font-bold text-slate-500 leading-relaxed italic">
             * Le reste à charge inclut le ticket modérateur (20%) et la franchise contractuelle de {deductible}$.
           </p>

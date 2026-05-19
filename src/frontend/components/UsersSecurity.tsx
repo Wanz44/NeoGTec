@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { 
   ShieldCheck, Lock, Smartphone, Key, 
   ShieldAlert, RefreshCw, Eye, CheckCircle2,
-  AlertTriangle, History, Verified, Settings,
+  AlertTriangle, History as HistoryIcon, Verified, Settings,
   Save, Unlock, Terminal, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -103,7 +103,7 @@ export const UsersSecurity: React.FC = () => {
        {/* IP Restrictrion & API Keys Settings */}
        <div className="fluent-card p-6">
           <h4 className="text-sm font-black text-green-950 uppercase mb-8 flex items-center gap-2">
-             <Globe className="w-5 h-5 text-indigo-600" /> Restrictions d'Accès & IP
+             <Globe className="w-5 h-5 text-green-600" /> Restrictions d'Accès & IP
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              <div className="space-y-4">
@@ -115,7 +115,7 @@ export const UsersSecurity: React.FC = () => {
                          <Unlock className="w-3.5 h-3.5 text-slate-200 hover:text-rose-500 cursor-pointer" />
                       </div>
                    ))}
-                   <button className="text-[9px] font-black text-indigo-600 uppercase italic hover:underline">+ Ajouter une restriction IP</button>
+                   <button className="text-[9px] font-black text-green-600 uppercase italic hover:underline">+ Ajouter une restriction IP</button>
                 </div>
              </div>
              <div className="p-6 bg-white rounded-lg text-slate-900 border border-slate-200 shadow-sm overflow-hidden relative">

@@ -42,11 +42,11 @@ export const ActsValidation: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-blue-100 p-6 shadow-sm h-full">
+    <div className="bg-white rounded-3xl border border-green-100 p-6 shadow-sm h-full">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-50 rounded-2xl">
-            <ClipboardCheck className="w-6 h-6 text-blue-600" />
+          <div className="p-3 bg-green-50 rounded-2xl">
+            <ClipboardCheck className="w-6 h-6 text-green-600" />
           </div>
           <div>
             <h2 className="text-lg font-black text-slate-900">Validation des Actes</h2>
@@ -69,7 +69,7 @@ export const ActsValidation: React.FC = () => {
               <button
                 key={act.id}
                 onClick={() => addAct(act)}
-                className="w-full flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all group"
+                className="w-full flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-green-50 hover:border-green-200 transition-all group"
               >
                 <div className="text-left">
                   <p className="text-sm font-black text-slate-700">{act.name}</p>
@@ -77,7 +77,7 @@ export const ActsValidation: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-900">{act.cost} $</span>
-                  <Plus className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                  <Plus className="w-4 h-4 text-slate-300 group-hover:text-green-500 transition-colors" />
                 </div>
               </button>
             ))}
@@ -99,7 +99,7 @@ export const ActsValidation: React.FC = () => {
                   <div key={act.id} className="flex items-center justify-between p-2 bg-white rounded-lg shadow-sm border border-slate-100">
                     <span className="text-xs font-black text-slate-700">{act.name}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-black text-blue-600">{act.cost} $</span>
+                      <span className="text-xs font-black text-green-600">{act.cost} $</span>
                       <button onClick={() => removeAct(act.id)} className="p-1 hover:bg-rose-50 rounded text-rose-400 hover:text-rose-600 transition-colors">
                         <X className="w-3 h-3" />
                       </button>

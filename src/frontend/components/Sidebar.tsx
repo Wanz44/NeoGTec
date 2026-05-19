@@ -9,10 +9,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { MODULES, Module } from '../constants';
 import { 
-  Shield, ChevronLeft, ChevronRight, Menu, Search, Key, History, Settings, Lock, 
+  Shield, ChevronLeft, ChevronRight, Menu, Search, Key, History as HistoryIcon, Settings, Lock, 
   ShieldCheck, ShieldAlert, BarChart3, Users, FileText, AlertCircle, Activity as ActivityIcon, 
   Plus, Clock, LayoutDashboard, Mail, Megaphone, Share2, PhoneCall, TrendingUp, HelpCircle,
-  Cpu, Video, ClipboardList, Pill
+  Cpu, Video, ClipboardList, Pill, CreditCard, Heart, Stethoscope,
+  Building2, MapPin, FileSignature, TabletSmartphone, Star, Calculator
 } from 'lucide-react'; 
 
 interface SidebarProps {
@@ -21,6 +22,7 @@ interface SidebarProps {
 }
 
 const SUB_MODULES_CONTRACTS = [
+  { id: 'contracts-config', name: 'Offres & Barèmes', icon: FileText },
   { id: 'consumption-list', name: 'Consommations', icon: ActivityIcon },
   { id: 'managers-list', name: 'Gestionnaires', icon: Users },
 ];
@@ -46,17 +48,43 @@ const SUB_MODULES_TELEMEDICINE = [
 ];
 
 const SUB_MODULES_BI = [
-  { id: 'bi-dashboard', name: 'Indicateurs', icon: BarChart3 },
-  { id: 'bi-trends', name: 'Tendances', icon: TrendingUp },
-  { id: 'bi-predictions', name: 'Prédictions IA', icon: Cpu },
-  { id: 'bi-reports', name: 'Rapports Export', icon: FileText },
+  { id: 'bi-global', name: 'Activité Globale', icon: LayoutDashboard },
+  { id: 'bi-fraud', name: 'Détection Fraude', icon: ShieldAlert },
+  { id: 'bi-performance', name: 'Perf. Partenaires', icon: BarChart3 },
+  { id: 'bi-forecasting', name: 'Prévisions Coûts', icon: TrendingUp },
+];
+
+const SUB_MODULES_BILLING = [
+  { id: 'billing-contributions', name: 'Suivi Cotisations', icon: ClipboardList },
+  { id: 'billing-mobile-money', name: 'Mobile Money', icon: TabletSmartphone },
+  { id: 'billing-reconciliation', name: 'Réconciliation', icon: Calculator },
+  { id: 'billing-tax', name: 'Rapports Fiscaux', icon: FileText },
+];
+
+const SUB_MODULES_CLAIMS = [
+  { id: 'claims-declaration', name: 'Déclaration', icon: Plus },
+  { id: 'claims-workflow', name: 'Suivi Dossier', icon: Clock },
+  { id: 'claims-expertise', name: 'Expertise Médicale', icon: Stethoscope },
+  { id: 'claims-litigation', name: 'Contentieux', icon: Mail },
+];
+
+const SUB_MODULES_PARTNERS = [
+  { id: 'partners-directory', name: 'Référentiel', icon: MapPin },
+  { id: 'partners-contracting', name: 'Conventionnement', icon: FileSignature },
+  { id: 'partners-portal', name: 'Portail Prestataire', icon: TabletSmartphone },
+  { id: 'partners-quality', name: 'Contrôle Qualité', icon: Star },
+  { id: 'partners-tariffs', name: 'Gestion des Tarifs', icon: Calculator },
 ];
 
 const SUB_MODULES_SYSTEM = [
   { id: 'governance', name: 'Paramétrage & Governance', icon: Settings },
   { id: 'users-list', name: 'Utilisateurs & Rôles', icon: Users },
+  { id: 'users-digital', name: 'Inscription Digitale', icon: Plus },
+  { id: 'users-selfcare', name: 'Portail Self-Care', icon: LayoutDashboard },
+  { id: 'users-card', name: 'Cartes Virtuelles', icon: CreditCard },
+  { id: 'users-beneficiaries', name: 'Ayants-Droit', icon: Heart },
   { id: 'users-security', name: 'Sécurité & MFA', icon: Lock },
-  { id: 'users-logs', name: 'Logs & Audits', icon: History },
+  { id: 'users-logs', name: 'Logs & Audits', icon: HistoryIcon },
   { id: 'system-config', name: 'Monitoring & Système', icon: ShieldCheck },
   { id: 'alerts', name: 'Surveillance & Alertes', icon: ShieldAlert },
   { id: 'admin', name: 'Privilèges & Accès', icon: Shield },
@@ -70,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
 
   const handleModuleClick = (moduleId: string) => {
-    if (['settings', 'contracts', 'reclamation', 'crm', 'telemedicine', 'bi'].includes(moduleId)) {
+    if (['settings', 'contracts', 'reclamation', 'crm', 'telemedicine', 'bi', 'partners', 'payment', 'claims', 'integrations'].includes(moduleId)) {
       setExpandedModules(prev => ({
         ...prev,
         [moduleId]: !prev[moduleId]
@@ -118,6 +146,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
               const isCRMModule = module.id === 'crm';
               const isTelemedicineModule = module.id === 'telemedicine';
               const isBIModule = module.id === 'bi';
+              const isPartnersModule = module.id === 'partners';
+              const isPaymentModule = module.id === 'payment';
+              const isClaimsModule = module.id === 'claims';
               
               const allSubs = [
                 ...(isContractsModule ? SUB_MODULES_CONTRACTS : []),
@@ -125,6 +156,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
                 ...(isCRMModule ? SUB_MODULES_CRM : []),
                 ...(isTelemedicineModule ? SUB_MODULES_TELEMEDICINE : []),
                 ...(isBIModule ? SUB_MODULES_BI : []),
+                ...(isPartnersModule ? SUB_MODULES_PARTNERS : []),
+                ...(isPaymentModule ? SUB_MODULES_BILLING : []),
+                ...(isClaimsModule ? SUB_MODULES_CLAIMS : []),
                 ...(isSettingsModule ? SUB_MODULES_SYSTEM : [])
               ];
 

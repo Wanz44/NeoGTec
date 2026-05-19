@@ -1,5 +1,5 @@
 import React from 'react';
-import { History, Calendar, MapPin, Activity, Stethoscope, Pill, FlaskConical, ChevronRight } from 'lucide-react';
+import { History as HistoryIcon, Calendar, MapPin, Activity, Stethoscope, Pill, FlaskConical, ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface ConsumptionRecord {
@@ -43,7 +43,7 @@ export const ConsumptionHistory: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-slate-950 rounded-2xl">
-            <History className="w-6 h-6 text-white" />
+            <HistoryIcon className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-lg font-black text-slate-900 leading-tight">Historique Assuré</h2>
@@ -70,7 +70,7 @@ export const ConsumptionHistory: React.FC = () => {
               {/* Timeline Dot with Icon */}
               <div className={cn(
                 "absolute left-0 top-1 p-3 rounded-2xl border-2 border-white transition-all transform group-hover:scale-110 shadow-sm",
-                item.type === 'consultation' ? "bg-blue-50 text-blue-600" : 
+                item.type === 'consultation' ? "bg-green-50 text-green-600" : 
                 item.type === 'pharmacy' ? "bg-purple-50 text-purple-600" : "bg-teal-50 text-teal-600"
               )}>
                 {getIcon(item.type)}

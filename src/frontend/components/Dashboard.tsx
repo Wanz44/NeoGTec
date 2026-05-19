@@ -111,8 +111,8 @@ export const Dashboard: React.FC = () => {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#117F02" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#117F02" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#4ba32c" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#4ba32c" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#00000005" />
@@ -139,7 +139,7 @@ export const Dashboard: React.FC = () => {
                     fontWeight: 700
                   }} 
                 />
-                <Area type="monotone" dataKey="value" stroke="#117F02" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" dot={{ r: 4, fill: '#117F02', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                <Area type="monotone" dataKey="value" stroke="#4ba32c" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" dot={{ r: 4, fill: '#4ba32c', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, strokeWidth: 0 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -159,7 +159,7 @@ export const Dashboard: React.FC = () => {
                     "w-1.5 h-4 rounded-full shadow-sm",
                     claim.status === 'Approuvé' ? "bg-emerald-400" : 
                     claim.status === 'En attente' ? "bg-green-400" :
-                    claim.status === 'Payé' ? "bg-blue-400" : "bg-rose-400"
+                    claim.status === 'Payé' ? "bg-green-600" : "bg-rose-400"
                   )} />
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] font-black text-green-950 truncate leading-tight mb-0.5 uppercase">{claim.user}</p>
@@ -171,7 +171,7 @@ export const Dashboard: React.FC = () => {
                       "text-[8px] font-black px-1.5 py-0.5 rounded-full border uppercase tracking-tighter italic",
                       claim.status === 'Approuvé' ? "text-emerald-600 bg-emerald-50 border-emerald-100" : 
                       claim.status === 'En attente' ? "text-green-600 bg-green-50 border-green-100" :
-                      claim.status === 'Payé' ? "text-blue-600 bg-blue-50 border-blue-100" : "text-rose-600 bg-rose-50 border-rose-100"
+                      claim.status === 'Payé' ? "text-green-700 bg-green-50 border-green-200" : "text-rose-600 bg-rose-50 border-rose-100"
                     )}>
                       {claim.status}
                     </span>

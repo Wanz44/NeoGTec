@@ -28,8 +28,11 @@ import { Payment } from './components/Payment';
 import { CRM } from './components/CRM';
 import { Telemedicine } from './components/Telemedicine';
 import { BI } from './components/BI';
+import { Integrations } from './components/Integrations';
 import { Admin } from './components/Admin';
 import { UsersView } from './components/Users';
+import { Contracts } from './components/Contracts';
+import { Partners } from './components/Partners';
 import { Settings } from './components/Settings';
 import { SystemConfig } from './components/SystemConfig';
 
@@ -72,12 +75,23 @@ export default function App() {
       case 'users-list':
       case 'users-security':
       case 'users-logs':
+      case 'users-digital':
+      case 'users-selfcare':
+      case 'users-card':
+      case 'users-beneficiaries':
         return <UsersView subModule={activeModule} />;
       case 'governance': return <Governance />; // Module 1 | 🔗 Fichier lié: Governance.tsx
       case 'alerts': return <Alerts />;
       case 'contracts':
+      case 'contracts-config':
+      case 'contracts-offers':
       case 'contracts-list':
-      case 'policies-list':
+        return <Contracts />;
+      case 'claims':
+      case 'claims-declaration':
+      case 'claims-litigation':
+      case 'claims-workflow':
+      case 'claims-expertise':
       case 'claims-list':
         return <Claims subModule={activeModule} />;
       case 'consumption-list':
@@ -90,7 +104,12 @@ export default function App() {
       case 'reclamation-dashboard':
       case 'reclamation-trace':
         return <Reclamation subModule={activeModule} />;
-      case 'payment': return <Payment />;
+      case 'payment': 
+      case 'billing-contributions':
+      case 'billing-mobile-money':
+      case 'billing-reconciliation':
+      case 'billing-tax':
+        return <Payment subModule={activeModule} />;
       case 'crm':
       case 'crm-marketing':
       case 'crm-performance':
@@ -105,11 +124,20 @@ export default function App() {
       case 'tele-history':
         return <Telemedicine subModule={activeModule} />;
       case 'bi':
-      case 'bi-dashboard':
-      case 'bi-trends':
-      case 'bi-predictions':
-      case 'bi-reports':
+      case 'bi-global':
+      case 'bi-fraud':
+      case 'bi-performance':
+      case 'bi-forecasting':
         return <BI subModule={activeModule} />;
+      case 'integrations':
+        return <Integrations />;
+      case 'partners':
+      case 'partners-directory':
+      case 'partners-contracting':
+      case 'partners-portal':
+      case 'partners-quality':
+      case 'partners-tariffs':
+        return <Partners />;
       case 'admin': return <Admin />;
       case 'system-config': return <SystemConfig />;
       case 'settings':

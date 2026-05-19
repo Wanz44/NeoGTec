@@ -38,7 +38,7 @@ export const GovernanceTenants: React.FC = () => {
        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { label: 'Hôpitaux Actifs', val: '24', icon: Hospital, color: 'text-green-600' },
-            { label: 'Dossiers Médicaux Total', val: '1.4M', icon: Database, color: 'text-indigo-600' },
+            { label: 'Dossiers Médicaux Total', val: '1.4M', icon: Database, color: 'text-green-600' },
             { label: 'Espace Utilise', val: '1.24 TB', icon: HardDrive, color: 'text-emerald-600' },
             { label: 'Status Global', val: 'Operational', icon: Activity, color: 'text-green-500' },
           ].map((stat, i) => (

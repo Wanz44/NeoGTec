@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Bell, Mail, MessageSquare, Phone, Send, 
-  Clock, CheckCircle2, AlertCircle, History,
+  Clock, CheckCircle2, AlertCircle, History as HistoryIcon,
   Search, Filter, ChevronRight, Settings,
   Zap, Calendar, RefreshCcw, CreditCard
 } from 'lucide-react';
@@ -131,7 +131,7 @@ export const Alerts: React.FC = () => {
                         <option value="Push">Push</option>
                      </select>
                   </div>
-                  <History className="w-4 h-4 text-green-200" />
+                  <HistoryIcon className="w-4 h-4 text-green-200" />
                </div>
 
                <div className="divide-y divide-green-50">

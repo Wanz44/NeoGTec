@@ -147,7 +147,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                          <div>
                             <div className="flex items-center gap-2">
                                <h4 className="text-sm font-black text-green-950 uppercase">{cons.doctorName}</h4>
-                               <span className="text-[8px] font-black bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full uppercase tracking-widest">{cons.specialty}</span>
+                               <span className="text-[8px] font-black bg-green-100 text-green-600 px-2 py-0.5 rounded-full uppercase tracking-widest">{cons.specialty}</span>
                                {cons.urgency === 'Haute' && <span className="text-[8px] font-black bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full uppercase italic animate-pulse">Haute Urgence</span>}
                             </div>
                             <div className="flex items-center gap-4 mt-1">
@@ -321,15 +321,15 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                       <AreaChart data={VITALS_HISTORY}>
                          <defs>
                             <linearGradient id="colorVit" x1="0" y1="0" x2="0" y2="1">
-                               <stop offset="5%" stopColor="#117F02" stopOpacity={0.1}/>
-                               <stop offset="95%" stopColor="#117F02" stopOpacity={0}/>
+                               <stop offset="5%" stopColor="#4ba32c" stopOpacity={0.1}/>
+                               <stop offset="95%" stopColor="#4ba32c" stopOpacity={0}/>
                             </linearGradient>
                          </defs>
                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                          <Tooltip />
-                         <Area type="monotone" dataKey="tension" stroke="#117F02" strokeWidth={3} fill="url(#colorVit)" />
+                         <Area type="monotone" dataKey="tension" stroke="#4ba32c" strokeWidth={3} fill="url(#colorVit)" />
                       </AreaChart>
                    </ResponsiveContainer>
                 </div>
@@ -339,7 +339,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
           <div className="space-y-6">
              <div className="fluent-card p-6">
                 <h4 className="text-sm font-black text-green-950 uppercase mb-6 flex items-center gap-2">
-                   <Pill className="w-4 h-4 text-indigo-600" /> Ordonnances
+                   <Pill className="w-4 h-4 text-green-600" /> Ordonnances
                 </h4>
                 <div className="space-y-3">
                    {[

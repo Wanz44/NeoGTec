@@ -7,9 +7,13 @@ import { UsersList } from './UsersList';
 import { UsersSecurity } from './UsersSecurity';
 import { UsersLogs } from './UsersLogs';
 import { Privileges } from './Privileges';
+import { DigitalEnrollment } from './users/DigitalEnrollment';
+import { SelfCarePortal } from './users/SelfCarePortal';
+import { VirtualCard } from './users/VirtualCard';
+import { BeneficiariesMgmt } from './users/BeneficiariesMgmt';
 import { 
-  Users, Shield, Lock, History, 
-  Settings, UserCheck, Key
+  Users, Shield, Lock, History as HistoryIcon, 
+  Settings, UserCheck, Key, UserPlus, Fingerprint, TabletSmartphone, CreditCard, Heart
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,20 +23,28 @@ interface UsersViewProps {
 }
 
 export const UsersView: React.FC<UsersViewProps> = ({ subModule }) => {
-  const [activeTab, setActiveTab] = useState<'list' | 'roles' | 'security' | 'logs'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'roles' | 'security' | 'logs' | 'digital' | 'selfcare' | 'card' | 'family'>('list');
 
   useEffect(() => {
     if (subModule === 'users-list') setActiveTab('list');
     else if (subModule === 'privileges') setActiveTab('roles');
     else if (subModule === 'users-security' || subModule === 'security') setActiveTab('security');
     else if (subModule === 'users-logs') setActiveTab('logs');
+    else if (subModule === 'users-digital') setActiveTab('digital');
+    else if (subModule === 'users-selfcare') setActiveTab('selfcare');
+    else if (subModule === 'users-card') setActiveTab('card');
+    else if (subModule === 'users-beneficiaries') setActiveTab('family');
   }, [subModule]);
 
   const tabs = [
     { id: 'list', label: 'Utilisateurs', icon: Users },
+    { id: 'digital', label: 'Inscription Digitale', icon: UserPlus },
+    { id: 'selfcare', label: 'Self-Care', icon: TabletSmartphone },
+    { id: 'card', label: 'Carte Virtuelle', icon: CreditCard },
+    { id: 'family', label: 'Ayants-Droit', icon: Heart },
     { id: 'roles', label: 'Rôles & Droits', icon: Shield },
-    { id: 'security', label: 'Sécurité MFA', icon: Lock },
-    { id: 'logs', label: 'Journal d\'Audit', icon: History },
+    { id: 'security', label: 'Sécurité', icon: Lock },
+    { id: 'logs', label: 'Audit', icon: HistoryIcon },
   ] as const;
 
   const renderContent = () => {
@@ -41,6 +53,10 @@ export const UsersView: React.FC<UsersViewProps> = ({ subModule }) => {
       case 'roles': return <Privileges />;
       case 'security': return <UsersSecurity />;
       case 'logs': return <UsersLogs />;
+      case 'digital': return <DigitalEnrollment />;
+      case 'selfcare': return <SelfCarePortal />;
+      case 'card': return <VirtualCard />;
+      case 'family': return <BeneficiariesMgmt />;
       default: return <UsersList />;
     }
   };

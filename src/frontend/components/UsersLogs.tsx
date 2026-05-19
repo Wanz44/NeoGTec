@@ -5,10 +5,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  History, ShieldAlert, CheckCircle2, AlertTriangle, 
+  ShieldAlert, CheckCircle2, AlertTriangle, 
   Search, Filter, Download, Terminal, Eye,
   Clock, User, RefreshCw, Layers, Lock,
-  ChevronRight, Calendar, MoreVertical
+  ChevronRight, Calendar, MoreVertical,
+  History as HistoryIcon
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -38,7 +39,7 @@ export const UsersLogs: React.FC = () => {
        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
              <h2 className="text-3xl font-extrabold text-orange-950 tracking-tight italic flex items-center gap-3">
-                Audit & Logs <History className="w-8 h-8 text-orange-500 fill-orange-500/10" />
+                Audit & Logs <HistoryIcon className="w-8 h-8 text-orange-500 fill-orange-500/10" />
              </h2>
              <p className="text-orange-900/50 font-medium tracking-tight uppercase tracking-tight italic underline decoration-orange-200 underline-offset-4 decoration-2">Journal d'Évènements, Monitoring Critique & Traçabilité</p>
           </div>
@@ -55,9 +56,9 @@ export const UsersLogs: React.FC = () => {
        {/* Quick Stats */}
        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
-            { label: 'Connexions', val: '1,420', icon: User, color: 'text-indigo-600' },
+            { label: 'Connexions', val: '1,420', icon: User, color: 'text-green-600' },
             { label: 'Erreurs Système', val: '12', icon: AlertTriangle, color: 'text-rose-600' },
-            { label: 'Actions d\'Audit', val: '48', icon: History, color: 'text-orange-600' },
+            { label: 'Actions d\'Audit', val: '48', icon: HistoryIcon, color: 'text-orange-600' },
             { label: 'Tps de réponse', val: '12ms', icon: Clock, color: 'text-emerald-600' },
           ].map((stat, i) => (
              <div key={i} className="fluent-card p-6 flex flex-col justify-between rounded-lg border border-orange-200 bg-white shadow-sm">
@@ -122,7 +123,7 @@ export const UsersLogs: React.FC = () => {
                             <p className="text-[11px] font-medium text-slate-600 italic leading-tight">{log.action}</p>
                          </td>
                          <td className="px-6 py-4">
-                            <span className="text-[9px] font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full uppercase italic">{log.module}</span>
+                            <span className="text-[9px] font-black text-green-500 bg-green-50 px-2 py-0.5 rounded-full uppercase italic">{log.module}</span>
                          </td>
                          <td className="px-6 py-4 text-center">
                             <span className={cn(

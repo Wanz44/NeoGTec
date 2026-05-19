@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Plus, Search, Filter, FileText, Upload, ShieldCheck, 
-  History, Clock, CheckCircle2, XCircle, AlertTriangle, 
+  Clock, CheckCircle2, XCircle, AlertTriangle, 
   ChevronRight, Download, BarChart3, TrendingUp, Zap,
   MessageSquare, User, Eye, ArrowLeft, Send, Shield
 } from 'lucide-react';
@@ -100,8 +100,8 @@ const MOCK_RECLAMATIONS: ReclamationData[] = [
 ];
 
 const STATS_DATA = [
-  { name: 'En attente', value: 12, color: '#117F02' },
-  { name: 'Validées', value: 45, color: '#10b981' },
+  { name: 'En attente', value: 12, color: '#4ba32c' },
+  { name: 'Validées', value: 45, color: '#5cc936' },
   { name: 'Rejetées', value: 8, color: '#ef4444' },
 ];
 
@@ -173,7 +173,7 @@ export const Reclamation: React.FC<{ subModule?: string }> = ({ subModule }) => 
              <div className="space-y-4">
                 {[
                   { label: 'Soumissions Mobile (Push)', percent: 72, color: 'bg-green-600' },
-                  { label: 'Validation Automatique (AI)', percent: 45, color: 'bg-indigo-600' },
+                  { label: 'Validation Automatique (AI)', percent: 45, color: 'bg-green-500' },
                   { label: 'Paiements Instantanés', percent: 28, color: 'bg-emerald-500' }
                 ].map((item, i) => (
                   <div key={i}>
