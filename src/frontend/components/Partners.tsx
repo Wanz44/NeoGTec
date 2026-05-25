@@ -18,8 +18,22 @@ import { ProviderPortal } from './partners/ProviderPortal';
 import { QualityControl } from './partners/QualityControl';
 import { TariffManagement } from './partners/TariffManagement';
 
-export const Partners: React.FC = () => {
+export const Partners: React.FC<{ subModule?: string }> = ({ subModule }) => {
   const [activeTab, setActiveTab] = useState<'directory' | 'contracting' | 'portal' | 'quality' | 'tariffs'>('directory');
+
+  React.useEffect(() => {
+    if (!subModule) return;
+    const mapping: Record<string, 'directory' | 'contracting' | 'portal' | 'quality' | 'tariffs'> = {
+      'partners-directory': 'directory',
+      'partners-contracting': 'contracting',
+      'partners-portal': 'portal',
+      'partners-quality': 'quality',
+      'partners-tariffs': 'tariffs'
+    };
+    if (mapping[subModule]) {
+      setActiveTab(mapping[subModule]);
+    }
+  }, [subModule]);
 
   const tabs = [
     { id: 'directory', label: 'Référentiel', icon: MapPin },

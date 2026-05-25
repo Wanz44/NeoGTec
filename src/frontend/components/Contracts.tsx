@@ -12,8 +12,19 @@ import {
 import { cn } from '../lib/utils';
 import { ContractConfig } from './contracts/ContractConfig';
 
-export const Contracts: React.FC = () => {
+export const Contracts: React.FC<{ subModule?: string }> = ({ subModule }) => {
   const [activeTab, setActiveTab] = useState<'config' | 'offers' | 'history'>('config');
+
+  React.useEffect(() => {
+    if (!subModule) return;
+    const mapping: Record<string, 'config' | 'offers' | 'history'> = {
+      'contracts-config': 'config',
+      'contracts-offers': 'offers'
+    };
+    if (mapping[subModule]) {
+      setActiveTab(mapping[subModule]);
+    }
+  }, [subModule]);
 
   return (
     <div className="space-y-6">

@@ -86,7 +86,7 @@ export default function App() {
       case 'contracts-config':
       case 'contracts-offers':
       case 'contracts-list':
-        return <Contracts />;
+        return <Contracts subModule={activeModule} />;
       case 'claims':
       case 'claims-declaration':
       case 'claims-litigation':
@@ -137,7 +137,7 @@ export default function App() {
       case 'partners-portal':
       case 'partners-quality':
       case 'partners-tariffs':
-        return <Partners />;
+        return <Partners subModule={activeModule} />;
       case 'admin': return <Admin />;
       case 'system-config': return <SystemConfig />;
       case 'settings':
