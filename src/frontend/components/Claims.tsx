@@ -16,8 +16,9 @@ import { ClaimDeclaration } from './claims/ClaimDeclaration';
 import { LitigationCenter } from './claims/LitigationCenter';
 import { WorkflowManager } from './claims/WorkflowManager';
 import { MedicalExpertise } from './claims/MedicalExpertise';
+import { PreauthPlafonds } from './PreauthPlafonds';
 
-type ClaimsTab = 'declaration' | 'litigation' | 'workflow' | 'expertise';
+type ClaimsTab = 'declaration' | 'litigation' | 'workflow' | 'expertise' | 'preauth';
 
 export const Claims: React.FC<{ subModule?: string }> = ({ subModule }) => {
   const [activeTab, setActiveTab] = useState<ClaimsTab>('declaration');
@@ -27,6 +28,7 @@ export const Claims: React.FC<{ subModule?: string }> = ({ subModule }) => {
     else if (subModule === 'claims-litigation') setActiveTab('litigation');
     else if (subModule === 'claims-workflow') setActiveTab('workflow');
     else if (subModule === 'claims-expertise') setActiveTab('expertise');
+    else if (subModule === 'claims-preauth') setActiveTab('preauth');
   }, [subModule]);
 
   const tabs = [
@@ -34,6 +36,7 @@ export const Claims: React.FC<{ subModule?: string }> = ({ subModule }) => {
     { id: 'litigation', label: 'Contentieux / Litiges', icon: MessageSquare },
     { id: 'workflow', label: 'Suivi Dossier', icon: Workflow },
     { id: 'expertise', label: 'Expertise Médicale', icon: Stethoscope },
+    { id: 'preauth', label: 'Pré-autorisations & Plafonds', icon: ShieldCheck },
   ] as const;
 
   const renderContent = () => {
@@ -42,6 +45,7 @@ export const Claims: React.FC<{ subModule?: string }> = ({ subModule }) => {
       case 'litigation': return <LitigationCenter />;
       case 'workflow': return <WorkflowManager />;
       case 'expertise': return <MedicalExpertise />;
+      case 'preauth': return <PreauthPlafonds />;
       default: return <ClaimDeclaration />;
     }
   };

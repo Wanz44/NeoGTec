@@ -15,14 +15,16 @@ import { cn } from '../lib/utils';
 import { RDCConnect } from './integrations/RDCConnect';
 import { TeleConsultHub } from './integrations/TeleConsultHub';
 import { RegulatoryExport } from './integrations/RegulatoryExport';
+import { WebhookAndHRHub } from './integrations/WebhookAndHRHub';
 
 export const Integrations: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'rdc' | 'tele' | 'regulatory'>('rdc');
+  const [activeTab, setActiveTab] = useState<'rdc' | 'tele' | 'regulatory' | 'webhooks'>('rdc');
 
   const tabs = [
     { id: 'rdc', label: 'SNIS & État Civil', icon: Globe },
     { id: 'tele', label: 'Télémédecine', icon: Video },
     { id: 'regulatory', label: 'Régulateurs (ARCA)', icon: Landmark },
+    { id: 'webhooks', label: 'Webhooks & SI RH (J)', icon: Zap },
   ] as const;
 
   const renderContent = () => {
@@ -30,6 +32,7 @@ export const Integrations: React.FC = () => {
       case 'rdc': return <RDCConnect />;
       case 'tele': return <TeleConsultHub />;
       case 'regulatory': return <RegulatoryExport />;
+      case 'webhooks': return <WebhookAndHRHub />;
       default: return <RDCConnect />;
     }
   };

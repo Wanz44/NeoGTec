@@ -1,92 +1,159 @@
 /**
  * 📄 Fichier : /src/frontend/components/Consumptions.tsx
- * 🎯 Objectif : Suivi dynamique des consommations avec sous-modules spécialisés.
+ * 🎯 Objectif : Suivi des consommations d'assurances santé en temps réel avec cost-control.
  */
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Activity, Wallet, AlertTriangle, TrendingUp, TrendingDown,
   Info, Shield, Users, Search, Download, Filter, 
-  ChevronRight, ArrowUpRight, BarChart3, BellRing, ShieldCheck, ClipboardCheck, History as HistoryIcon
+  ChevronRight, ArrowUpRight, BarChart3, BellRing, ShieldCheck, 
+  ClipboardCheck, History as HistoryIcon, X, Check, Lock, Unlock, Mail, FileText
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { EligibilityCheck } from './consumptions/EligibilityCheck';
 import { ActsValidation } from './consumptions/ActsValidation';
 import { ConsumptionHistory } from './consumptions/ConsumptionHistory';
 
-// --- Types ---
-
-export interface ConsumptionStats {
-  totalUsed: number;
-  totalLimit: number;
-  remaining: number;
-  percentUsed: number;
-  lastClaimAmount: number;
-  lastClaimDate: string;
-}
-
 export interface ConsumptionRecord {
   id: string;
-  insuredName: string;
   policyNumber: string;
-  totalCeiling: number;
+  insuredName: string;
+  companyName: string;
   consumed: number;
-  refunded: number;
-  remaining: number;
+  totalCeiling: number;
   status: 'Normal' | 'Attention' | 'Critique';
-  alerts: { type: 'Fraude' | 'UtilisationÉlevée' | 'Anomalie'; message: string; severity: 'basse' | 'moyenne' | 'haute' }[];
+  alerts: string[];
+  history: Array<{ date: string; label: string; amount: number; location: string }>;
+  isFrozen?: boolean;
 }
 
-const MOCK_CONSUMPTION: ConsumptionRecord[] = [
+const INITIAL_RECORDS: ConsumptionRecord[] = [
   {
-    id: '1',
-    insuredName: 'Adonaï WANZAMBI',
-    policyNumber: 'POL-123456',
-    totalCeiling: 25000,
-    consumed: 1250.00,
-    refunded: 1100.00,
-    remaining: 23750,
-    status: 'Normal',
-    alerts: []
-  },
-  {
-    id: '2',
-    insuredName: 'Marie Curie',
-    policyNumber: 'POL-654321',
-    totalCeiling: 5000,
-    consumed: 4200.00,
-    refunded: 3800.00,
-    remaining: 800,
+    id: 'ENT-2025-001',
+    policyNumber: 'ENT-2025-001',
+    insuredName: 'Jean-Laurent Mukendi',
+    companyName: 'Rawbank RDC',
+    consumed: 10450,
+    totalCeiling: 10000,
     status: 'Critique',
-    alerts: [
-      { type: 'UtilisationÉlevée', message: "84% du plafond consommé en 3 mois.", severity: 'haute' }
-    ]
+    alerts: ['Plafond Dentaire dépassé (104.5%)'],
+    history: [
+      { date: '12/03/2026', label: 'Consultation Dentaire', amount: 150, location: 'Hôpital Biamba Marie Mutola' },
+      { date: '18/03/2026', label: 'Achat Prothèse & Remplacement', amount: 450, location: 'Pharmacie du Centre Kinshasa' },
+      { date: '25/04/2026', label: 'Orthodontie Enfant curative', amount: 9850, location: 'Clinique Ngaliema' },
+    ],
+    isFrozen: false
   },
   {
-    id: '3',
-    insuredName: 'Robert Oppenheimer',
-    policyNumber: 'POL-445566',
-    totalCeiling: 150000,
-    consumed: 15000.00,
-    refunded: 12000.00,
-    remaining: 135000,
+    id: 'ENT-2025-042',
+    policyNumber: 'ENT-2025-042',
+    insuredName: 'Marie Curie Mpunga',
+    companyName: 'Vodacom RDC',
+    consumed: 9200,
+    totalCeiling: 10000,
     status: 'Attention',
-    alerts: [
-      { type: 'Anomalie', message: "Multiplication anormale des actes de kinésithérapie (15 actes/mois).", severity: 'moyenne' },
-      { type: 'Fraude', message: "Facture suspecte détectée via Analyse IA sur le dossier CL-900.", severity: 'haute' }
-    ]
+    alerts: ['Utilisation élevée (>90%)'],
+    history: [
+      { date: '10/02/2026', label: 'Consultation Pédiatrique', amount: 80, location: 'Hôpital HJ Hospitals' },
+      { date: '14/03/2026', label: 'Scanner Tomographie abdomen', amount: 3500, location: 'Centre Médical de Kinshasa (CMK)' },
+      { date: '21/05/2026', label: 'Hospitalisation intensive', amount: 5610, location: 'Clinique Ngaliema' }
+    ],
+    isFrozen: false
+  },
+  {
+    id: 'ENT-2025-099',
+    policyNumber: 'ENT-2025-099',
+    insuredName: 'Robert Oppenheimer Kalonji',
+    companyName: 'Bralima SARL',
+    consumed: 1250,
+    totalCeiling: 15000,
+    status: 'Normal',
+    alerts: [],
+    history: [
+      { date: '15/04/2026', label: 'Médecine Générale d\'urgence', amount: 150, location: 'Hôpital Sino-Congolais' },
+      { date: '19/04/2026', label: 'Analyses Biologiques complètes', amount: 1100, location: 'Hôpital HJ Hospitals' }
+    ],
+    isFrozen: false
+  },
+  {
+    id: 'IND-2025-301',
+    policyNumber: 'IND-2025-301',
+    insuredName: 'Sarah Al-Mansoori',
+    companyName: 'Individuel Libre',
+    consumed: 14200,
+    totalCeiling: 15000,
+    status: 'Attention',
+    alerts: ['Utilisation élevée (>90%)'],
+    history: [
+      { date: '01/01/2026', label: 'Soins Optiques Réfractive', amount: 2200, location: 'Moorfields Hospital Dubai' },
+      { date: '15/03/2026', label: 'IRM du Genou gauche', amount: 12000, location: 'Saudi German Hospital Dubai' }
+    ],
+    isFrozen: false
   }
 ];
 
 export const Consumptions: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'eligibility' | 'validation' | 'history'>('overview');
-  const [data] = useState<ConsumptionRecord[]>(MOCK_CONSUMPTION);
+  const [records, setRecords] = useState<ConsumptionRecord[]>(INITIAL_RECORDS);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Custom Filters state
+  const [filterConsoNinety, setFilterConsoNinety] = useState(false);
+  
+  // Modals & Drawers state
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [exportPeriod, setExportPeriod] = useState('30j');
+  const [exportReason, setExportReason] = useState('Audit Clinique RGPD');
+  const [selectedRecord, setSelectedRecord] = useState<ConsumptionRecord | null>(null);
+  
+  // Alert message notification toast feedback
+  const [notification, setNotification] = useState<string | null>(null);
 
-  const filteredData = data.filter(r => 
-    r.insuredName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.policyNumber.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const triggerNotification = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+  };
+
+  // Toggle Ice lock on specific policy (suspend the card temporarily due to fraud suspicion etc.)
+  const handleToggleFreeze = (id: string) => {
+    setRecords(prev => prev.map(rec => {
+      if (rec.id === id) {
+        const nextState = !rec.isFrozen;
+        triggerNotification(nextState ? `La police "${id}" a été gelée avec succès. Toutes les pré-autorisations sont bloquées.` : `La police "${id}" a été dégelée.`);
+        return { ...rec, isFrozen: nextState };
+      }
+      return rec;
+    }));
+    // Clean selected drawer
+    setSelectedRecord(null);
+  };
+
+  // Automated notification of RH for exceeds
+  const handleNotifyRH = (policyNumber: string, company: string) => {
+    triggerNotification(`Notification d'urgence envoyée par email & SMS au Gestionnaire RH de l'entreprise "${company}" concernant le dépassement du contrat ${policyNumber}.`);
+  };
+
+  const handleRunExport = (e: React.FormEvent) => {
+    e.preventDefault();
+    setExportModalOpen(false);
+    triggerNotification(`Exportation autorisée et archivée sous le motif "${exportReason}". Période: ${exportPeriod}. Téléchargement initialisé de l'audit de consommation.`);
+  };
+
+  // Filter calculation
+  const filteredRecords = records.filter(rec => {
+    const matchesSearch = rec.insuredName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          rec.policyNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          rec.companyName.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (filterConsoNinety) {
+      const percentage = (rec.consumed / rec.totalCeiling) * 100;
+      return matchesSearch && percentage >= 90;
+    }
+    return matchesSearch;
+  });
 
   const renderContent = () => {
     switch (activeTab) {
@@ -95,215 +162,215 @@ export const Consumptions: React.FC = () => {
       case 'history': return <ConsumptionHistory />;
       default: return (
         <div className="space-y-6">
-          {/* Global Indicators */}
+          
+          {/* Section: Automated Alert Banner at the top of the Overview module */}
+          <div className="bg-gradient-to-r from-rose-50 to-rose-100/40 border border-rose-200 rounded-[2rem] p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="p-3 bg-white border border-rose-200 text-rose-600 rounded-xl mt-0.5">
+                <AlertTriangle className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <span className="px-2 py-0.5 bg-rose-200/50 text-rose-700 text-[8px] font-black uppercase tracking-widest rounded-full border border-rose-300">
+                  Alerte Dépassement Plafond
+                </span>
+                <p className="text-sm font-black text-rose-950 uppercase mt-1 leading-tight">Alerte de limitation de contrat</p>
+                <p className="text-xs text-slate-500 italic max-w-xl">
+                  La police <span className="font-bold text-rose-600">ENT-2025-001</span> (Jean-Laurent Mukendi - Rawbank RDC) a dépassé 100% du plafond dentaire annuel autorisé.
+                </p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => handleNotifyRH('ENT-2025-001', 'Rawbank RDC')}
+              className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest transition-colors shadow-lg shadow-rose-600/15 flex items-center gap-2 cursor-pointer outline-none shrink-0"
+            >
+              <Mail className="w-3.5 h-3.5" /> Notifier RH entreprise
+            </button>
+          </div>
+
+          {/* Quick Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <div className="p-6 bg-white border border-green-100 rounded-[32px] shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
-                   <TrendingUp className="w-24 h-24" />
+            <div className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center border border-green-100">
+                  <Activity className="w-6 h-6 text-green-600" />
                 </div>
-                <div className="relative z-10 flex flex-col gap-4">
-                   <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center border border-green-200">
-                      <Activity className="w-6 h-6 text-green-600" />
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black text-green-950/30 uppercase tracking-[0.2em] mb-1">Taux de Sinistralité GLOBAL</p>
-                      <p className="text-3xl font-black text-green-950">42.5% <span className="text-xs font-bold text-rose-500 italic">+2.1%</span></p>
-                   </div>
-                   <div className="w-full h-1 bg-green-100 rounded-full overflow-hidden">
-                      <div className="w-[42.5%] h-full bg-green-600 rounded-full" />
-                   </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Taux de Sinistralité GLOBAL</p>
+                  <p className="text-2xl font-black text-slate-900 mt-1">42.5% <span className="text-[10px] text-rose-500 font-extrabold">+2.1%</span></p>
                 </div>
-             </div>
+              </div>
+              <div className="w-full h-1.5 bg-slate-100 rounded-full mt-4 overflow-hidden">
+                <div className="w-[42.5%] h-full bg-green-500 rounded-full" />
+              </div>
+            </div>
 
-             <div className="p-6 bg-green-950 rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:rotate-12 transition-transform">
-                   <Wallet className="w-24 h-24" />
+            <div className="p-6 bg-slate-900 border border-slate-800 text-white rounded-[2rem] shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10">
+                  <Wallet className="w-6 h-6 text-green-400" />
                 </div>
-                <div className="relative z-10 flex flex-col gap-4">
-                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10">
-                      <Wallet className="w-6 h-6 text-green-400" />
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Total Remboursements (Mois)</p>
-                      <p className="text-3xl font-black text-white">2.4M <span className="text-xs font-bold text-emerald-400 italic">$</span></p>
-                   </div>
-                   <div className="flex items-center gap-2 text-[10px] font-black text-white/40 italic">
-                      <BarChart3 className="w-3 h-3" /> Basé sur 1,240 dossiers validés
-                   </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Remboursements (Mois)</p>
+                  <p className="text-2xl font-black text-white mt-1">2.4M USD</p>
                 </div>
-             </div>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-4 italic">Sur la base de 1,240 factures de tiers payant matchées</p>
+            </div>
 
-             <div className="p-6 bg-white border border-green-100 rounded-[32px] shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-5">
-                   <AlertTriangle className="w-24 h-24" />
+            <div className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center border border-rose-100">
+                  <Shield className="w-6 h-6 text-rose-600" />
                 </div>
-                <div className="relative z-10 flex flex-col gap-4">
-                   <div className="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center border border-rose-200">
-                      <Shield className="w-6 h-6 text-rose-600" />
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black text-green-950/30 uppercase tracking-[0.2em] mb-1">Économies (Fraudes évitées)</p>
-                      <p className="text-3xl font-black text-rose-600">85K <span className="text-xs font-bold text-slate-400 italic">$</span></p>
-                   </div>
-                   <div className="flex items-center gap-2 text-[10px] font-black text-green-950/40 italic">
-                      <Info className="w-3 h-3" /> Système Neural Detection actif
-                   </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Économies (Fraudes évitées)</p>
+                  <p className="text-2xl font-black text-rose-600 mt-1">85K USD</p>
                 </div>
-             </div>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-4 italic">Analyse automatique par OCR et filtre d&apos;actes doublons</p>
+            </div>
           </div>
 
-          {/* Consumption Table */}
-          <div className="fluent-card overflow-hidden">
-             <div className="p-4 bg-green-50/20 border-b border-green-100 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                   <div className="relative">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-green-400" />
-                      <input 
-                         type="text" 
-                         placeholder="Rechercher un client ou une police..." 
-                         value={searchQuery}
-                         onChange={(e) => setSearchQuery(e.target.value)}
-                         className="pl-9 pr-4 py-1.5 text-xs bg-white border border-green-100 rounded-lg outline-none w-64 focus:ring-2 focus:ring-green-500/20"
-                      />
-                   </div>
-                   <button className="flex items-center gap-2 text-xs font-bold text-green-600 px-3 py-1.5 hover:bg-green-100 rounded-lg transition-colors">
-                      <Filter className="w-3.5 h-3.5" /> Filtres
-                   </button>
+          {/* Main Table Card representing B2 */}
+          <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
+            
+            {/* Table Control header */}
+            <div className="p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                
+                {/* Search */}
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input 
+                    type="text" 
+                    placeholder="Filtrer par police, assuré ou RH..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl outline-none w-64 focus:ring-4 focus:ring-green-500/10 focus:border-green-600 transition-all text-slate-800 font-bold"
+                  />
                 </div>
-                <div className="text-[10px] font-black text-green-950/30 uppercase italic">
-                   Monitorage en temps réel
-                </div>
-             </div>
 
-             <div className="divide-y divide-green-50">
-                {filteredData.map(record => (
-                  <div key={record.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between hover:bg-green-50/30 transition-all group gap-6">
-                     <div className="flex items-center gap-4 flex-1">
-                        <div className={cn(
-                          "w-12 h-12 rounded-2xl flex items-center justify-center font-black",
-                          record.status === 'Critique' ? "bg-rose-100 text-rose-600 ring-4 ring-rose-50" :
-                          record.status === 'Attention' ? "bg-amber-100 text-amber-600 ring-4 ring-amber-50" : "bg-emerald-100 text-emerald-600 ring-4 ring-emerald-50"
-                        )}>
-                          {record.status === 'Critique' ? '!' : record.status === 'Attention' ? '?' : '✓'}
-                        </div>
-                        <div>
-                           <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-black text-green-950">{record.insuredName}</h4>
-                              <span className="text-[9px] font-mono font-bold text-slate-400 px-1.5 py-0.5 rounded bg-slate-100 uppercase">{record.policyNumber}</span>
-                           </div>
-                           <p className="text-[11px] font-bold text-green-900/40 mt-0.5">Plafond: {record.totalCeiling.toLocaleString()} $</p>
-                        </div>
-                     </div>
-
-                     <div className="flex-1 max-w-sm">
-                        <div className="flex items-center justify-between mb-2">
-                           <p className="text-[11px] font-black text-green-950/60 tracking-tight">Utilisation effective</p>
-                           <p className={cn(
-                             "text-[11px] font-black",
-                             record.status === 'Critique' ? "text-rose-600" : "text-green-950"
-                           )}>
-                             {((record.consumed / record.totalCeiling) * 100).toFixed(1)}%
-                           </p>
-                        </div>
-                        <div className="h-2 bg-green-100 rounded-full overflow-hidden">
-                           <motion.div 
-                             initial={{ width: 0 }}
-                             animate={{ width: `${(record.consumed / record.totalCeiling) * 100}%` }}
-                             className={cn(
-                               "h-full rounded-full transition-all duration-1000",
-                               record.status === 'Critique' ? "bg-rose-500" : 
-                               record.status === 'Attention' ? "bg-amber-500" : "bg-emerald-500"
-                             )}
-                           />
-                        </div>
-                        <div className="flex justify-between mt-2">
-                           <p className="text-[10px] font-bold text-slate-400">Restant: {record.remaining.toLocaleString()} $</p>
-                           <p className="text-[10px] font-black text-emerald-600 italic">Remboursé: {record.refunded.toLocaleString()} $</p>
-                        </div>
-                     </div>
-
-                     <div className="flex items-center gap-4">
-                        {record.alerts.length > 0 ? (
-                          <div className="flex -space-x-2">
-                            {record.alerts.map((alert, i) => (
-                              <div 
-                                key={i} 
-                                className={cn(
-                                  "w-8 h-8 rounded-full flex items-center justify-center border-2 border-white text-[10px] font-black shadow-sm",
-                                  alert.severity === 'haute' ? "bg-rose-600 text-white" : "bg-amber-500 text-white"
-                                )}
-                                title={alert.message}
-                              >
-                                {alert.type === 'Fraude' ? 'F' : alert.type === 'Anomalie' ? 'A' : 'U'}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest italic bg-emerald-50 px-2 py-1 rounded">Sans Anomalie</span>
-                        )}
-                        <button className="p-2 rounded-xl bg-slate-50 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:text-green-600 transition-all hover:bg-green-50">
-                           <ChevronRight className="w-5 h-5" />
-                        </button>
-                     </div>
-                  </div>
-                ))}
-             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <div className="fluent-card p-6">
-                <h4 className="text-sm font-black text-green-950 mb-6 flex items-center gap-2">
-                   <TrendingDown className="w-5 h-5 text-emerald-600" /> TOP 5 Économies du mois
-                </h4>
-                <div className="space-y-4">
-                   {[
-                     { client: 'Clinique ProSanté', saving: '12,400 $', reason: 'Négociation tarifs actes' },
-                     { client: 'Labo Bio-X', saving: '8,150 $', reason: 'Audit factures doubles' },
-                     { client: 'Pharmacie Centrale', saving: '5,500 $', reason: 'Substitution génériques' }
-                   ].map((item, i) => (
-                     <div key={i} className="flex items-center justify-between p-3 bg-green-50/20 rounded-xl border border-green-50">
-                        <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 font-black text-[10px]">#{i+1}</div>
-                           <div>
-                              <p className="text-xs font-black text-green-950">{item.client}</p>
-                              <p className="text-[10px] font-bold text-slate-400 italic font-medium italic">{item.reason}</p>
-                           </div>
-                        </div>
-                        <p className="text-sm font-black text-emerald-600">+{item.saving}</p>
-                     </div>
-                   ))}
-                </div>
-             </div>
-
-             <div className="fluent-card p-6 border-rose-100 bg-rose-50/10">
-                <h4 className="text-sm font-black text-rose-950 mb-6 flex items-center gap-2">
-                   <AlertTriangle className="w-5 h-5 text-rose-600" /> Alertes Risques / Anomalies
-                </h4>
-                <div className="space-y-3">
-                   {[
-                     { user: 'Benoit Lucas', alert: 'Usage intensif hors-zone', priority: 'haute' },
-                     { user: 'Sarl Omega', alert: 'Pics de consommation nocturnes', priority: 'moyenne' },
-                     { user: 'Adonaï WANZAMBI', alert: 'Consommation pluriannuelle dépassée', priority: 'basse' }
-                   ].map((item, i) => (
-                     <div key={i} className="flex items-center justify-between p-3 bg-white rounded-xl border border-rose-100 shadow-sm">
-                        <div className="flex items-center gap-3">
-                           <div className={cn(
-                             "w-2 h-2 rounded-full",
-                             item.priority === 'haute' ? "bg-rose-600" : item.priority === 'moyenne' ? "bg-amber-500" : "bg-yellow-400"
-                           )} />
-                           <div>
-                              <p className="text-xs font-black text-rose-950">{item.user}</p>
-                              <p className="text-[10px] font-bold text-rose-900/40 italic font-medium italic">{item.alert}</p>
-                           </div>
-                        </div>
-                        <button className="text-[10px] font-black text-rose-600 uppercase italic hover:underline">Investiger</button>
-                     </div>
-                   ))}
-                </div>
-                <button className="w-full mt-6 py-2 border border-rose-200 text-rose-600 text-[10px] font-black rounded-xl hover:bg-rose-50 transition-all uppercase tracking-widest italic">
-                   Archiver toutes les alertes traitées
+                {/* Filter Conso >90% Toggle */}
+                <button 
+                  onClick={() => setFilterConsoNinety(!filterConsoNinety)}
+                  className={cn(
+                    "px-4 py-2 border rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2",
+                    filterConsoNinety 
+                      ? "bg-rose-500 text-white border-transparent shadow-lg shadow-rose-500/10" 
+                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                  )}
+                >
+                  <AlertTriangle className="w-3.5 h-3.5" /> Conso &gt;90%
                 </button>
-             </div>
+              </div>
+
+              {/* Exporter Button is registered to Audit & RGPD modal */}
+              <button 
+                onClick={() => setExportModalOpen(true)}
+                className="px-5 py-2 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                id="btn-export-audit"
+              >
+                <Download className="w-4 h-4" /> Exporter l&apos;audit
+              </button>
+            </div>
+
+            {/* Consumption Table Layout */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    <th className="py-4 px-6">N° Police</th>
+                    <th className="py-4 px-6">Assuré</th>
+                    <th className="py-4 px-6">Entreprise / Cible</th>
+                    <th className="py-4 px-6 text-right">Montant Consommé</th>
+                    <th className="py-4 px-6">% Plafond</th>
+                    <th className="py-4 px-6">Alerte active</th>
+                    <th className="py-4 px-6 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
+                  {filteredRecords.map((rec) => {
+                    const pctUsed = (rec.consumed / rec.totalCeiling) * 100;
+                    return (
+                      <tr 
+                        key={rec.id} 
+                        onClick={() => setSelectedRecord(rec)}
+                        className={cn(
+                          "hover:bg-slate-50/50 cursor-pointer transition-colors group",
+                          rec.isFrozen ? "bg-slate-100/40 text-slate-400" : ""
+                        )}
+                      >
+                        <td className="py-4 px-6 font-mono font-black text-slate-800">
+                          <span className="flex items-center gap-1.5">
+                            {rec.isFrozen && <Lock className="w-3 h-3 text-rose-500 shrink-0" />}
+                            {rec.policyNumber}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 font-extrabold text-slate-900 group-hover:text-green-600 transition-colors">
+                          {rec.insuredName}
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className="px-2.5 py-1 bg-slate-100 text-slate-600 font-extrabold uppercase text-[9px] rounded-lg border border-slate-200/50">
+                            {rec.companyName}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right font-black text-slate-900">
+                          {rec.consumed.toLocaleString()} $
+                        </td>
+                        <td className="py-4 px-6 min-w-[140px]">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div 
+                                style={{ width: `${Math.min(pctUsed, 100)}%` }} 
+                                className={cn(
+                                  "h-full rounded-full",
+                                  pctUsed >= 100 ? "bg-rose-500" : pctUsed >= 85 ? "bg-amber-500" : "bg-green-500"
+                                )}
+                              />
+                            </div>
+                            <span className={cn(
+                              "font-extrabold text-[10px]",
+                              pctUsed >= 100 ? "text-rose-600" : pctUsed >= 85 ? "text-amber-500" : "text-green-600"
+                            )}>
+                              {pctUsed.toFixed(1)}%
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          {rec.alerts.length > 0 ? (
+                            <span className="px-2 py-0.5 bg-rose-50 text-rose-600 text-[9px] font-black rounded border border-rose-100 uppercase tracking-tighter">
+                              ⚠️ {rec.alerts[0]}
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest italic bg-emerald-50 px-2 py-0.5 rounded">
+                              Conforme
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          <button className="p-2 bg-white group-hover:bg-green-50 rounded-xl border border-transparent group-hover:border-green-200 text-slate-400 group-hover:text-green-600 transition-all shadow-sm">
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+
+                  {filteredRecords.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="text-center py-10 text-slate-400 italic font-medium">
+                        Aucun résultat correspondant à votre filtrage.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="p-4 bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center border-t border-slate-100">
+              Visualisation en temps réel • Audit conforme aux normes RGPD &amp; HIPAA
+            </div>
           </div>
         </div>
       );
@@ -312,14 +379,38 @@ export const Consumptions: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between px-2">
+
+      {/* Embedded Live feedback toast overlay */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-6 right-6 z-[250] max-w-sm bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border border-white/10 flex items-start gap-3"
+          >
+            <div className="p-2 bg-indigo-500 rounded-xl text-white">
+              <Check className="w-4 h-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Action Réalisée</p>
+              <p className="text-xs text-slate-300 font-bold mt-1 leading-relaxed">{notification}</p>
+            </div>
+            <button onClick={() => setNotification(null)} className="text-slate-500 hover:text-white transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 pb-4">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-green-950 rounded-2xl shadow-xl shadow-green-900/20">
-            <Activity className="w-6 h-6 text-white" />
+          <div className="p-3 bg-indigo-600 text-white rounded-2xl">
+            <Activity className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-green-950 italic">Suivi des Consommations</h1>
-            <p className="text-xs font-bold text-green-600 uppercase tracking-widest leading-none">Calcul dynamique des plafonds</p>
+            <h1 className="text-2xl font-black text-slate-900 italic uppercase">Suivi des Consommations</h1>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Calcul dynamique, contrôle anti-fraude et blocage immédiat</p>
           </div>
         </div>
         
@@ -328,7 +419,7 @@ export const Consumptions: React.FC = () => {
             onClick={() => setActiveTab('overview')}
             className={cn(
               "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center gap-2",
-              activeTab === 'overview' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'overview' ? "bg-white text-slate-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
             )}
           >
             Aperçu
@@ -337,7 +428,7 @@ export const Consumptions: React.FC = () => {
             onClick={() => setActiveTab('eligibility')}
             className={cn(
               "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center gap-2",
-              activeTab === 'eligibility' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'eligibility' ? "bg-white text-slate-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
             )}
           >
             <ShieldCheck className="w-4 h-4 text-green-600" /> Éligibilité
@@ -346,7 +437,7 @@ export const Consumptions: React.FC = () => {
             onClick={() => setActiveTab('validation')}
             className={cn(
               "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center gap-2",
-              activeTab === 'validation' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'validation' ? "bg-white text-slate-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
             )}
           >
             <ClipboardCheck className="w-4 h-4 text-green-600" /> Validation
@@ -355,22 +446,201 @@ export const Consumptions: React.FC = () => {
             onClick={() => setActiveTab('history')}
             className={cn(
               "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center gap-2",
-              activeTab === 'history' ? "bg-white text-green-950 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'history' ? "bg-white text-slate-950 shadow-sm border border-slate-100" : "text-slate-500 hover:text-slate-700"
             )}
           >
-            <HistoryIcon className="w-4 h-4 text-slate-900" /> Historique
+            <HistoryIcon className="w-4 h-4" /> Historique ACT
           </button>
         </div>
       </div>
 
       <motion.div
         key={activeTab}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
       >
         {renderContent()}
       </motion.div>
+
+      {/* ========================================= */}
+      {/* EXPORTATION MODAL (AUDITING & RGPD FOR B2) */}
+      {/* ========================================= */}
+      <AnimatePresence>
+        {exportModalOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setExportModalOpen(false)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl border border-slate-100"
+            >
+              <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100">
+                    <Download className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 uppercase italic tracking-tight">Exportation Sécurisée (RGPD)</h3>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Traçabilité légale obligatoire</p>
+                  </div>
+                </div>
+                <button onClick={() => setExportModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-xl cursor-pointer">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleRunExport} className="p-8 space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Période d&apos;extraction</label>
+                  <select 
+                    value={exportPeriod}
+                    onChange={(e) => setExportPeriod(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black outline-none focus:ring-4 focus:ring-indigo-600/15 text-slate-800 uppercase"
+                  >
+                    <option value="30j">30 derniers jours</option>
+                    <option value="90j">90 derniers jours</option>
+                    <option value="1an">Année d&apos;exercice 2025</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Motif obligatoire d&apos;exportation</label>
+                  <select 
+                    value={exportReason}
+                    onChange={(e) => setExportReason(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black outline-none focus:ring-4 focus:ring-indigo-600/15 text-slate-800"
+                  >
+                    <option value="Audit Clinique RGPD">Audit d&apos;établissement (Clinique/Cabinet)</option>
+                    <option value="Vérification soupçon de fraude">Suspicion de Fraude - Contrôle Médical</option>
+                    <option value="Transmission RH Trimestrielle">Contrôle de consommation - Partenaire RH</option>
+                  </select>
+                </div>
+
+                <div className="p-3 bg-indigo-50/50 rounded-xl text-[9px] text-indigo-900 border border-indigo-100 italic">
+                  🛑 Chaque export est consigné avec votre adresse mail adonailutonadio70@gmail.com, horodaté et archivé dans le grand livre de sécurité.
+                </div>
+
+                <div className="pt-4 border-t border-slate-100 flex gap-3">
+                  <button 
+                    type="button"
+                    onClick={() => setExportModalOpen(false)}
+                    className="flex-1 py-4 border border-slate-200 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 cursor-pointer"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    type="submit"
+                    className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg cursor-pointer animate-pulse"
+                  >
+                    Confirmer et Télécharger
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ========================================= */}
+      {/* TIMELINE CLIENT DRAWER (LINE CLICK B2)    */}
+      {/* ========================================= */}
+      <AnimatePresence>
+        {selectedRecord && (
+          <div className="fixed inset-0 z-[180] flex justify-end">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedRecord(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col justify-between border-l border-slate-100"
+            >
+              <div className="p-8 border-b border-rose-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">TIMELINE DE CONSOMMATION</span>
+                    <h3 className="text-lg font-black text-slate-900 uppercase italic mt-1">{selectedRecord.insuredName}</h3>
+                  </div>
+                  <button onClick={() => setSelectedRecord(null)} className="p-2 hover:bg-slate-100 rounded-xl cursor-pointer">
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2 items-center mt-3">
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-mono font-bold border border-slate-200">
+                    N° Police: {selectedRecord.policyNumber}
+                  </span>
+                  <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-bold">
+                    RH: {selectedRecord.companyName}
+                  </span>
+                </div>
+              </div>
+
+              {/* Timeline chronological entries */}
+              <div className="p-8 overflow-y-auto flex-1 space-y-6">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chronologie des actes médicaux récents</p>
+
+                <div className="relative border-l-2 border-indigo-100 pl-6 ml-2 space-y-6">
+                  {selectedRecord.history.map((h, i) => (
+                    <div key={i} className="relative space-y-1">
+                      {/* circle */}
+                      <span className="absolute left-[-31px] top-1.5 w-4.5 h-4.5 rounded-full bg-white border-2 border-indigo-500 shadow-sm flex items-center justify-center">
+                        <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
+                      </span>
+                      <p className="text-[10px] text-slate-400 font-extrabold">{h.date}</p>
+                      <p className="text-xs font-black text-slate-900 uppercase">{h.label}</p>
+                      <p className="text-[11px] text-indigo-600 font-bold">{h.amount.toLocaleString()} $ • {h.location}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Suspicion Frozen Action */}
+              <div className="p-8 border-t border-slate-100 bg-slate-50 flex flex-col gap-3">
+                <div className="text-center pb-2">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase italic">🛡️ Option de blocage d&apos;urgence anti-fraude</p>
+                </div>
+                
+                {selectedRecord.isFrozen ? (
+                  <button 
+                    onClick={() => handleToggleFreeze(selectedRecord.id)}
+                    className="w-full py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer border border-transparent"
+                  >
+                    <Unlock className="w-4 h-4" /> Dégeler les droits de la police
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => handleToggleFreeze(selectedRecord.id)}
+                    className="w-full py-4 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer border border-transparent"
+                  >
+                    <Lock className="w-4 h-4 animate-bounce" /> Geler d’urgence le contrat
+                  </button>
+                )}
+                <button 
+                  onClick={() => setSelectedRecord(null)}
+                  className="w-full py-4 bg-transparent text-slate-400 hover:text-slate-800 text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer text-center"
+                >
+                  Fermer la timeline
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

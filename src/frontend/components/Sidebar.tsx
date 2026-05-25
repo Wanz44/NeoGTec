@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { MODULES, Module } from '../constants';
+import { useLanguage } from '../lib/LanguageContext';
 import { 
   Shield, ChevronLeft, ChevronRight, Menu, Search, Key, History as HistoryIcon, Settings, Lock, 
   ShieldCheck, ShieldAlert, BarChart3, Users, FileText, AlertCircle, Activity as ActivityIcon, 
@@ -63,6 +64,7 @@ const SUB_MODULES_BILLING = [
 
 const SUB_MODULES_CLAIMS = [
   { id: 'claims-declaration', name: 'Déclaration', icon: Plus },
+  { id: 'claims-preauth', name: 'Pré-autorisations & Plafonds', icon: ShieldAlert },
   { id: 'claims-workflow', name: 'Suivi Dossier', icon: Clock },
   { id: 'claims-expertise', name: 'Expertise Médicale', icon: Stethoscope },
   { id: 'claims-litigation', name: 'Contentieux', icon: Mail },
@@ -94,6 +96,7 @@ const SYSTEM_CHILDREN_IDS = SUB_MODULES_SYSTEM.map(s => s.id);
 const HIDDEN_IDS = [...SYSTEM_CHILDREN_IDS];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }) => {
+  const { t } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
 
@@ -191,7 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
                           >
                             <span className="text-[9px] font-bold text-green-400 w-4">{sidx + 1}.</span>
                             <sub.icon className="w-3.5 h-3.5 shrink-0" />
-                            <span className="truncate">{sub.name}</span>
+                            <span className="truncate">{t('submodules.' + sub.id, sub.name)}</span>
                           </button>
                         ))}
                       </motion.div>
@@ -209,10 +212,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
 
 const ModuleItem = ({ module, isActive, isCollapsed, onClick, letter }: { module: Module; isActive: boolean; isCollapsed: boolean; onClick: () => void; letter: string }) => {
   const Icon = module.icon;
+  const { t } = useLanguage();
   return (
     <button
       onClick={onClick}
-      title={isCollapsed ? `${letter}. ${module.name}` : ""}
+      title={isCollapsed ? `${letter}. ${t('modules.' + module.id, module.name)}` : ""}
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 group text-left outline-none relative",
         isActive 
@@ -236,7 +240,7 @@ const ModuleItem = ({ module, isActive, isCollapsed, onClick, letter }: { module
           animate={{ opacity: 1, x: 0 }}
           className="text-[13px] font-medium tracking-tight whitespace-nowrap overflow-hidden"
         >
-          {module.name}
+          {t('modules.' + module.id, module.name)}
         </motion.span>
       )}
       {isActive && !isCollapsed && (

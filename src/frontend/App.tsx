@@ -14,6 +14,8 @@ import {
   Info, // Icône d'information système | 🔗 Module: lucide-react
   ChevronDown, // Indication visuelle de déploiement | 🔗 Module: lucide-react
   ExternalLink, // Lien vers documentation externe | 🔗 Module: lucide-react
+  Globe, // Icône pour le sélecteur de langue | 🔗 Module: lucide-react
+  X,
 } from 'lucide-react'; // Pack d'icônes standardisé | 🔗 Fichier lié: constants.ts
 import { cn } from './lib/utils'; // Utilitaire de concaténation de classes Tailwind | 🔗 Fichier lié: /src/lib/utils.ts
 import { Sidebar } from './components/Sidebar'; // Composant de navigation latérale | 🔗 Fichier lié: /src/components/Sidebar.tsx
@@ -35,35 +37,60 @@ import { Contracts } from './components/Contracts';
 import { Partners } from './components/Partners';
 import { Settings } from './components/Settings';
 import { SystemConfig } from './components/SystemConfig';
+import { useLanguage } from './lib/LanguageContext';
 
 // Sous-composant pour la section d'aide dynamique (FAQ)
-const FAQSection = () => (
-  <div className="flex flex-col items-center justify-center py-20 text-center bg-green-50/20 rounded-fluent border border-dashed border-green-200">
-    <h3 className="text-xl font-bold text-green-950 mb-2">Aide & FAQ</h3>
-    <p className="text-green-950/50 max-w-sm">Le centre d'aide est actuellement vide.</p>
-  </div>
-);
+const FAQSection = () => {
+  const { t } = useLanguage();
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center bg-green-50/20 rounded-fluent border border-dashed border-green-200">
+      <h3 className="text-xl font-bold text-green-950 mb-2">{t('app.help')} & FAQ</h3>
+      <p className="text-green-950/50 max-w-sm">{t('app.no_notifications', 'Le centre d\'aide est actuellement vide.')}</p>
+    </div>
+  );
+};
 
 // Sous-composant SearchInput : Recherche avancée polices et dossiers
-const SearchInput = () => (
-  <div className="relative group flex-1 max-w-xl">
-    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-green-600 group-focus-within:text-green-700 transition-colors stroke-[2.5px]" />
-    <input 
-      type="text" 
-      placeholder="Rechercher une police, un prestataire ou un dossier..." 
-      className="w-full pl-12 pr-4 py-3 bg-white/40 backdrop-blur-sm border border-green-200/30 rounded-sm focus:ring-4 focus:ring-green-500/10 focus:border-green-500 outline-none transition-all placeholder:text-green-950/20 text-green-950 font-medium"
-    />
-    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1 pointer-events-none">
-      <span className="px-1.5 py-0.5 rounded border border-green-200 text-[10px] font-bold text-green-500 bg-white/80">⌘</span>
-      <span className="px-1.5 py-0.5 rounded border border-green-200 text-[10px] font-bold text-green-500 bg-white/80">K</span>
+const SearchInput = () => {
+  const { t } = useLanguage();
+  return (
+    <div className="relative group flex-1 max-w-xl">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-green-600 group-focus-within:text-green-700 transition-colors stroke-[2.5px]" />
+      <input 
+        type="text" 
+        placeholder={t('app.search_placeholder')} 
+        className="w-full pl-12 pr-4 py-3 bg-white/40 backdrop-blur-sm border border-green-200/30 rounded-sm focus:ring-4 focus:ring-green-500/10 focus:border-green-500 outline-none transition-all placeholder:text-green-950/20 text-green-950 font-medium"
+      />
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1 pointer-events-none">
+        <span className="px-1.5 py-0.5 rounded border border-green-200 text-[10px] font-bold text-green-500 bg-white/80">⌘</span>
+        <span className="px-1.5 py-0.5 rounded border border-green-200 text-[10px] font-bold text-green-500 bg-white/80">K</span>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Composant racine de l'application
 export default function App() {
+  const { language, setLanguage, t } = useLanguage();
   const [activeModule, setActiveModule] = React.useState('dashboard'); // Hook d'état : Module courant | 🔗 Source: constants.ts
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
+
+  // Multi-filiales & Devises (I1, I2)
+  const [countryEntity, setCountryEntity] = React.useState('RDC');
+  const [globalToast, setGlobalToast] = React.useState<string | null>(null);
+
+  const handleSwitchEntity = (entity: string, currency: string) => {
+    let rate = '1 USD = 2800 CDF';
+    if (entity === 'FR') rate = '1 USD = 0.92 EUR';
+    else if (entity === 'COG') rate = '1 USD = 605 XAF';
+    else if (entity === 'AOL') rate = '1 USD = 830 AOA';
+
+    setCountryEntity(entity);
+    setGlobalToast(`Filiale ${entity} activée. Taux de change de référence appliqué : ${rate}`);
+    setTimeout(() => {
+      setGlobalToast(null);
+    }, 4500);
+  };
 
   // Logique de routage interne simplifiée pour le rendu des modules
   const renderContent = () => {
@@ -161,6 +188,29 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-brand-beige text-slate-900 font-sans selection:bg-green-500 selection:text-white overflow-hidden relative p-4 gap-4">
+      {/* Floating country change notification toast */}
+      <AnimatePresence>
+        {globalToast && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            className="fixed top-6 right-6 z-[250] max-w-sm bg-slate-950 text-white rounded-2xl p-4 shadow-2xl border border-white/10 flex items-start gap-3"
+          >
+            <div className="p-2 bg-indigo-500 rounded-xl text-white shrink-0">
+              <Globe className="w-4 h-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Entité Nationale &amp; Devises</p>
+              <p className="text-xs text-slate-350 font-bold mt-1 leading-relaxed">{globalToast}</p>
+            </div>
+            <button onClick={() => setGlobalToast(null)} className="text-slate-550 hover:text-white transition-colors p-1">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Dynamic background accents for Fluent Design 2 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-green-500/10 blur-[120px] rounded-full" />
@@ -175,6 +225,107 @@ export default function App() {
           <SearchInput />
           
           <div className="flex items-center gap-3">
+            {/* Elegant Country Subsidiary Selector & Currency Converter (I1, I2) */}
+            <div className="relative group z-50">
+              <button className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 border border-slate-900 text-white rounded-sm text-xs font-black uppercase tracking-wider transition-all active:scale-95 outline-none cursor-pointer">
+                <span>🌍 {countryEntity === 'RDC' ? '🇨🇩 RDC (CDF/USD)' : countryEntity === 'FR' ? '🇫🇷 France (EUR)' : countryEntity === 'AOL' ? '🇦🇴 Angola (AOA)' : '🇨🇬 Congo (XAF)'}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-white/50" />
+              </button>
+              
+              <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-md p-1.5 shadow-2xl opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-[100] border border-slate-150 flex flex-col gap-1 text-slate-700">
+                <span className="text-[8.5px] font-black text-slate-400 uppercase tracking-widest block px-2 py-1 border-b">Filiales &amp; Multi-devises (I1, I2)</span>
+                
+                <button 
+                  onClick={() => handleSwitchEntity('RDC', 'CDF/USD')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center justify-between cursor-pointer outline-none",
+                    countryEntity === 'RDC' ? "bg-indigo-600 text-white" : "hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇨🇩 Congo-Kinshasa (RDC)</span>
+                  <span className="text-[8px] font-mono opacity-85">1 USD = 2800 CDF</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleSwitchEntity('FR', 'EUR')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center justify-between cursor-pointer outline-none",
+                    countryEntity === 'FR' ? "bg-indigo-600 text-white" : "hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇫🇷 France (EUR)</span>
+                  <span className="text-[8px] font-mono opacity-85">1 USD = 0.92 EUR</span>
+                </button>
+
+                <button 
+                  onClick={() => handleSwitchEntity('COG', 'XAF')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center justify-between cursor-pointer outline-none",
+                    countryEntity === 'COG' ? "bg-indigo-600 text-white" : "hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇨🇬 Congo-Brazzaville</span>
+                  <span className="text-[8px] font-mono opacity-85">1 USD = 605 XAF</span>
+                </button>
+
+                <button 
+                  onClick={() => handleSwitchEntity('AOL', 'AOA')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center justify-between cursor-pointer outline-none",
+                    countryEntity === 'AOL' ? "bg-indigo-600 text-white" : "hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇦🇴 Angola (AOA)</span>
+                  <span className="text-[8px] font-mono opacity-85">1 USD = 830 AOA</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Elegant Language Selector */}
+            <div className="relative group z-50">
+              <button className="flex items-center gap-2 px-3 py-2 bg-white/50 rounded-sm border border-white/20 text-green-900 hover:bg-white/85 transition-all font-bold text-xs cursor-pointer outline-none active:scale-95">
+                <Globe className="w-4 h-4 text-green-600 shrink-0" />
+                <span className="hidden sm:inline">
+                  {language === 'fr' ? '🇫🇷 FR' : language === 'en' ? '🇬🇧 EN' : '🇵🇹 PT'}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform duration-300" />
+              </button>
+              
+              {/* Dropdown Items */}
+              <div className="absolute top-full right-0 mt-2 w-36 bg-white rounded-md p-1.5 shadow-2xl opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 border border-slate-100 flex flex-col gap-1">
+                <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 py-1 border-b border-slate-50 mb-1">
+                  {t('app.language', 'Langue')}
+                </h4>
+                <button 
+                  onClick={() => setLanguage('fr')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center gap-2 cursor-pointer outline-none",
+                    language === 'fr' ? "bg-green-600 text-white" : "text-slate-700 hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇫🇷</span> Français
+                </button>
+                <button 
+                  onClick={() => setLanguage('en')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center gap-2 cursor-pointer outline-none",
+                    language === 'en' ? "bg-green-600 text-white" : "text-slate-700 hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇬🇧</span> English
+                </button>
+                <button 
+                  onClick={() => setLanguage('pt')}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded-sm text-xs font-bold transition-all flex items-center gap-2 cursor-pointer outline-none",
+                    language === 'pt' ? "bg-green-600 text-white" : "text-slate-700 hover:bg-slate-50"
+                  )}
+                >
+                  <span>🇵🇹</span> Português
+                </button>
+              </div>
+            </div>
+
             <button 
               onClick={() => setShowFAQ(!showFAQ)}
               className={cn(
@@ -183,7 +334,7 @@ export default function App() {
               )}
             >
               <HelpCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Aide</span>
+              <span className="hidden sm:inline">{t('app.help')}</span>
             </button>
 
             <div className="relative group">
@@ -193,7 +344,7 @@ export default function App() {
               </button>
               {/* Notifications Dropdown */}
               <div className="absolute top-full right-0 mt-2 w-72 material-mica rounded-md p-4 opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all z-50 border border-white/60">
-                <h4 className="text-[11px] font-bold text-green-950/40 uppercase tracking-widest mb-3">Alertes Récentes</h4>
+                <h4 className="text-[11px] font-bold text-green-950/40 uppercase tracking-widest mb-3">{t('app.notifications')}</h4>
                 <div className="space-y-2">
                   <div className="flex gap-3 p-2 rounded-[8px] hover:bg-green-50/50 transition-colors cursor-default">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />

@@ -1,126 +1,234 @@
 /**
  * 📄 Fichier : /src/frontend/components/billing/TaxReporting.tsx
- * 🎯 Objectif : Rapports fiscaux conformes à la législation congolaise (RDC).
+ * 🎯 Objectif : Rapports fiscaux conformes multi-devises et multi-juridictions (D4).
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  FileText, Landmark, ShieldCheck, Scale, 
-  Download, Filter, ArrowUpRight, Calculator,
-  TrendingDown, Info, Lock, CheckCircle2
+  FileText, Landmark, ShieldCheck, Scale, Download, Filter, ArrowUpRight, Calculator,
+  TrendingDown, Info, Lock, CheckCircle2, ChevronDown, Check, X, RefreshCw
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export interface TaxLog {
+  id: string;
+  country: string;
+  currency: string;
+  period: string;
+  taxAmount: number;
+  generatedAt: string;
+  status: 'Certifié' | 'En attente';
+}
+
+const INITIAL_TAX_LOGS: TaxLog[] = [
+  { id: 'TAX-RDC-901', country: 'République Démocratique du Congo', currency: 'USD', period: 'Avril 2026', taxAmount: 18400, generatedAt: '02/05/2026 14:10', status: 'Certifié' },
+  { id: 'TAX-FR-202', country: 'France', currency: 'EUR', period: 'Q1 2026', taxAmount: 12500, generatedAt: '15/04/2026 10:30', status: 'Certifié' },
+  { id: 'TAX-RDC-804', country: 'République Démocratique du Congo', currency: 'CDF', period: 'Mars 2026', taxAmount: 48500000, generatedAt: '01/04/2026 09:00', status: 'Certifié' }
+];
 
 export const TaxReporting: React.FC = () => {
+  const [selectedCountry, setSelectedCountry] = useState<'RDC' | 'France' | 'Congo-Brazza'>('RDC');
+  const [selectedCurrency, setSelectedCurrency] = useState<'USD' | 'CDF' | 'EUR'>('USD');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('Mai 2026');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [logs, setLogs] = useState<TaxLog[]>(INITIAL_TAX_LOGS);
+
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => {
+      setToast(null);
+    }, 4500);
+  };
+
+  // Generate simulated fiscal report (D4 Action)
+  const handleGenerateReport = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsGenerating(true);
+
+    setTimeout(() => {
+      setIsGenerating(false);
+
+      const countryName = selectedCountry === 'RDC' 
+        ? 'République Démocratique du Congo' 
+        : selectedCountry === 'France' ? 'France' : 'République du Congo';
+
+      const mockTaxAmount = selectedCurrency === 'CDF' ? 38200000 : 14500;
+
+      const newLog: TaxLog = {
+        id: `TAX-${selectedCountry}-${Math.floor(100 + Math.random() * 900)}`,
+        country: countryName,
+        currency: selectedCurrency,
+        period: selectedPeriod,
+        taxAmount: mockTaxAmount,
+        generatedAt: new Date().toLocaleString(),
+        status: 'Certifié'
+      };
+
+      setLogs([newLog, ...logs]);
+      showToast(`Rapport Fiscal PDF généré avec succès pour la juridiction "${countryName}" en ${selectedCurrency}. Archivé sur l'IPFS.`);
+    }, 2000);
+  };
+
   return (
-    <div className="space-y-10 max-w-6xl mx-auto">
-       {/* Compliance Shield */}
-       <div className="bg-emerald-600 p-10 rounded-[48px] text-white flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl relative overflow-hidden group border border-emerald-700">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000" />
-          
-          <div className="flex items-center gap-8 relative z-10 w-full max-w-2xl">
-             <div className="w-20 h-20 bg-white/20 rounded-[28px] border border-white/20 flex items-center justify-center ring-8 ring-white/5 shadow-2xl shrink-0 group-hover:rotate-6 transition-transform">
-                <Landmark className="w-10 h-10 text-white" />
-             </div>
-             <div className="space-y-3">
-                <h2 className="text-3xl font-black italic tracking-tighter uppercase leading-none">Fiscalité Congolaise</h2>
-                <p className="text-sm font-bold text-white/70 italic leading-relaxed">
-                   Génération automatisée des déclarations fiscales (TVA, IPR, Cotisations Spéciales) conformes aux exigences de la DGI et de l'ARCA.
-                </p>
-                <div className="flex items-center gap-3 py-1 px-3 bg-white/10 rounded-full border border-white/10 w-fit">
-                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                   <span className="text-[9px] font-black uppercase tracking-widest">Update Tax Law 2024</span>
-                </div>
-             </div>
+    <div className="space-y-6">
+
+      {/* Internal interactive success Feedback toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            className="fixed top-6 right-6 z-[250] max-w-sm bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border border-white/10 flex items-start gap-3"
+          >
+            <div className="p-2 bg-indigo-500 rounded-xl text-white shrink-0">
+              <Check className="w-4 h-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Générateur Fiscal</p>
+              <p className="text-xs text-slate-350 font-bold mt-1 leading-relaxed">{toast}</p>
+            </div>
+            <button onClick={() => setToast(null)} className="text-slate-500 hover:text-white transition-colors p-1">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Form Selector Left (D4 country dropdown + currencies) */}
+        <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 pb-2">
+            <Landmark className="w-5 h-5 text-indigo-600" />
+            <h4 className="text-sm font-black text-slate-900 uppercase italic">Configuration Regimes</h4>
           </div>
 
-          <div className="relative z-10 flex flex-col gap-3 shrink-0">
-             <button className="px-10 py-5 bg-white text-emerald-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all">
-                Gérer mes Certificats
-             </button>
-          </div>
-       </div>
+          <form onSubmit={handleGenerateReport} className="space-y-4">
+            
+            <div className="space-y-1">
+              <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Territoire Juridictionnel</label>
+              <select 
+                value={selectedCountry}
+                onChange={(e) => {
+                  const val = e.target.value as any;
+                  setSelectedCountry(val);
+                  if (val === 'RDC') setSelectedCurrency('USD');
+                  else if (val === 'France') setSelectedCurrency('EUR');
+                  else setSelectedCurrency('CDF');
+                }}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black"
+              >
+                <option value="RDC">République Démocratique du Congo (ARCA-DGI)</option>
+                <option value="France">France (TVA / IPR Union Européenne)</option>
+                <option value="Congo-Brazza">République du Congo (Brazzaville)</option>
+              </select>
+            </div>
 
-       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Periodic Declarations */}
-          <div className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm space-y-8">
-             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-black text-slate-900 uppercase italic">Déclarations Périodiques</h3>
-                <Scale className="w-5 h-5 text-indigo-400" />
-             </div>
-             
-             <div className="space-y-4">
-                {[
-                  { name: 'Déclaration TVA (Mensuelle)', code: 'FRM-701', status: 'Prêt', color: 'indigo' },
-                  { name: 'IPR / Impôt sur le Revenu', code: 'FRM-201', status: 'Vérifié', color: 'emerald' },
-                  { name: 'Redevance ARCA (Annuelle)', code: 'REG-88', status: 'En Calcul', color: 'amber' },
-                  { name: 'CNSS / Onem (Cotisations)', code: 'SOC-902', status: 'Soumis', color: 'slate' }
-                ].map((form, i) => (
-                   <div key={i} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-3xl border border-slate-100 group hover:bg-white hover:shadow-xl transition-all">
-                      <div className="flex items-center gap-5">
-                         <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs italic shadow-sm", `bg-${form.color}-50 text-${form.color}-600`)}>
-                            {form.code.split('-')[0]}
-                         </div>
-                         <div>
-                            <p className="text-xs font-black text-slate-900 uppercase italic">{form.name}</p>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{form.code}</p>
-                         </div>
-                      </div>
-                      <div className="flex items-center gap-6">
-                         <span className={cn(
-                           "text-[9px] font-black uppercase tracking-widest italic",
-                           form.status === 'Prêt' ? "text-indigo-600" : form.status === 'Vérifié' ? "text-emerald-500" : "text-slate-400"
-                         )}>
-                            {form.status}
-                         </span>
-                         <button className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-950 hover:text-white transition-all shadow-sm">
-                            <Download className="w-4 h-4" />
-                         </button>
-                      </div>
-                   </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Devise du Rapport</label>
+                <select 
+                  value={selectedCurrency}
+                  onChange={(e) => setSelectedCurrency(e.target.value as any)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black"
+                >
+                  <option value="USD">USD ($)</option>
+                  <option value="CDF">CDF (FC)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Période Fiscale</label>
+                <select 
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black"
+                >
+                  <option value="Mai 2026">Mai 2026</option>
+                  <option value="Avril 2026">Avril 2026</option>
+                  <option value="Q1 2026">1er Trimestre 2026</option>
+                  <option value="Exercice Fiscal 2025">Annuel Complet 2025</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isGenerating}
+              className="w-full py-4 bg-slate-900 text-white hover:bg-slate-800 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-lg shadow-slate-900/15 cursor-pointer"
+            >
+              {isGenerating ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Validation compliance...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-4 h-4 text-indigo-400" />
+                  <span>Générer rapport fiscal</span>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* Previous fiscal document list right (D4 logs) */}
+        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-50">
+            <span className="text-xs font-black text-slate-900 uppercase">Registre d&apos;archivage des Rapports Fiscaux</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest p-1 bg-slate-50 rounded border border-slate-150">DGI-ARCA compliant Ledger</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-sans col-auto">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-100 text-[8.5px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="py-3 px-4">Référence</th>
+                  <th className="py-3 px-4">Territoire Juridictionnel</th>
+                  <th className="py-3 px-4">Période</th>
+                  <th className="py-3 px-4 text-right">Impôt / Redevance Calculé</th>
+                  <th className="py-3 px-4">Généré le</th>
+                  <th className="py-3 px-4">Statut de validation</th>
+                  <th className="py-3 px-4 text-center">Export</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
+                {logs.map((log) => (
+                  <tr key={log.id} className="hover:bg-slate-50/20 transition-colors">
+                    <td className="py-3 px-4 font-mono font-black text-slate-800">{log.id}</td>
+                    <td className="py-3 px-4 font-extrabold text-slate-900 uppercase">{log.country}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-500 uppercase text-[10px]">{log.period}</td>
+                    <td className="py-3 px-4 text-right font-black text-indigo-600">
+                      {log.taxAmount.toLocaleString()} {log.currency}
+                    </td>
+                    <td className="py-3 px-4 font-mono text-slate-400 font-bold">{log.generatedAt}</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 border border-emerald-150 rounded text-[9px] font-black uppercase">
+                        {log.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <button 
+                        onClick={() => showToast(`Téléchargement de l&apos;archive fiscale ${log.id}.pdf signé cryptographiquement...`)}
+                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                        title="Télécharger l'attestation signée"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-             </div>
+              </tbody>
+            </table>
           </div>
+        </div>
 
-          {/* Tax Metrics & Savings */}
-          <div className="space-y-8">
-             <div className="bg-slate-950 p-10 rounded-[48px] text-white shadow-2xl space-y-8 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-1000">
-                   <Calculator className="w-32 h-32" />
-                </div>
-                <div className="space-y-2 relative z-10">
-                   <h4 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] italic">Projection Fiscale (Q2)</h4>
-                   <p className="text-4xl font-black text-white tracking-widest">128,500 <span className="text-xs font-bold italic">$</span></p>
-                </div>
-                <div className="grid grid-cols-2 gap-4 relative z-10">
-                   <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <p className="text-[8px] font-black text-white/30 uppercase tracking-widest mb-1">Droit d'accises</p>
-                      <p className="text-lg font-black italic">14.2k $</p>
-                   </div>
-                   <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <p className="text-[8px] font-black text-white/30 uppercase tracking-widest mb-1">Provision IBP</p>
-                      <p className="text-lg font-black italic">45.0k $</p>
-                   </div>
-                </div>
-                <button className="w-full py-4 bg-white text-slate-950 rounded-2xl font-black text-[10px] uppercase tracking-widest relative z-10 shadow-xl shadow-white/5 hover:scale-[1.02] transition-all">
-                   Simuler ma Déclaration IBP
-                </button>
-             </div>
+      </div>
 
-             <div className="p-8 bg-amber-50/50 border border-amber-100 rounded-[48px] flex items-start gap-5 shadow-sm">
-                <div className="w-12 h-12 bg-white rounded-2xl border border-amber-100 flex items-center justify-center shrink-0 shadow-sm">
-                   <Info className="w-6 h-6 text-amber-500" />
-                </div>
-                <div className="space-y-2">
-                   <h4 className="text-[10px] font-black text-amber-900 uppercase tracking-widest italic">Note de Vigilance</h4>
-                   <p className="text-[11px] font-bold text-amber-900/60 italic leading-relaxed">
-                      La nouvelle circulaire n°234 sur la taxation des plateformes digitales est active. Assurez-vous d'avoir paramétré vos commissions conformement aux nouvelles directives.
-                   </p>
-                </div>
-             </div>
-          </div>
-       </div>
     </div>
   );
 };
