@@ -14,6 +14,21 @@ interface EstablishmentCreateFormProps {
 }
 
 export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = ({ onClose }) => {
+  const [name, setName] = React.useState('');
+  const [category, setCategory] = React.useState('Hôpital Général');
+  const [email, setEmail] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+  const [location, setLocation] = React.useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    
+    // Simulate API registration and trigger feedback
+    alert(`L'établissement "${name}" (${category}) à ${location || 'l\'adresse renseignée'} a été enregistré et certifié HL7.`);
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <motion.div 
@@ -23,7 +38,8 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
         onClick={onClose}
         className="absolute inset-0 bg-green-950/40 backdrop-blur-sm"
       />
-      <motion.div 
+      <motion.form 
+        onSubmit={handleSubmit}
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -38,8 +54,9 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 italic">Nouveau partenaire du réseau AssurAdvance</p>
           </div>
           <button 
+            type="button"
             onClick={onClose} 
-            className="p-2 hover:bg-white rounded-md transition-all border border-transparent hover:border-green-200 shadow-sm"
+            className="p-2 hover:bg-white rounded-md transition-all border border-transparent hover:border-green-200 shadow-sm cursor-pointer"
           >
             <X className="w-5 h-5 text-slate-400" />
           </button>
@@ -57,13 +74,20 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Nom de l'Établissement</label>
                 <input 
                   type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="ex: Centre Hospitalier de Kinshasa" 
-                  className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 transition-all shadow-sm" 
+                  required
+                  className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 transition-all shadow-sm text-slate-800" 
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Catégorie</label>
-                <select className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 transition-all shadow-sm">
+                <select 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 transition-all shadow-sm text-slate-800"
+                >
                   <option>Hôpital Général</option>
                   <option>Clinique Spécialisée</option>
                   <option>Centre Médical</option>
@@ -79,8 +103,11 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
                   <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@hopital.org" 
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm" 
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm text-slate-800" 
                   />
                 </div>
               </div>
@@ -90,8 +117,11 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
                   <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     placeholder="+243 ..." 
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm" 
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm text-slate-800" 
                   />
                 </div>
               </div>
@@ -101,8 +131,11 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
                   <MapPin className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
                     placeholder="ex: Kinshasa, Gombe" 
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm" 
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm text-slate-800" 
                   />
                 </div>
               </div>
@@ -119,13 +152,14 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Capacité Patients (Quota)</label>
                 <input 
                    type="number" 
+                   required
                    placeholder="ex: 10000" 
-                   className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm" 
+                   className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm text-slate-800" 
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-slate-500 uppercase px-1">Régime de Facturation</label>
-                <select className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm">
+                <select className="w-full px-4 py-3 bg-slate-50 border border-green-300 rounded-md text-xs font-bold outline-none focus:ring-2 focus:ring-green-500/20 shadow-sm text-slate-800">
                   <option>Standard (Commission 5%)</option>
                   <option>Premium (Commission 3%)</option>
                   <option>Forfait Mensuel</option>
@@ -152,18 +186,20 @@ export const EstablishmentCreateForm: React.FC<EstablishmentCreateFormProps> = (
         {/* Footer */}
         <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-4">
           <button 
+            type="button"
             onClick={onClose} 
-            className="flex-1 py-3 border border-slate-300 text-slate-400 rounded-md text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-slate-600 hover:border-slate-300 transition-all transition-all shadow-sm"
+            className="flex-1 py-3 border border-slate-300 text-slate-400 rounded-md text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm cursor-pointer"
           >
             Annuler
           </button>
           <button 
-            className="flex-1 py-3 bg-green-600 text-white rounded-md text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all border border-green-700"
+            type="submit"
+            className="flex-1 py-3 bg-green-600 text-white rounded-md text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-green-600/20 hover:scale-[1.02] transition-all border border-green-700 cursor-pointer"
           >
             Valider l'Établissement
           </button>
         </div>
-      </motion.div>
+      </motion.form>
     </div>
   );
 };
