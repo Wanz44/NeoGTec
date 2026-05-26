@@ -8,7 +8,7 @@ import {
   Plus, Search, Filter, FileText, Upload, ShieldCheck, 
   Clock, CheckCircle2, XCircle, AlertTriangle, 
   ChevronRight, Download, BarChart3, TrendingUp, Zap,
-  MessageSquare, User, Eye, ArrowLeft, Send, Shield, Check, X, File, FileSpreadsheet
+  MessageSquare, User, Eye, ArrowLeft, Send, Shield, Check, X, File as FileIcon, FileSpreadsheet
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { 
@@ -381,7 +381,7 @@ export const Reclamation: React.FC<{ subModule?: string }> = ({ subModule }) => 
                   <div className="flex flex-wrap gap-2 pt-2">
                     {formFiles.map((file, i) => (
                       <span key={i} className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg border border-indigo-150 flex items-center gap-1.5 uppercase">
-                        <File className="w-3.5 h-3.5" /> {file}
+                        <FileIcon className="w-3.5 h-3.5" /> {file}
                       </span>
                     ))}
                   </div>

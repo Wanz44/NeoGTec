@@ -1,170 +1,183 @@
 /**
  * 📄 Fichier : /src/frontend/components/partners/TariffManagement.tsx
- * 🎯 Objectif : Mise à jour centralisée des barèmes d'actes médicaux.
+ * 🎯 Objectif : Mise à jour des barèmes, importation Excel simulée, et simulateur d'impact actuariel par curseur (H5).
  */
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Calculator, Search, Plus, Filter, 
-  History as HistoryIcon, TrendingUp, TrendingDown, RefreshCcw, 
-  Download, Upload, CheckCircle2, AlertCircle, 
-  FileText, ArrowRight, Save
+  Calculator, Search, Plus, Filter, RefreshCw, Upload, Download, 
+  CheckCircle, ArrowRight, Save, Sliders, TrendingUp, Sparkles, FileText
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { motion } from 'motion/react';
 
 export interface MedicalAct {
   id: string;
   code: string;
   label: string;
-  category: 'Consultation' | 'Hospitalisation' | 'Chirurgie' | 'Laboratoire' | 'Radiologie';
+  category: 'Consultation' | 'Hospitalisation' | 'Laboratoire';
   priceUSD: number;
-  lastUpdate: string;
-  status: 'Actif' | 'Obsolète' | 'En révision';
 }
 
-const MOCK_ACTS: MedicalAct[] = [
-  { id: 'ACT-001', code: 'C01', label: 'Consultation Médecine Générale', category: 'Consultation', priceUSD: 15.00, lastUpdate: '2024-01-01', status: 'Actif' },
-  { id: 'ACT-002', code: 'H01', label: 'Nuit d\'Hospitalisation (Chambre Simple)', category: 'Hospitalisation', priceUSD: 45.00, lastUpdate: '2024-03-15', status: 'Actif' },
-  { id: 'ACT-003', code: 'S01', label: 'Appendicectomie Coelioscopique', category: 'Chirurgie', priceUSD: 1250.00, lastUpdate: '2024-02-10', status: 'En révision' },
-  { id: 'ACT-004', code: 'L01', label: 'Bilan Sanguin Complet', category: 'Laboratoire', priceUSD: 25.00, lastUpdate: '2024-05-01', status: 'Actif' },
+const INITIAL_ACTS: MedicalAct[] = [
+  { id: 'ACT-001', code: 'C01', label: 'Consultation Généraliste', category: 'Consultation', priceUSD: 15.00 },
+  { id: 'ACT-002', code: 'H01', label: 'Nuitee Hospitalisation Standard', category: 'Hospitalisation', priceUSD: 45.00 },
+  { id: 'ACT-003', code: 'L01', label: 'Numération Formule Sanguine (NFS)', category: 'Laboratoire', priceUSD: 25.00 }
 ];
 
 export const TariffManagement: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [acts, setActs] = useState<MedicalAct[]>(INITIAL_ACTS);
+  const [search, setSearch] = useState('');
+  
+  // H5.2 Excel Simulator states
+  const [isImporting, setIsImporting] = useState(false);
+  const [importReport, setImportReport] = useState<string | null>(null);
 
-  const filteredActs = MOCK_ACTS.filter(act => 
-    (act.label.toLowerCase().includes(searchQuery.toLowerCase()) || act.code.toLowerCase().includes(searchQuery.toLowerCase())) &&
-    (activeCategory === 'All' || act.category === activeCategory)
-  );
+  // H5.3 Actuarial Slider states
+  const [consultationBaseCost, setConsultationBaseCost] = useState<number>(15);
+  const totalSubscribers = 152340; // from cockpit DG KPI list
+  const averageConsultationsPerYear = 3.5;
+
+  // Formula: Projection = Cost * average visits * total subscribers
+  const projectedAnnualBudget = Math.round(consultationBaseCost * averageConsultationsPerYear * totalSubscribers);
+
+  const simulateExcelImport = () => {
+    setIsImporting(true);
+    setImportReport(null);
+
+    setTimeout(() => {
+      setIsImporting(false);
+      setImportReport('✓ Importation de Barème Excel réussie ! 42 tarifs d\'actes mis à jour avec simulation d\'impact actuariel de +3.4% à l\'échelle nationale RDC.');
+    }, 1500);
+  };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-         <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-indigo-50 rounded-[24px] border border-indigo-100 flex items-center justify-center shadow-sm">
-               <Calculator className="w-7 h-7 text-indigo-600" />
+    <div className="space-y-6">
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* Directory pricing grid Column */}
+        <div className="lg:col-span-2 bg-white border border-slate-150 p-6 rounded-[2.5rem] shadow-sm space-y-4">
+          <div className="flex justify-between items-center pb-2 border-b">
+            <span className="text-xs font-black text-slate-900 uppercase">H5. Barème d&apos;Actes Médicaux Officiels</span>
+            <Calculator className="w-5 h-5 text-indigo-600 animate-pulse" />
+          </div>
+
+          <table className="w-full text-left font-sans text-xs">
+            <thead>
+              <tr className="border-b border-indigo-50 text-[10px] font-black uppercase text-slate-400 bg-slate-50/50">
+                <th className="p-3">Code CCAM</th>
+                <th className="p-3">Libellé</th>
+                <th className="p-3">Tarif Unitaire (USD)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {acts.map((act) => (
+                <tr key={act.id} className="hover:bg-slate-50/50">
+                  <td className="p-3">
+                    <span className="font-mono bg-indigo-55 bg-indigo-50/50 text-indigo-700 px-2 py-0.5 rounded font-black text-[10.5px]">
+                      {act.code}
+                    </span>
+                  </td>
+                  <td className="p-3 font-semibold text-slate-800 uppercase text-[11px]">{act.label}</td>
+                  <td className="p-3 font-mono font-black text-slate-950">
+                    {act.code === 'C01' ? consultationBaseCost : act.priceUSD} USD
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Excel Importer & Actuarial Simulator Slider Column */}
+        <div className="space-y-6">
+          
+          {/* Importer Simulation Box */}
+          <div className="bg-white border border-slate-150 p-6 rounded-[2.5rem] shadow-sm space-y-4">
+            <div className="pb-2 border-b">
+              <span className="text-xs font-black text-slate-900 uppercase">H5.2 Import Doublon Excel / CSV</span>
             </div>
-            <div>
-               <h2 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter leading-none">Gestion des Tarifs</h2>
-               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Barèmes d'actes conventionnés</p>
+
+            <div 
+              onClick={simulateExcelImport}
+              className="border-2 border-dashed border-slate-200 hover:border-indigo-400 p-6 text-center cursor-pointer space-y-1.5 bg-slate-50/50 rounded-2xl transition-colors select-none"
+            >
+              <Upload className="mx-auto w-8 h-8 text-slate-400 animate-bounce" />
+              <p className="text-xs font-black text-slate-800 uppercase">Glisser-déposer le barème Excel</p>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">Formats supportés : .xlsx, .csv</p>
             </div>
-         </div>
-         <div className="flex gap-4">
-            <button className="flex items-center gap-3 px-6 py-3 border border-slate-200 bg-white text-slate-400 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:border-slate-400 transition-all">
-               <Upload className="w-4 h-4" /> Import Bulk (CSV)
-            </button>
-            <button className="flex items-center gap-3 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:scale-105 transition-all">
-               <Plus className="w-4 h-4" /> Ajouter un Acte
-            </button>
-         </div>
+
+            {isImporting && (
+              <div className="p-2 bg-indigo-50 text-indigo-700 text-center font-black text-[10px] uppercase rounded-lg animate-pulse tracking-wide">
+                Calibration des coefficients de risque...
+              </div>
+            )}
+
+            <AnimatePresence>
+              {importReport && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-start gap-2 text-emerald-800 text-xs font-semibold"
+                >
+                  <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 text-emerald-600" />
+                  <p className="leading-relaxed">{importReport}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Actuarial Price Impact Slider */}
+          <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span className="text-xs font-black text-white uppercase tracking-wider font-mono">H5.3 Simulateur d&apos;Impact Actuariel</span>
+              <Sliders className="w-4 h-4 text-indigo-400 animate-pulse" />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-[11px] font-mono">
+                <span className="font-extrabold text-[#94a3b8] uppercase">Coût Consultation Généraliste :</span>
+                <span className="font-black text-indigo-400">{consultationBaseCost} USD</span>
+              </div>
+              <input 
+                type="range"
+                min="10"
+                max="50"
+                step="1"
+                className="w-full cursor-pointer accent-indigo-550"
+                value={consultationBaseCost}
+                onChange={(e) => setConsultationBaseCost(Number(e.target.value))}
+              />
+            </div>
+
+            {/* Calculations metrics output */}
+            <div className="p-4 bg-slate-800 border border-slate-755 rounded-2xl space-y-3 font-mono text-[10px]">
+              <div className="flex justify-between py-1">
+                <span className="text-slate-400">Nombre d&apos;assurés cockpit :</span>
+                <span className="text-white font-extrabold">{totalSubscribers.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between py-1 border-t border-slate-800">
+                <span className="text-slate-400">Arbitrage de visites Moyen/an :</span>
+                <span className="text-white font-extrabold">{averageConsultationsPerYear} consultations/an</span>
+              </div>
+              <div className="flex justify-between py-1 border-t border-slate-800 text-[11px] font-black">
+                <span className="text-indigo-300 uppercase">Budget Consultations Annuel :</span>
+                <span className="text-emerald-400">{projectedAnnualBudget.toLocaleString()} USD</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-800/50 rounded-xl flex items-start gap-1.5 text-[11px] text-justify text-slate-335 text-slate-300 leading-normal">
+              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 animate-bounce" />
+              <p>
+                La variation de 1 USD sur le coût unitaire de consultation induit un impact mécanique de <span className="font-bold font-mono text-emerald-400">{(totalSubscribers * averageConsultationsPerYear).toLocaleString()} USD</span> de dépenses d&apos;indemnités par an.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         {['All', 'Consultation', 'Hospitalisation', 'Chirurgie', 'Laboratoire', 'Radiologie'].map(cat => (
-           <button 
-             key={cat}
-             onClick={() => setActiveCategory(cat)}
-             className={cn(
-               "p-4 rounded-[2rem] border transition-all text-[10px] font-black uppercase tracking-widest text-center",
-               activeCategory === cat ? "bg-indigo-950 text-white border-indigo-950 shadow-xl" : "bg-white border-slate-100 text-slate-400 hover:bg-slate-50"
-             )}
-           >
-              {cat === 'All' ? 'Tous les Actes' : cat}
-           </button>
-         ))}
-      </div>
-
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-         <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/10">
-            <div className="flex items-center gap-4 flex-1 max-w-md">
-               <div className="relative w-full">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-                  <input 
-                    type="text" 
-                    placeholder="Filtrer par code ou label..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-bold outline-none" 
-                  />
-               </div>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase italic">
-               <HistoryIcon className="w-4 h-4" /> Log de mise à jour: 12 Mai 2024
-            </div>
-         </div>
-         <div className="overflow-x-auto">
-            <table className="w-full text-left">
-               <thead>
-                  <tr className="border-b border-slate-50 bg-slate-50/20">
-                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Code ACT</th>
-                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Libellé de l'acte</th>
-                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Catégorie</th>
-                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Tarif Conventionné</th>
-                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">Actions</th>
-                  </tr>
-               </thead>
-               <tbody className="divide-y divide-slate-50">
-                  {filteredActs.map((act) => (
-                    <tr key={act.id} className="hover:bg-slate-50/50 transition-colors group">
-                       <td className="px-8 py-6">
-                          <span className="text-[10px] font-mono font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded">{act.code}</span>
-                       </td>
-                       <td className="px-8 py-6">
-                          <p className="text-xs font-black text-slate-900 uppercase italic leading-tight">{act.label}</p>
-                          <p className="text-[9px] font-bold text-slate-300 italic mt-0.5">MAJ: {act.lastUpdate}</p>
-                       </td>
-                       <td className="px-8 py-6">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-tight">{act.category}</span>
-                       </td>
-                       <td className="px-8 py-6">
-                          <div className="flex items-center gap-2">
-                             <span className="text-sm font-black text-slate-900">{act.priceUSD.toLocaleString()} $</span>
-                             <div className={cn(
-                               "w-1.5 h-1.5 rounded-full",
-                               act.status === 'Actif' ? "bg-emerald-500" : act.status === 'En révision' ? "bg-amber-400" : "bg-rose-400"
-                             )} />
-                          </div>
-                       </td>
-                       <td className="px-8 py-6">
-                          <div className="flex items-center justify-end gap-2">
-                             <button className="p-3 bg-slate-50 text-slate-300 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
-                                <RefreshCcw className="w-4 h-4" />
-                             </button>
-                             <button className="px-6 py-2.5 bg-slate-950 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-slate-900/10 hover:opacity-90 transition-all">
-                                Éditer
-                             </button>
-                          </div>
-                       </td>
-                    </tr>
-                  ))}
-               </tbody>
-            </table>
-         </div>
-      </div>
-
-      <div className="p-10 bg-indigo-600 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl relative overflow-hidden group border border-indigo-700">
-         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
-         <div className="relative z-10 flex-1 space-y-4">
-            <h4 className="text-2xl font-black italic tracking-tighter">Révision Annuelle des Tarifs</h4>
-            <p className="text-sm text-white/60 italic leading-relaxed">
-              La campagne de mise à jour des barèmes pour l'exercice 2025 est ouverte. 
-              Veuillez soumettre vos propositions tarifaires pour validation actuarielle.
-            </p>
-            <div className="flex items-center gap-3 py-2 px-4 bg-white/10 rounded-xl w-fit border border-white/20">
-               <AlertCircle className="w-4 h-4 text-white" />
-               <span className="text-[10px] font-black uppercase tracking-widest italic">Date limite: 31 Mars 2025</span>
-            </div>
-         </div>
-         <div className="relative z-10 flex flex-col gap-3 shrink-0">
-            <button className="px-10 py-4 bg-white text-indigo-600 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all">
-               Ouvrir la Campagne
-            </button>
-            <button className="px-10 py-4 bg-indigo-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-3">
-               Exporter le Guide <Download className="w-4 h-4" />
-            </button>
-         </div>
-      </div>
     </div>
   );
 };

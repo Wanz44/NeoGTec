@@ -5,7 +5,7 @@
 import React from 'react';
 import { 
   FileText, Landmark, Download, ShieldCheck, 
-  Send, History, Search, Filter, Eye,
+  Send, Search, Filter, Eye,
   Lock, CheckCircle2, AlertTriangle, FileSignature
 } from 'lucide-react';
 import { cn } from '../../lib/utils';

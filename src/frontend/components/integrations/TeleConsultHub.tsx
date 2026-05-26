@@ -5,7 +5,7 @@
 import React from 'react';
 import { 
   Video, Phone, MessageSquare, ShieldCheck, 
-  ArrowUpRight, Users, Clock, History,
+  ArrowUpRight, Users, Clock,
   Search, Filter, Play, CheckCircle2,
   Lock, Activity, Zap
 } from 'lucide-react';
