@@ -76,14 +76,14 @@ export default function App() {
   const [currentUser, setCurrentUser] = React.useState<{ email: string; name: string; role: string } | null>(null);
   const [activeModule, setActiveModule] = React.useState('dashboard'); // Hook d'état : Module courant | 🔗 Source: constants.ts
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
+  
+  // Multi-filiales & Devises (I1, I2)
+  const [countryEntity, setCountryEntity] = React.useState('RDC');
+  const [globalToast, setGlobalToast] = React.useState<string | null>(null);
 
   if (!currentUser) {
     return <Login onLoginSuccess={(user) => setCurrentUser(user)} />;
   }
-
-  // Multi-filiales & Devises (I1, I2)
-  const [countryEntity, setCountryEntity] = React.useState('RDC');
-  const [globalToast, setGlobalToast] = React.useState<string | null>(null);
 
   const handleSwitchEntity = (entity: string, currency: string) => {
     let rate = '1 USD = 2800 CDF';
