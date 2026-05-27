@@ -7,7 +7,7 @@ import {
   FilePlus, Camera, Upload, ShieldCheck, 
   CheckCircle2, X, Info, Calendar, 
   MapPin, Stethoscope, AlertCircle, FileText,
-  RefreshCcw
+  RefreshCcw, Lock
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';

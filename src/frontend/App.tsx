@@ -119,6 +119,7 @@ export default function App() {
       case 'claims-litigation':
       case 'claims-workflow':
       case 'claims-expertise':
+      case 'claims-preauth':
       case 'claims-list':
         return <Claims subModule={activeModule} />;
       case 'consumption-list':

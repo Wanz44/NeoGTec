@@ -54,14 +54,69 @@
   --color-mica: rgba(251, 255, 251, 0.85);
   --color-acrylic: rgba(255, 255, 255, 0.4);
   
-  /* Fluent Border Radius System (8px base at 96 DPI) */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 10px;
-  --radius-2xl: 12px;
+  /* Fluent Border Radius System (40% reduced values for modern sleekness) */
+  --radius-xs: 1.2px;
+  --radius-sm: 2.4px;
+  --radius-md: 3.6px;
+  --radius-lg: 4.8px;
+  --radius-xl: 6px;
+  --radius-2xl: 7.2px;
   --radius-fluent: var(--radius-sm);
+}
+
+/* Global utility overrides to scale down arbitrary and standard radius classes by 40% */
+@layer utilities {
+  .rounded-\[8px\] {
+    border-radius: 4.8px !important;
+  }
+  .rounded-\[12px\] {
+    border-radius: 7.2px !important;
+  }
+  .rounded-\[16px\] {
+    border-radius: 9.6px !important;
+  }
+  .rounded-\[20px\] {
+    border-radius: 12px !important;
+  }
+  .rounded-\[24px\] {
+    border-radius: 14.4px !important;
+  }
+  .rounded-\[32px\] {
+    border-radius: 19.2px !important;
+  }
+  .rounded-\[48px\] {
+    border-radius: 28.8px !important;
+  }
+  .rounded-\[56px\] {
+    border-radius: 33.6px !important;
+  }
+  .rounded-\[2rem\] {
+    border-radius: 1.2rem !important;
+  }
+  .rounded-\[2\.5rem\] {
+    border-radius: 1.5rem !important;
+  }
+  .rounded-\[3rem\] {
+    border-radius: 1.8rem !important;
+  }
+  .rounded-sm {
+    border-radius: 0.12rem !important; /* 40% reduced */
+  }
+  .rounded-md {
+    border-radius: 0.225rem !important; /* 40% reduced */
+  }
+  .rounded-lg {
+    border-radius: 0.3rem !important; /* 40% reduced */
+  }
+  .rounded-xl {
+    border-radius: 0.45rem !important; /* 40% reduced */
+  }
+  .rounded-2xl {
+    border-radius: 0.6rem !important; /* 40% reduced */
+  }
+  .rounded-3xl {
+    border-radius: 0.9rem !important; /* 40% reduced */
+  }
 }
 
 @layer base {

@@ -12,7 +12,8 @@ import {
   X, Check, DollarSign, Wallet, ShieldAlert, FileText, ChevronRight
 } from 'lucide-react';
 import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar,
+  LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
 
 // Regional Data corresponding to filters
@@ -65,11 +66,21 @@ interface PreAuthRequest {
 }
 
 export const Dashboard: React.FC = () => {
+  // Safe Alert Helper to prevent iframe sandboxing errors on window.alert
+  const safeAlert = (message: string) => {
+    try {
+      alert(message);
+    } catch (e) {
+      console.warn("[Alert Blocked by sandbox Context]:", message);
+    }
+  };
+
   // Global filters
   const [country, setCountry] = useState<'RDC' | 'France' | 'UAE'>('RDC');
   const [currency, setCurrency] = useState<'FC' | 'USD' | 'EUR' | 'AED'>('FC');
   const [period, setPeriod] = useState<'30j' | '90j' | '1an'>('30j');
   const [clientType, setClientType] = useState<'all' | 'enterprise' | 'individual'>('all');
+  const [chartType, setChartType] = useState<'area' | 'bar' | 'line' | 'pie'>('area');
 
   // Modals & Sliders state
   const [activeMembersDrawerOpen, setActiveMembersDrawerOpen] = useState(false);
@@ -119,12 +130,12 @@ export const Dashboard: React.FC = () => {
 
   const handleApprovePreAuth = (id: string, name: string) => {
     setPreAuthList(prev => prev.filter(item => item.id !== id));
-    alert(`La demande de pré-autorisation pour ${name} a été approuvée avec succès. Notification débloquée au tiers payant.`);
+    safeAlert(`La demande de pré-autorisation pour ${name} a été approuvée avec succès. Notification débloquée au tiers payant.`);
   };
 
   const handleRejectPreAuth = (id: string, name: string) => {
     setPreAuthList(prev => prev.filter(item => item.id !== id));
-    alert(`La demande de pré-autorisation pour ${name} a été refusée. L'assuré et l'établissement ont été notifiés.`);
+    safeAlert(`La demande de pré-autorisation pour ${name} a été refusée. L'assuré et l'établissement ont été notifiés.`);
   };
 
   // Recharts activity graph data
@@ -136,6 +147,14 @@ export const Dashboard: React.FC = () => {
     { name: 'Ven', consultations: country === 'RDC' ? 510 : 310, remboursements: 280 },
     { name: 'Sam', consultations: country === 'RDC' ? 180 : 90, remboursements: 80 },
     { name: 'Dim', consultations: country === 'RDC' ? 120 : 60, remboursements: 50 },
+  ];
+
+  // Dynamic Pie Chart Data calculation
+  const totalConsultations = activityData.reduce((sum, item) => sum + item.consultations, 0);
+  const totalRemboursements = activityData.reduce((sum, item) => sum + item.remboursements, 0);
+  const pieData = [
+    { name: 'Consultations', value: totalConsultations, color: '#16a34a' },
+    { name: 'Remboursements', value: totalRemboursements, color: '#818cf8' },
   ];
 
   return (
@@ -237,7 +256,12 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* KPI 1 - Assurés Actifs */}
-        <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+        >
           <div className="space-y-2">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assurés Actifs</p>
             <div className="flex items-baseline gap-2">
@@ -250,14 +274,19 @@ export const Dashboard: React.FC = () => {
           </div>
           <button 
             onClick={() => setActiveMembersDrawerOpen(true)}
-            className="mt-6 w-full py-2.5 bg-slate-50 hover:bg-slate-900 hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-800 flex items-center justify-center gap-2"
+            className="mt-6 w-full py-2.5 bg-slate-50 hover:bg-slate-900 hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-800 flex items-center justify-center gap-2 cursor-pointer"
           >
             <Users className="w-3.5 h-3.5" /> Voir détail
           </button>
-        </div>
+        </motion.div>
 
         {/* KPI 2 - S/P Ratio (Loss/Premium Ratio) */}
-        <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+        >
           <div className="space-y-2 relative group">
             <div className="flex items-center justify-between">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Ratio S/P Moyen</p>
@@ -287,10 +316,15 @@ export const Dashboard: React.FC = () => {
             <span>Trimestre en cours</span>
             <span className="text-emerald-600 font-black">Conforme (-2%)</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* KPI 3 - Cotisations en Retard */}
-        <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+        >
           <div className="space-y-2">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Cotisations en Retard</p>
             <div className="flex items-baseline gap-1">
@@ -300,14 +334,19 @@ export const Dashboard: React.FC = () => {
           </div>
           <button 
             onClick={() => setRelanceModalOpen(true)}
-            className="mt-6 w-full py-2.5 bg-rose-50 hover:bg-rose-600 hover:text-white hover:border-transparent transition-all rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-600 border border-rose-200 flex items-center justify-center gap-2"
+            className="mt-6 w-full py-2.5 bg-rose-50 hover:bg-rose-600 hover:text-white hover:border-transparent transition-all rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-600 border border-rose-200 flex items-center justify-center gap-2 cursor-pointer"
           >
             <BellRing className="w-3.5 h-3.5 animate-bounce" /> Lancer relances
           </button>
-        </div>
+        </motion.div>
 
         {/* KPI 4 - Pré-autorisations */}
-        <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+        >
           <div className="space-y-2">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pré-auto en Attente</p>
             <div className="flex items-baseline gap-2">
@@ -318,11 +357,11 @@ export const Dashboard: React.FC = () => {
           </div>
           <button 
             onClick={() => setPreAuthModalOpen(true)}
-            className="mt-6 w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white tracking-widest transition-all rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+            className="mt-6 w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white tracking-widest transition-all rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" /> Traiter les cas
           </button>
-        </div>
+        </motion.div>
 
       </div>
 
@@ -330,8 +369,13 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Graph Section */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-2 bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-sm space-y-6"
+        >
+          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-2 h-6 bg-green-600 rounded-full" />
               <div>
@@ -339,35 +383,116 @@ export const Dashboard: React.FC = () => {
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Evolution hebdomadaire</p>
               </div>
             </div>
-            <div className="flex gap-4 text-[10px] font-black uppercase tracking-widest">
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-green-500" /> Consultations</span>
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-400" /> Remboursements</span>
+
+            {/* Interactive Switchers & Legends */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex bg-slate-150 p-1 rounded-xl border border-slate-200/60 gap-1 shrink-0">
+                <button 
+                  onClick={() => setChartType('area')}
+                  className={`px-3 py-1.5 text-[9px] uppercase font-black tracking-widest transition-all rounded-lg cursor-pointer ${chartType === 'area' ? 'bg-white text-slate-950 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  📈 Aire
+                </button>
+                <button 
+                  onClick={() => setChartType('bar')}
+                  className={`px-3 py-1.5 text-[9px] uppercase font-black tracking-widest transition-all rounded-lg cursor-pointer ${chartType === 'bar' ? 'bg-white text-slate-950 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  📊 Barres
+                </button>
+                <button 
+                  onClick={() => setChartType('line')}
+                  className={`px-3 py-1.5 text-[9px] uppercase font-black tracking-widest transition-all rounded-lg cursor-pointer ${chartType === 'line' ? 'bg-white text-slate-950 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  📉 Courbe
+                </button>
+                <button 
+                  onClick={() => setChartType('pie')}
+                  className={`px-3 py-1.5 text-[9px] uppercase font-black tracking-widest transition-all rounded-lg cursor-pointer ${chartType === 'pie' ? 'bg-white text-slate-950 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  🍕 Ratio
+                </button>
+              </div>
+
+              <div className="hidden md:flex gap-4 text-[10px] font-black uppercase tracking-widest shrink-0">
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-green-500" /> Consultations</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-400" /> Remboursements</span>
+              </div>
             </div>
           </div>
 
           <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={activityData}>
-                <defs>
-                  <linearGradient id="chartConsult" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#16a34a" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#16a34a" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="chartRemb" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
-                <Tooltip contentStyle={{ borderRadius: '16px', border: '1px solid #f1f5f9', fontSize: '11px', fontWeight: 'bold' }} />
-                <Area type="monotone" name="Consultations" dataKey="consultations" stroke="#16a34a" strokeWidth={3} fillOpacity={1} fill="url(#chartConsult)" />
-                <Area type="monotone" name="Remboursements" dataKey="remboursements" stroke="#818cf8" strokeWidth={3} fillOpacity={1} fill="url(#chartRemb)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {chartType === 'area' && (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={activityData}>
+                  <defs>
+                    <linearGradient id="chartConsult" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#16a34a" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#16a34a" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="chartRemb" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#818cf8" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 'bold' }} />
+                  <Area type="monotone" name="Consultations" dataKey="consultations" stroke="#16a34a" strokeWidth={3} fillOpacity={1} fill="url(#chartConsult)" />
+                  <Area type="monotone" name="Remboursements" dataKey="remboursements" stroke="#818cf8" strokeWidth={3} fillOpacity={1} fill="url(#chartRemb)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+
+            {chartType === 'bar' && (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={activityData} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <Tooltip cursor={{ fill: '#f8fafc', opacity: 0.6 }} contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 'bold' }} />
+                  <Bar dataKey="consultations" name="Consultations" fill="#16a34a" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                  <Bar dataKey="remboursements" name="Remboursements" fill="#818cf8" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+
+            {chartType === 'line' && (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={activityData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 'bold' }} />
+                  <Line type="monotone" dataKey="consultations" name="Consultations" stroke="#16a34a" strokeWidth={4} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 7 }} />
+                  <Line type="monotone" dataKey="remboursements" name="Remboursements" stroke="#818cf8" strokeWidth={4} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 7 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+
+            {chartType === 'pie' && (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 'bold' }} />
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="45%"
+                    innerRadius={60}
+                    outerRadius={95}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Heatmap Geographical Insights Card */}
         <div className="bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-sm flex flex-col justify-between">
