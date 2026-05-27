@@ -49,8 +49,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   // Authenticated default Admin definitions
   const ALLOWED_ADMINS = [
-    { email: 'adonailutonadio70@gmail.com', password: 'Rocky_#202676259@', name: 'Adonïa Lutonadio (Admin)' },
-    { email: 'mutomborocky@gmail.com', password: 'Adonai_#202623624@', name: 'Mutombo Rocky (Admin)' }
+    { email: 'adonailutonadio70@gmail.com', password: 'Adonai_#202623624@', name: 'Adonïa Lutonadio (Admin)' },
+    { email: 'mutomborocky@gmail.com', password: 'Rocky_#202676259@', name: 'Mutombo Rocky (Admin)' }
   ];
 
   // International translations
@@ -223,13 +223,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    // Proceed to MFA or success if device remember bypass active
-    if (rememberDevice) {
-      processSuccess(matchingAdmin);
-    } else {
-      setStep('mfa');
-      setMfaTimer(60);
-    }
+    // Proceed directly to the platform upon validation of credentials
+    processSuccess(matchingAdmin);
   };
 
   const handleMfaSubmit = (e: React.FormEvent) => {
