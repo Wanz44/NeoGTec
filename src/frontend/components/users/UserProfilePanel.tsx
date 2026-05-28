@@ -13,10 +13,68 @@ import {
 import { useApp } from '../../lib/AppContext';
 import { cn } from '../../lib/utils';
 
-export const UserProfilePanel: React.FC = () => {
+export const UserProfilePanel: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const { currentUser, setCurrentUser, logAction, auditLogs } = useApp();
-  const [activeTab, setActiveTab] = useState<'identity' | 'security' | 'roles' | 'logs'>('identity');
+  const [activeTab, setActiveTab] = useState<'identity' | 'security' | 'roles' | 'logs' | 'sandbox'>('identity');
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  
+  // Sandbox State variables for ISO 27001 & Bancaire frictionless validation demos
+  const [activeSandboxSubTab, setActiveSandboxSubTab] = useState<'friction' | 'audit_trail' | 'briques_tech'>('friction');
+  const [biambaStatus, setBiambaStatus] = useState<'active' | 'suspended'>('active');
+  const [keywordInput, setKeywordInput] = useState('');
+  const [virementStatus, setVirementStatus] = useState<'idle' | 'pending_admin_b' | 'approved'>('idle');
+  const [selectedAdminRole, setSelectedAdminRole] = useState<'ADMIN_A' | 'ADMIN_B'>('ADMIN_A');
+  const [passwordRequiredAction, setPasswordRequiredAction] = useState<'none' | 'export_rgpd' | 'disable_mfa'>('none');
+  const [reauthPassword, setReauthPassword] = useState('');
+  const [reauthError, setReauthError] = useState<string | null>(null);
+  const [tariffState, setTariffState] = useState<'v12' | 'v13_simulated' | 'v13_applied'>('v12');
+  const [dryRunSimulated, setDryRunSimulated] = useState(false);
+  const [showLowRiskModal, setShowLowRiskModal] = useState(false);
+  const [showMediumRiskModal, setShowMediumRiskModal] = useState(false);
+  const [showHighRiskModal, setShowHighRiskModal] = useState(false);
+  const [sandboxLogs, setSandboxLogs] = useState<Array<{
+    id: string;
+    timestamp: string;
+    who: string;
+    action: string;
+    ip: string;
+    details: string;
+    status: 'SUCCESS' | 'WARNING' | 'CRITICAL';
+  }>>([
+    {
+      id: 'SBOX-001',
+      timestamp: '2026-05-28 10:15:32',
+      who: currentUser?.email || 'j.kabasele@neogtec.com',
+      action: 'SOC_CHECK',
+      ip: '41.78.1.9',
+      details: 'Démarrage du coffre-fort ISO-27001 Sandbox.',
+      status: 'SUCCESS'
+    }
+  ]);
+  const [webhookLogs, setWebhookLogs] = useState<Array<{
+    event: string;
+    timestamp: string;
+    payload: string;
+  }>>([]);
+  const [notifLogs, setNotifLogs] = useState<Array<{
+    phone: string;
+    message: string;
+    timestamp: string;
+  }>>([]);
+
+  const addSandboxLog = (action: string, details: string, status: 'SUCCESS' | 'WARNING' | 'CRITICAL' = 'SUCCESS') => {
+    const newLogItem = {
+      id: `SBOX-` + Math.floor(100 + Math.random() * 900),
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      who: selectedAdminRole === 'ADMIN_A' ? (currentUser?.email || 'j.kabasele@neogtec.com') : 'supervisor.audit@neogtec.com',
+      action,
+      ip: '41.78.1.9',
+      details,
+      status
+    };
+    setSandboxLogs(prev => [newLogItem, ...prev]);
+    logAction(action as any, details, status);
+  };
   
   // Tab 1 state
   const [langDisplay, setLangDisplay] = useState<'Français' | 'English' | 'Lingala' | 'Arabic'>('Français');
@@ -213,25 +271,26 @@ export const UserProfilePanel: React.FC = () => {
       </div>
 
       {/* Grid Menu Tabs */}
-      <div className="grid grid-cols-4 gap-2 bg-slate-100 p-1 rounded-2xl border">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-1.5 bg-slate-100 p-1 rounded-2xl border">
         {[
           { id: 'identity', label: 'Identité', icon: User },
           { id: 'security', label: 'Sécurité & Accès', icon: Lock },
           { id: 'roles', label: 'Rôles & Permissions', icon: Shield },
-          { id: 'logs', label: 'Activité & Logs', icon: History }
+          { id: 'logs', label: 'Activité & Logs', icon: History },
+          { id: 'sandbox', label: '🕹️ Bac à Sable', icon: Sparkles }
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={cn(
-              "py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer outline-none",
+              "py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer outline-none",
               activeTab === tab.id 
                 ? "bg-white text-slate-950 border shadow-sm" 
                 : "text-slate-500 hover:text-slate-900"
             )}
           >
             <tab.icon className="w-4 h-4" />
-            <span className="hidden md:inline">{tab.label}</span>
+            <span>{tab.label}</span>
           </button>
         ))}
       </div>
@@ -760,6 +819,597 @@ export const UserProfilePanel: React.FC = () => {
 
           </div>
         )}
+
+        {activeTab === 'sandbox' && (
+          <div className="space-y-6 animate-in fade-in duration-200 text-slate-800">
+            {/* Header / Intro to Sandbox */}
+            <div className="bg-slate-900 text-white rounded-[2rem] p-6 border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
+              <div>
+                <span className="text-[9px] font-black uppercase text-indigo-400 tracking-[0.2em] block font-mono">ISO-27001 Security &amp; Bancaire Guardrails</span>
+                <h4 className="text-xl font-black text-white uppercase tracking-tight mt-1">Cabinet de Démonstration &amp; Friction Sec</h4>
+                <p className="text-xs text-slate-400 font-semibold leading-relaxed max-w-xl mt-1">
+                  Ce bac à sable vous permet de tester en temps réel les politiques d'accès de l'ARCA et de la CNIL : gestion de crise, double approbation (4-eyes), versioning de barèmes et logs d'audit certifiés.
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                {onClose && (
+                  <button 
+                    onClick={onClose}
+                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-lg hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <X className="w-4 h-4" /> Fermer Profil
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Sandbox Sub-Tabs */}
+            <div className="flex border-b border-slate-150 gap-4 overflow-x-auto">
+              {[
+                { id: 'friction', label: '1. Friction Sec (Are You Sure?)' },
+                { id: 'audit_trail', label: '2. Piste d\'Audit et Preuves (CNIL)' },
+                { id: 'briques_tech', label: '3. 5 Briques NeoGTec & SOC Alerts' }
+              ].map(sub => (
+                <button
+                  key={sub.id}
+                  onClick={() => setActiveSandboxSubTab(sub.id as any)}
+                  className={cn(
+                    "pb-3 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer outline-none whitespace-nowrap",
+                    activeSandboxSubTab === sub.id 
+                      ? "border-green-600 text-green-700" 
+                      : "border-transparent text-slate-450 hover:text-slate-800"
+                  )}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Sub-tab 1 contents: Friction & Confirm */}
+            {activeSandboxSubTab === 'friction' && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-200">
+                
+                {/* Friction Card 1: Low-Risk Simple Modal */}
+                <div className="bg-white p-5 rounded-3xl border border-slate-150 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[8px] font-black uppercase tracking-wide">Niveau : Faible (Friction Légère)</span>
+                    <h5 className="text-xs font-black text-slate-800 uppercase tracking-tight mt-1">Changement de Langue ou Export Simple</h5>
+                    <p className="text-[11px] font-semibold text-slate-450 leading-relaxed leading-snug">
+                      Un simple clic accidentel ne doit pas déclencher d'écriture lourde. Utilisation d'un modal de confirmation standard. Évite les faux exports.
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => setShowLowRiskModal(true)}
+                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer border hover:scale-[1.01] active:scale-[0.99] transition-all"
+                  >
+                    Tester l'Export CSV Simple (Modal)
+                  </button>
+                </div>
+
+                {/* Friction Card 2: Medium-Risk Keyword Confirmation + Soft Delete */}
+                <div className="bg-white p-5 rounded-3xl border border-slate-150 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-start gap-1">
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 border border-orange-200 rounded text-[8px] font-black uppercase tracking-wide">Niveau : Moyen (Soft Delete)</span>
+                      <span className={cn(
+                        "px-2 py-0.5 rounded text-[8px] font-black uppercase whitespace-nowrap",
+                        biambaStatus === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-750 border border-rose-250 animate-pulse'
+                      )}>
+                        Biamba : {biambaStatus === 'active' ? 'ACTIF (152 cliniques)' : 'SUSPENDU'}
+                      </span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-800 uppercase tracking-tight mt-1">Suspendre un Espace Partenaire Clinique</h5>
+                    <p className="text-[11px] font-semibold text-slate-450 leading-relaxed leading-snug">
+                      Suspendre un partenaire coupe l'accès de 12,340 assurés. Demandes de mot-clé exact pour empêcher le clic rapide.
+                    </p>
+                  </div>
+                  {biambaStatus === 'active' ? (
+                    <button 
+                      onClick={() => {
+                        setKeywordInput('');
+                        setShowMediumRiskModal(true);
+                      }}
+                      className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer shadow hover:scale-[1.01] active:scale-[0.99] transition-all"
+                    >
+                      Suspendre l'Hôpital Biamba Marie Mutombo
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="p-2.5 bg-rose-50 border border-rose-150 rounded-xl text-[9.5px] font-semibold text-rose-700 italic">
+                        Espace clinique bloqué. "deleted_at" enregistré par {currentUser?.email}.
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setBiambaStatus('active');
+                          addSandboxLog('RESTAURATION_PARTENAIRE_CLINIQUE', 'Réactivation officielle de l\'Hôpital Biamba Marie Mutombo, réindexation des API de communication.', 'SUCCESS');
+                          triggerSuccessToast("Hôpital Biamba Marie Mutombo réactivé avec de nouveaux droits SSO.");
+                        }}
+                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer shadow hover:scale-[1.01] active:scale-[0.99] transition-all"
+                      >
+                        Restaurer l'établissement (Soft Delete Restore)
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Friction Card 3: High-Risk Double Validation (4-Eyes Principle) */}
+                <div className="bg-white p-5 rounded-3xl border border-slate-150 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <span className="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 rounded text-[8px] font-black uppercase tracking-wide">Niveau : Élevé (Virement &gt;50k USD)</span>
+                    <h5 className="text-xs font-black text-slate-800 uppercase tracking-tight mt-1">Contrôle 4-Eyes (Seuil Financier $50,000+)</h5>
+                    <p className="text-[11px] font-semibold text-slate-450 leading-relaxed leading-snug">
+                      La double approbation bancaire : Admin A (vous) initie le virement, Admin B (Alice Kabeya) co-approuve obligatoirement pour débloquer.
+                    </p>
+                  </div>
+                  
+                  {/* Status of transfer */}
+                  <div className="p-3 bg-slate-50 border rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                      <p className="font-extrabold text-slate-800">Acompte Clinique NGALIEMA - 84,500 USD</p>
+                      <p className="text-[9.5px] font-medium text-slate-500 mt-1 uppercase tracking-wider">
+                        {virementStatus === 'idle' && "Statut : Non Initié"}
+                        {virementStatus === 'pending_admin_b' && "⚠️ EN ATTENTE DE CO-SIGNATURE ADMIN B"}
+                        {virementStatus === 'approved' && "✅ VIREMENT EXPÉDIÉ (SIGNATURES OK)"}
+                      </p>
+                    </div>
+                    <div>
+                      {virementStatus === 'idle' && (
+                        <button 
+                          onClick={() => {
+                            setVirementStatus('pending_admin_b');
+                            addSandboxLog('VIREMENT_INITIE_4EYES', 'Création d\'une demande de paiement de sinistre lourd pour 84,500 USD vers Ngaliema.', 'WARNING');
+                            triggerSuccessToast("Demande de paiement d'acompte initié. Signature Admin A apposée.");
+                          }}
+                          className="px-3.5 py-1.5 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-[1.02] cursor-pointer"
+                        >
+                          Initier
+                        </button>
+                      )}
+                      {virementStatus === 'pending_admin_b' && (
+                        <div className="flex gap-1">
+                          <button 
+                            onClick={() => {
+                              setSelectedAdminRole('ADMIN_B');
+                            }}
+                            className="px-2.5 py-1.5 bg-indigo-600 text-white rounded-lg text-[8px] font-black uppercase transition-all hover:bg-indigo-700 cursor-pointer flex items-center gap-1"
+                          >
+                            <Key className="w-3 h-3" /> Incarner Admin B
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setVirementStatus('idle');
+                              addSandboxLog('VIREMENT_REJETE_4EYES', 'Paiement de 84,500 USD rejeté et annulé du coffre.', 'CRITICAL');
+                            }}
+                            className="px-2.5 py-1.5 bg-rose-50 text-rose-600 rounded-lg border border-rose-200 text-[8px] font-black uppercase hover:bg-rose-100 cursor-pointer"
+                          >
+                            Annuler
+                          </button>
+                        </div>
+                      )}
+                      {virementStatus === 'approved' && (
+                        <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-[9px] font-black">Scellements Ok</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedAdminRole === 'ADMIN_B' && virementStatus === 'pending_admin_b' && (
+                    <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2 text-xs">
+                      <p className="font-bold text-indigo-950">🔐 Cabinet d'Alice Kabeya (Admin B - Superviseur Finance)</p>
+                      <p className="text-[10px] text-slate-500 leading-normal">
+                        Vous avez emprunté le jeton d'Alice Kabeya. Vous pilotez maintenant le deuxième oeil d'approbation.
+                      </p>
+                      <button 
+                        onClick={() => {
+                          setVirementStatus('approved');
+                          setSelectedAdminRole('ADMIN_A');
+                          addSandboxLog('VIREMENT_APPROUVE_4EYES', 'Double approbation complétée par Alice Kabeya. Empreinte de coffre SHA256 validée.', 'SUCCESS');
+                          triggerSuccessToast("Double validation réussie ! Les fonds de 84,500 USD ont été émis.");
+                        }}
+                        className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[9px] font-black uppercase cursor-pointer"
+                      >
+                        Co-signer &amp; Débloquer Virement
+                      </button>
+                    </div>
+                  )}
+
+                  {virementStatus === 'approved' && (
+                    <div className="pt-1 flex gap-2">
+                      <button 
+                        onClick={() => {
+                          const payload = `ID TRANSACTION: TX-9b7c-GOMBE\nINITIATEUR: j.kabasele@neogtec.com\nCO-ASSISTANT: alice.kabeya@neogtec.com\nMONTANT: 84,500 USD\nBENEFICIAIRE: Clinique Ngaliema\nDATE CERTIFICATION: 2026-05-28 10:22 UTC\nHASH SHA256 VALIDE: 0e78c8bc1e204deae819c98cd12f45eaef812bf7e719`;
+                          const link = document.createElement("a");
+                          link.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(payload));
+                          link.setAttribute("download", `Recu_Paiement_Certifie_SHA256_Ngaliema_84k.txt`);
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          addSandboxLog('TELECHARGER_RECU_TX', 'Téléchargement d\'un reçu de virement signé numériquement par hash cryptographique.', 'SUCCESS');
+                        }}
+                        className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white border text-[9px] font-black rounded-lg uppercase cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        <Download className="w-4 h-4" /> Télécharger Reçu d'Administration Signé (SHA256)
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Friction Card 4: Critical Action Re-Authentication (MFA requirement) */}
+                <div className="bg-white p-5 rounded-3xl border border-slate-150 shadow-xs space-y-4 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <span className="px-2 py-0.5 bg-rose-100 text-rose-700 border border-rose-200 rounded text-[8px] font-black uppercase tracking-wide">Niveau : Critique (Re-Auth)</span>
+                    <h5 className="text-xs font-black text-slate-800 uppercase tracking-tight mt-1">Export Données Sensibles Cliniques (DME)</h5>
+                    <p className="text-[11px] font-semibold text-slate-450 leading-relaxed leading-snug">
+                      Même si la session est déjà ouverte, l'accès ou l'export de dossiers médicaux complets (RGPD) exige de reprononcer votre mot de passe pour vérifier l'identité.
+                    </p>
+                  </div>
+                  
+                  {passwordRequiredAction === 'none' ? (
+                    <button 
+                      onClick={() => {
+                        setReauthPassword('');
+                        setReauthError(null);
+                        setPasswordRequiredAction('export_rgpd');
+                      }}
+                      className="w-full py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer shadow hover:scale-[1.01] active:scale-[0.99] transition-all"
+                    >
+                      Démarrer Export de Données Médicales
+                    </button>
+                  ) : (
+                    <div className="p-4 bg-rose-50 border border-rose-200 rounded-[1.5rem] space-y-3 text-xs text-slate-850">
+                      <div className="flex justify-between items-center">
+                        <span className="font-extrabold uppercase text-[9.5px] text-rose-700">🔒 Prouvez que c'est bien vous !</span>
+                        <button type="button" onClick={() => setPasswordRequiredAction('none')} className="text-slate-450 hover:text-slate-900 font-extrabold">X</button>
+                      </div>
+                      <p className="text-[10px] text-slate-500">Pour débloquer l'export sécurisé, tapez le mot de passe administrateur : (Entrez <b className="font-mono text-slate-850">admin123</b>).</p>
+                      
+                      <div className="space-y-1">
+                        <input 
+                          type="password"
+                          value={reauthPassword}
+                          onChange={(e) => setReauthPassword(e.target.value)}
+                          placeholder="Entrez votre mot de passe"
+                          className="w-full h-10 bg-white border rounded-xl px-3 text-xs focus:outline-none"
+                        />
+                      </div>
+
+                      {reauthError && (
+                        <p className="text-[10px] text-rose-600 font-bold leading-none">{reauthError}</p>
+                      )}
+
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          if (reauthPassword === 'admin123') {
+                            setReauthError(null);
+                            setPasswordRequiredAction('none');
+                            addSandboxLog('REAUTH_SUCCESS_EXPORT_RGPD', 'Réauthentification réussie du password. Lancement d\'export.', 'SUCCESS');
+                            triggerSuccessToast("Authentification réussie ! L'exportation de 1234 dossiers de santé s'est déclenchée.");
+                            
+                            // File download simulation
+                            const data = "NOM,ID,AFFILIATION,DIAGNOSTIC,DATE_SOUSCRIPTION\nMukendi,123,Med-A,Gastro,2024-05-12\nKanyama,422,Med-B,Palu,2025-01-08\nKasongo,12,Med-A,Trauma,2026-03-30";
+                            const link = document.createElement("a");
+                            link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(data));
+                            link.setAttribute("download", "AfreakCare_Dossiers_Cliniques_RGPD_Article15.csv");
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          } else {
+                            setReauthError("Mot de passe incorrect (Tapez admin123)");
+                            addSandboxLog('REAUTH_ECHEC_EXPORT_RGPD', 'Échec de mot de passe lors de la tentative d\'export de données cliniques.', 'CRITICAL');
+                          }
+                        }}
+                        className="w-full py-2 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase hover:bg-slate-800 cursor-pointer"
+                      >
+                        Valider &amp; Exporter Fichiers DME / RGPD
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Friction Card 5: Dry-Run and Prediction Impact Analysis Simulation */}
+                <div className="bg-white p-5 rounded-3xl border border-slate-150 shadow-xs space-y-4 lg:col-span-2 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center bg-slate-50 border rounded-xl p-3">
+                      <div>
+                        <span className="text-[9px] font-black uppercase text-slate-400 block tracking-wider leading-none font-mono">Barème Actuel Réseau</span>
+                        <span className="text-sm font-extrabold text-slate-850 mt-1 block font-mono">
+                          {tariffState === 'v12' ? 'v12 : BASE_CONSULTATION = 20.00 USD' : 'v13 : BASE_CONSULTATION = 22.00 USD (Appliqué par Marie)'}
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[8px] font-black uppercase tracking-wide rounded">Planificateur de Simulation (Dry-Run)</span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-800 uppercase tracking-tight mt-1">Changement d'échelle / Changement de Tarification consultative (Dry Run Simulator)</h5>
+                    <p className="text-[11px] font-semibold text-slate-450 leading-relaxed">
+                      Évitez d'appliquer une modification tarifaire instantanément si vous ne connaissez pas le coût futur. Cliquez sur le bouton de Dry-run ci-dessous pour lancer l'analyse prévisionnelle d'impact financier avant l'application officielle !
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl flex flex-col justify-between space-y-4">
+                      <div className="space-y-1">
+                        <h6 className="text-[10px] font-black text-slate-450 uppercase block tracking-widest leading-none font-mono">ÉTAPE 1 : Simuler l'effet de bord</h6>
+                        <p className="text-[10px] text-slate-400">Calcule la déviation annuelle budgétaire estimée par algorithme de projection.</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setDryRunSimulated(true);
+                          addSandboxLog('LANCEMENT_DRYRUN_SIMULATION_BAR', 'Simulation d\'impact lancée : calcul sur 12,340 assurés régionaux.', 'SUCCESS');
+                        }}
+                        className="py-2.5 bg-white border border-slate-250 hover:bg-slate-100 text-slate-800 rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer shadow-xs hover:scale-[1.01] transition-all"
+                      >
+                        Simuler modification +10% (de 20$ à 22$)
+                      </button>
+                    </div>
+
+                    <div className="p-4 bg-slate-900 text-white rounded-2xl flex flex-col justify-between space-y-3">
+                      <div className="space-y-1">
+                        <h6 className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono">ÉTAPE 2 : Diagnostic &amp; Écritures</h6>
+                        <p className="text-[9.5px] text-slate-400 leading-normal">Permet à la direction de visualiser l'impact avant la prise de risque financier.</p>
+                      </div>
+                      {dryRunSimulated ? (
+                        <div className="space-y-2">
+                          <div className="bg-white/5 border border-white/10 rounded-lg p-2.5 text-[10.5px] space-y-1 font-mono font-medium text-slate-300">
+                            <div>👥 Assurés impactés : <b className="text-orange-400">12,340 personnes</b></div>
+                            <div>💰 Coût dynamique annuel : <b className="text-orange-400">+1.24 M USD</b></div>
+                            <div>📈 Diagnostic cotisations : <b className="text-emerald-400">+2.41% ok</b></div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setTariffState('v13_applied');
+                              addSandboxLog('APPLICATION_REALE_BAREME_TARIFS', 'Changement du barème général consultation de 20 USD à 22 USD.', 'SUCCESS');
+                              triggerSuccessToast("La tarification de consultation générale a été modifiée officiellement à 22.00 USD.");
+                            }}
+                            className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[9.5px] font-black uppercase rounded-lg cursor-pointer"
+                          >
+                            Appliquer officiellement
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="h-12 bg-white/5 border border-dashed border-white/10 rounded-lg flex items-center justify-center text-[10.5px] text-slate-500 italic">
+                          En attente du Dry-run simulation...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* Sub-tab 2 contents: Audit Trail & Proofs */}
+            {activeSandboxSubTab === 'audit_trail' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-200 text-slate-800">
+                
+                {/* Left: Interactive Proof Table */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h5 className="text-xs font-black text-slate-800 uppercase tracking-wider italic flex items-center gap-1 font-mono">
+                        <History className="w-4 h-4 text-green-600 animate-spin-slow" />
+                        Piste d'Audit Immuable (Registre WORM Scellé)
+                      </h5>
+                      <p className="text-[10px] text-slate-450 uppercase font-bold tracking-widest mt-1">
+                        Pour toute modification d'établissement ou de barème, la preuve de transaction est instantanément enregistrée pour inspection CNIL.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-0 border rounded-2xl overflow-hidden bg-white max-h-[350px] overflow-y-auto custom-scrollbar shadow-xs">
+                    <table className="w-full text-left text-xs bg-white">
+                      <thead className="bg-slate-50 border-b sticky top-0">
+                        <tr>
+                          <th className="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-wider">Date &amp; Heure (Kinshasa)</th>
+                          <th className="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-wider">Acteur</th>
+                          <th className="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-wider">Événement</th>
+                          <th className="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-wider">Détails d'opération</th>
+                          <th className="px-4 py-2 text-[9px] font-black text-slate-400 uppercase tracking-wider text-center">Gravité</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {sandboxLogs.map(log => (
+                          <tr key={log.id} className="hover:bg-slate-50">
+                            <td className="px-4 py-2 font-mono text-[9.5px] font-semibold text-slate-800">{log.timestamp}</td>
+                            <td className="px-4 py-2 truncate text-[10px] font-bold text-indigo-700">{log.who.split('@')[0]}</td>
+                            <td className="px-4 py-2 font-mono font-black text-[9px] text-slate-900 uppercase">{log.action}</td>
+                            <td className="px-4 py-2 font-medium text-slate-550 text-[10px] max-w-xs truncate" title={log.details}>{log.details}</td>
+                            <td className="px-4 py-2 text-center text-[10px]">
+                              <span className={cn(
+                                "px-2 py-0.5 rounded text-[8px] font-black uppercase inline-block min-w-[50px] text-center",
+                                log.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : log.status === 'WARNING' ? 'bg-orange-50 text-orange-600 border border-orange-100' : 'bg-rose-50 text-rose-500 border border-rose-100 animate-pulse'
+                              )}>
+                                {log.status === 'SUCCESS' ? 'Info' : log.status === 'WARNING' ? 'Alerte' : 'Critique'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Right Panel: Live Diff visualizer & Push Notify celular mockup */}
+                <div className="space-y-4">
+                  
+                  {/* Before/After Diff component */}
+                  <div className="p-4 bg-slate-900 text-white rounded-3xl border border-slate-800 space-y-3">
+                    <h5 className="text-[10px] font-black uppercase text-indigo-400 tracking-widest flex items-center gap-1 font-mono">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" /> Comparateur de barèmes (v12 vs v13)
+                    </h5>
+                    <p className="text-[10px] text-slate-400 font-medium leading-normal italic">
+                      Visualisation des différences de version (diff rouge/vert) après modification :
+                    </p>
+
+                    <div className="bg-slate-950 p-3 rounded-xl border border-white/10 font-mono text-[10.5px] space-y-0.5 leading-tight text-slate-350 select-all max-h-48 overflow-y-auto custom-scrollbar">
+                      <div><span className="text-slate-500 font-bold">// Version Diff local RDC //</span></div>
+                      <div className="text-rose-450 bg-rose-950/40 px-1 rounded font-black">- FEE_GENERAL_CONSULTATION: 20.00 USD</div>
+                      <div className="text-emerald-455 bg-emerald-950/40 px-1 rounded font-black">+ FEE_GENERAL_CONSULTATION: 22.00 USD</div>
+                      <div className="text-rose-450 bg-rose-950/40 px-1 rounded font-black">- status: "active" (Clinique Biamba)</div>
+                      <div className="text-indigo-305 bg-indigo-950/40 px-1 rounded font-black">+ status: "suspended" (Clinique Biamba)</div>
+                      <div className="text-slate-500 font-bold">// Fin du différentiel //</div>
+                    </div>
+                  </div>
+
+                  {/* Push SMS cellular device simulator */}
+                  <div className="p-4 bg-slate-105 rounded-3xl border border-slate-200 space-y-3">
+                    <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
+                      <span>GSM Affiliés - Alerte Push</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                    </div>
+
+                    <div className="relative mx-auto w-full max-w-[210px] h-[330px] rounded-[2rem] border-4 border-slate-800 bg-slate-950 overflow-hidden shadow-lg p-3">
+                      {/* Speaker & camera slot */}
+                      <div className="absolute top-1 left-1/2 -translate-x-1/2 w-16 h-3 bg-slate-800 rounded-full z-10" />
+                      
+                      {/* Screen Area */}
+                      <div className="h-full rounded-[1.5rem] bg-gradient-to-tr from-indigo-950 to-slate-900 flex flex-col justify-between p-2 pt-4 relative">
+                        {/* Carrier and Clock */}
+                        <div className="flex justify-between text-[8px] font-black text-indigo-200">
+                          <span>AfreakCell RDC</span>
+                          <span>10:20</span>
+                        </div>
+
+                        {/* Central push notification alert simulation */}
+                        <div className="my-auto space-y-2">
+                          <div className="bg-white/95 backdrop-blur-md rounded-xl p-2.5 shadow-xl border text-[9px] text-slate-850">
+                            <p className="font-extrabold text-slate-900">🔔 AfreakCare Guard</p>
+                            <p className="text-[8px] text-slate-500 font-semibold leading-tight mt-0.5">
+                              {biambaStatus === 'active' 
+                                ? "FEE: Consultation générale ajustée de 20.00 USD à 22.00 USD." 
+                                : "⚠️ Clinique Biamba suspendue. Alternatives : Clinique Ngaliema (1.2km) ou Hôpital du Cinquantenaire."}
+                            </p>
+                            <span className="text-[7px] text-slate-400 block mt-1">À l'instant</span>
+                          </div>
+                        </div>
+
+                        {/* Home indicator bar */}
+                        <div className="w-16 h-1 bg-white/40 mx-auto rounded-full mt-2" />
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* Sub-tab 3 contents: Technical architecture highlights & threat warnings */}
+            {activeSandboxSubTab === 'briques_tech' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-200">
+                
+                {/* 5 Briques Highlight 1 */}
+                <div className="p-5 bg-white rounded-3xl border border-slate-150 shadow-xs space-y-3 text-slate-850">
+                  <div className="w-10 h-10 bg-green-50 text-green-700 rounded-2xl flex items-center justify-center font-extrabold text-xs border border-green-150">
+                    B1
+                  </div>
+                  <h6 className="text-xs font-black uppercase text-slate-850 tracking-tight">1. Event Sourcing</h6>
+                  <p className="text-[11px] font-semibold text-slate-450 leading-relaxed">
+                    Au lieu de simplement écraser la donnée, chaque transition d'état est capturée (SinistreCréé ➜ Approuvé ➜ Suspension). Vous pouvez rejouer l'historique complet pour auditer l'arbitrage.
+                  </p>
+                </div>
+
+                {/* Highlight 2 */}
+                <div className="p-5 bg-white rounded-3xl border border-slate-150 shadow-xs space-y-3 text-slate-850">
+                  <div className="w-10 h-10 bg-red-50 text-red-700 rounded-2xl flex items-center justify-center font-extrabold text-xs border border-red-150">
+                    B2
+                  </div>
+                  <h6 className="text-xs font-black uppercase text-slate-850 tracking-tight">2. Soft Delete permanent</h6>
+                  <p className="text-[11px] font-semibold text-slate-455 leading-relaxed">
+                    Aucun SuperAdmin ou robot malveillant ne peut détruire physiquement de fiche clinique. Tout enregistrement supprimé conserve sa colonne <code className="font-mono text-rose-600 bg-rose-50 px-1 py-0.5 rounded text-[10px]">deleted_at</code> et reste restaurable en un clic.
+                  </p>
+                </div>
+
+                {/* Highlight 3 */}
+                <div className="p-5 bg-white rounded-3xl border border-slate-150 shadow-xs space-y-3 text-slate-850">
+                  <div className="w-10 h-10 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center font-extrabold text-xs border border-indigo-150">
+                    B3
+                  </div>
+                  <h6 className="text-xs font-black uppercase text-slate-850 tracking-tight">3. Signature de Serveur</h6>
+                  <p className="text-[11px] font-semibold text-slate-455 leading-relaxed">
+                    Chaque bloc d'audit est scellé par la clé de scellement privée NeoGTec. En cas d'intrusion physique en Base de Données, la signature casse, dénonçant instantanément le falsificateur.
+                  </p>
+                </div>
+
+                {/* Interactive Outbound simulated Webhook */}
+                <div className="md:col-span-3 p-6 bg-slate-900 text-white rounded-3xl border border-slate-800 space-y-4">
+                  <div className="flex justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700">
+                    <div className="flex items-center gap-2 text-yellow-400">
+                      <ShieldAlert className="w-5 h-5 animate-bounce" />
+                      <span className="text-xs font-black uppercase tracking-widest font-mono">Simulateur d'Alertes Comportementales Anormales (SOC LIVE)</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                    Déclencher une anomalie simule un comportement suspect (ex: tentative de création en masse de 12 comptes par le même IP à 3h du matin). Cela alerte immédiatement le RSSI par SMS et modifie le niveau d'alerte générale de la plateforme.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addSandboxLog('ALERTE_ANOMALIE_CREATION_RAPIDE', 'Alerte comportementale : 10 utilisateurs créés en moins d\'une minute.', 'CRITICAL');
+                        triggerErrorToast("SOC SECURITÉ : Activité anormale suspecte ! Demande SMS de sécurité émise vers le mobile du RSSI (+243 81...).");
+                      }}
+                      className="py-3 bg-red-650 hover:bg-red-700 text-white rounded-xl text-[10px] font-black uppercase shadow cursor-pointer text-center hover:scale-[1.01] active:scale-[0.99] transition-all"
+                    >
+                      🚨 Simuler création en masse à 3h
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addSandboxLog('ALERTE_BRUTE_FORCE_MFA', 'Échecs multiples consécutifs sur dispositif FIDO2.', 'CRITICAL');
+                        triggerErrorToast("ALERTE BRUTE-FORCE : 5 tentatives MFA infructueuses sur le compte super-admin. Verrouillage temporaire du jeton.");
+                      }}
+                      className="py-3 bg-red-650 hover:bg-red-700 text-white rounded-xl text-[10px] font-black uppercase shadow cursor-pointer text-center hover:scale-[1.01] active:scale-[0.99] transition-all"
+                    >
+                      🚨 Tentative Brute-force MFA
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addSandboxLog('ALERTE_EVASION_VPN', 'Signature de géolocalisation impossible : voyage rapide détecté (Kinshasa ➜ Moscou).', 'WARNING');
+                        triggerSuccessToast("ALERTE VOYAGE RAPIDE : Routeur VPN ou Proxy suspect détecté. Restriction d'accès financier.");
+                      }}
+                      className="py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase shadow cursor-pointer text-center hover:scale-[1.01] active:scale-[0.99] transition-all"
+                    >
+                      ⚠️ Détection Évasion IP (VPN)
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 p-4 rounded-xl border border-white/10 space-y-1">
+                    <p className="text-[10px] uppercase font-black text-slate-500 font-mono">Payload Webhook Rest envoyé au down-stream SAP d'entreprise (Signature Scellée)</p>
+                    <pre className="text-[10.5px] font-mono font-medium text-emerald-450 overflow-x-auto select-all max-h-48 custom-scrollbar leading-relaxed">
+{`POST /api/webhooks/neogtec-compliance HTTP/1.1
+Host: downstream-sap.arca-rdc.com
+Content-Type: application/json
+X-NeoGTec-Signature-SHA256: 0e78c8bc1e204deae819c98cd12f45eaef812bf7e7193b29c9ef
+
+{
+  "event": "hospital.suspension",
+  "audit_id": "SBOX-${Math.floor(100+Math.random()*900)}",
+  "actor": "${currentUser?.email || 'j.kabasele@neogtec.com'}",
+  "timestamp": "${new Date().toISOString()}",
+  "meta": {
+    "target_hospital": "Biamba Marie Mutombo",
+    "affected_beneficiaries": 12340,
+    "system_active_hospitals": ${biambaStatus === 'active' ? 152 : 151},
+    "compliance_code": "ARCA-RDC-SECURE-2026"
+  }
+}`}
+                    </pre>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* Footnote of Sandbox */}
+            <div className="p-4 bg-slate-100 border rounded-2xl text-[9.5px] font-semibold text-slate-500 text-center uppercase tracking-wide leading-normal font-mono">
+              NeoGTec Core — Coffre-fort de Gouvernance de Santé RDC Certifié conforme ISO/IEC 27001 version 2026 &amp; RGPD Article 21. Tout abus d'usage fait l'objet de sanctions SOC.
+            </div>
+
+          </div>
+        )}
       </div>
 
       {/* ======================================= */}
@@ -844,6 +1494,100 @@ export const UserProfilePanel: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ======================================= */}
+      {/* LOW-RISK ISO CONFIRMATION DIALOG        */}
+      {/* ======================================= */}
+      <AnimatePresence>
+        {showLowRiskModal && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
+            <div className="absolute inset-0" onClick={() => setShowLowRiskModal(false)} />
+            <div className="relative bg-white rounded-3xl w-full max-w-md p-6 space-y-4 text-slate-850 shadow-2xl border border-slate-200 z-10 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center gap-2 border-b pb-3 text-slate-950 font-black uppercase text-xs font-mono">
+                <ShieldCheck className="w-5 h-5 text-indigo-500" /> Confirmer l'Exportation Standard
+              </div>
+              <p className="text-xs text-slate-500 leading-normal font-semibold">
+                Vous allez exporter <b className="text-slate-900 font-bold">1,240 lignes d'historiques anonymisées</b> pour analyse statistique. Souhaitez-vous continuer l'opération ?
+              </p>
+              <div className="flex gap-2 pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowLowRiskModal(false)}
+                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer border"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setShowLowRiskModal(false);
+                    addSandboxLog('EXPORT_CSV_FAIBLE_RISQUE', 'Exportation réussie de 1,240 lignes de données cliniques brutes anonymisées.', 'SUCCESS');
+                    triggerSuccessToast("Export CSV généré avec succès !");
+                  }}
+                  className="flex-1 py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer shadow-lg"
+                >
+                  Confirmer l'export
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ======================================= */}
+      {/* MEDIUM-RISK KEYWORD REQ DIALOG (Friction) */}
+      {/* ======================================= */}
+      <AnimatePresence>
+        {showMediumRiskModal && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
+            <div className="absolute inset-0" onClick={() => setShowMediumRiskModal(false)} />
+            <div className="relative bg-white rounded-3xl w-full max-w-sm p-6 space-y-4 text-slate-850 shadow-2xl border border-rose-150 z-10 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center gap-2 border-b pb-3 text-rose-600 font-mono font-black uppercase text-xs">
+                <AlertTriangle className="w-5 h-5" /> Confirmation d'Action Critique
+              </div>
+              <p className="text-xs text-slate-500 leading-normal">
+                Suspendre un partenaire clinique coupe immédiatement l'accès de <b>12,340 assurés</b> du secteur de Gombe.
+              </p>
+              <p className="text-[11px] text-slate-650 font-semibold bg-slate-50 p-2.5 rounded-xl border">
+                Pour accomplir la suspension de l'<b>Hôpital Biamba Marie Mutombo</b>, veuillez saisir explicitement le code de déverrouillage ci-dessous : <b className="text-rose-600 select-all font-mono font-bold block mt-1 text-center scale-105 text-sm">SUSPENDRE</b>
+              </p>
+
+              <div className="space-y-1">
+                <input 
+                  type="text"
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  placeholder="Tapez le mot de passe ici"
+                  className="w-full h-11 bg-slate-50 border border-slate-205 text-slate-900 rounded-xl px-4 text-xs font-black uppercase text-center focus:outline-none focus:bg-white"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowMediumRiskModal(false)}
+                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-750 border rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="button"
+                  disabled={keywordInput !== 'SUSPENDRE'}
+                  onClick={() => {
+                    setBiambaStatus('suspended');
+                    setShowMediumRiskModal(false);
+                    addSandboxLog('SUSPENDRE_ETABLISSEMENT_BIAMBA', 'Suspension de l\'Hôpital Biamba Marie Mutombo, coupure des clés API partenaires et notification des assurés.', 'CRITICAL');
+                    triggerSuccessToast("Hôpital Biamba Marie Mutombo suspendu temporairement. Statut synchronisé.");
+                  }}
+                  className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer transition-colors shadow-lg"
+                >
+                  Confirmer
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </AnimatePresence>

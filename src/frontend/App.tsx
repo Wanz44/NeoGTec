@@ -40,6 +40,9 @@ import { SystemConfig } from './components/SystemConfig';
 import { useLanguage } from './lib/LanguageContext';
 import { Login } from './components/Login';
 import { UserProfilePanel } from './components/users/UserProfilePanel';
+import { HelpSystem } from './components/HelpSystem';
+import { NotificationCenter } from './components/NotificationCenter';
+import { Sparkles, ArrowRight, Check } from 'lucide-react';
 
 import { useApp } from './lib/AppContext';
 
@@ -90,6 +93,35 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
   const [globalToast, setGlobalToast] = React.useState<string | null>(null);
+  const [showProfileModal, setShowProfileModal] = React.useState(false);
+  
+  // Advanced support systems and active notification router states
+  const [showHelpPanel, setShowHelpPanel] = React.useState(false);
+  const [showNotificationsPanel, setShowNotificationsPanel] = React.useState(false);
+  const [guidedTourStep, setGuidedTourStep] = React.useState<number | null>(null);
+
+  const TOUR_STEPS = [
+    {
+      id: "tour-1",
+      title: "🧭 Menu Réseau (Sidebar)",
+      description: "Explorez les modules opérationnels de NeoGTec : Administration, Sinistres, Contrats, Comptabilité, Tiers Payant, Télémédecine et Analytics."
+    },
+    {
+      id: "tour-2",
+      title: "🌍 Sélecteur National Multi-dévises",
+      description: "Commutez le flux de travail vers un autre pays (RDC, France, Angola) pour appliquer instantanément les devises et taux d'échange régionaux (CDF, EUR, AOA)."
+    },
+    {
+      id: "tour-3",
+      title: "🔔 Piste d'Alertes et Notifications",
+      description: "Consultez la santé générale de la base de données CPU, validez les pré-autorisations financières urgentes ou examinez les audits."
+    },
+    {
+      id: "tour-4",
+      title: "🕹️ Assistance Active Google Support",
+      description: "Cliquez sur l'option d'Aide à tout moment pour lire les bases de connaissances interactives, simuler un bot WhatsApp, ou créer un ticket."
+    }
+  ];
 
   if (!isLoggedIn) {
     return (
@@ -359,42 +391,41 @@ export default function App() {
             </div>
 
             <button 
-              onClick={() => setShowFAQ(!showFAQ)}
-              className={cn(
-                "p-2 rounded-sm transition-all border outline-none font-medium text-sm flex items-center gap-2",
-                showFAQ ? "bg-green-500 text-white border-green-400 shadow-lg shadow-green-500/20" : "bg-white/50 text-green-900/70 border-white/20 hover:bg-white/80 active:scale-95"
-              )}
+              onClick={() => {
+                setShowHelpPanel(true);
+                logAction('OUVERTURE_PANNEAU_AIDE', 'Ouverture du support client intégré niveau Google depuis le header.', 'SUCCESS');
+              }}
+              className="p-2 rounded-sm transition-all border outline-none font-medium text-sm flex items-center gap-2 bg-white/50 text-green-950 hover:bg-white/80 active:scale-95 cursor-pointer border-white/20 relative"
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-4 h-4 text-emerald-600" />
               <span className="hidden sm:inline">{t('app.help')}</span>
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 border border-white rounded-full animate-bounce" />
             </button>
 
-            <div className="relative group">
-              <button className="p-2 bg-white/50 rounded-sm border border-white/20 text-green-900/60 hover:bg-white/80 transition-all relative outline-none active:scale-95">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-green-500 rounded-full border-2 border-white" />
-              </button>
-              {/* Notifications Dropdown */}
-              <div className="absolute top-full right-0 mt-2 w-72 material-mica rounded-md p-4 opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all z-50 border border-white/60">
-                <h4 className="text-[11px] font-bold text-green-950/40 uppercase tracking-widest mb-3">{t('app.notifications')}</h4>
-                <div className="space-y-2">
-                  <div className="flex gap-3 p-2 rounded-[8px] hover:bg-green-50/50 transition-colors cursor-default">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
-                    <p className="text-[11px] text-green-950/80 leading-relaxed font-medium">Contrat GOUV-2024 en attente de signature électronique (Tenant: AS-912).</p>
-                  </div>
-                  <div className="flex gap-3 p-2 rounded-[8px] hover:bg-green-50/50 transition-colors cursor-default">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                    <p className="text-[11px] text-green-950/80 leading-relaxed font-medium">Audit RGPD hebdomadaire : 100% de conformité.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <button 
+              onClick={() => {
+                setShowNotificationsPanel(true);
+                logAction('OUVERTURE_CENTRE_NOTIFICATIONS', 'Accès des alertes réseau NeoGTec.', 'SUCCESS');
+              }}
+              className="p-2 bg-white/50 rounded-sm border border-white/20 text-green-900/60 hover:bg-white/80 transition-all relative outline-none active:scale-95 cursor-pointer"
+            >
+              <Bell className="w-4 h-4 text-indigo-600" />
+              <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-600 text-[8px] font-black text-white border border-white shadow-md">
+                3
+              </span>
+            </button>
 
             <div className="w-px h-6 bg-green-200/20 mx-1" />
 
             {/* Profile Dropdown with Session Controls */}
             <div className="relative group z-50">
-              <button className="flex items-center gap-2 hover:bg-slate-50 p-1 rounded-full border border-slate-200/60 transition-all cursor-pointer outline-none md:pr-2.5">
+              <button 
+                onClick={() => {
+                  setShowProfileModal(true);
+                  logAction('ACCES_PROFIL_UTILISATEUR', 'Ouverture du panneau centralisé du profil utilisateur (RGPD / CNIL).', 'SUCCESS');
+                }}
+                className="flex items-center gap-2 hover:bg-slate-50 p-1 rounded-full border border-slate-200/60 transition-all cursor-pointer outline-none md:pr-2.5"
+              >
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black bg-gradient-to-tr from-green-500 to-emerald-500 text-white shadow-md uppercase">
                   {currentUser?.name.substring(0, 2)}
                 </div>
@@ -418,7 +449,7 @@ export default function App() {
                 
                 <button 
                   onClick={() => {
-                    setActiveModule('profile');
+                    setShowProfileModal(true);
                   }}
                   className="mx-1 px-2 py-1.5 rounded-lg text-xs font-black text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/65 transition-all flex items-center justify-between cursor-pointer outline-none"
                 >
@@ -481,6 +512,161 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Profile Compliance Overlay Window */}
+      <AnimatePresence>
+        {showProfileModal && (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[1000] flex items-center justify-center p-4">
+            {/* Click blocking overlay: Clicking here will NOT close the window */}
+            <div className="absolute inset-0 cursor-default" />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="relative bg-slate-50 w-full max-w-6xl rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] z-10"
+            >
+              <div className="bg-white border-b border-slate-150 px-8 py-4 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider font-mono">Coffre-fort d'audit RGPD activé</span>
+                </div>
+                
+                <button 
+                  id="profile-modal-close-btn"
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    logAction('FERMETURE_PROFIL_ADMIN', 'Fermeture manuelle sécurisée du profil admin.');
+                  }}
+                  className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-md flex items-center gap-1.5"
+                >
+                  <X className="w-4 h-4" /> Fermer
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+                <UserProfilePanel onClose={() => {
+                  setShowProfileModal(false);
+                  logAction('FERMETURE_PROFIL_ADMIN', 'Fermeture manuelle sécurisée du profil admin.');
+                }} />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Help Badge Intercom-like Widget at the bottom-right of all page views */}
+      <div className="fixed bottom-6 right-6 z-[180]">
+        <button
+          onClick={() => {
+            setShowHelpPanel(true);
+            logAction('CLIC_WIDGET_FLOAT_AIDE', 'Clic sur le Widget flottant d\'assistance en bas à droite.', 'SUCCESS');
+          }}
+          className="w-14 h-14 bg-gradient-to-tr from-green-600 to-emerald-700 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 outline-none cursor-pointer group border-2 border-white/25 relative"
+          title="Besoin d'aide ? (Google Support)"
+        >
+          <HelpCircle className="w-6 h-6 shrink-0 group-hover:rotate-12 transition-transform" />
+          <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white border border-white animate-bounce shadow">
+            !
+          </span>
+        </button>
+      </div>
+
+      {/* Embedded Help system right drawers (Intercom style) */}
+      <HelpSystem 
+        activeModule={activeModule}
+        onModuleChange={(mod) => {
+          setActiveModule(mod);
+          logAction('REDIRECTION_MODULE_AIDE', `Navigation vers le module ${mod} depuis le centre d'assistance.`, 'SUCCESS');
+        }}
+        isOpen={showHelpPanel}
+        onClose={() => setShowHelpPanel(false)}
+        onStartTour={() => setGuidedTourStep(0)}
+        logAction={logAction}
+      />
+
+      {/* Embedded active Notification router right drawers (NeoGTec nerve style) */}
+      <NotificationCenter 
+        isOpen={showNotificationsPanel}
+        onClose={() => setShowNotificationsPanel(false)}
+        onModuleChange={(mod) => {
+          setActiveModule(mod);
+          logAction('REDIRECTION_MODULE_NOTIF', `Navigation vers le module ${mod} depuis les alertes réseau.`, 'SUCCESS');
+        }}
+        logAction={logAction}
+      />
+
+      {/* ======================================= */}
+      {/* GUIDED ONBOARDING TOUR OVERLAY WINDOW    */}
+      {/* ======================================= */}
+      <AnimatePresence>
+        {guidedTourStep !== null && (
+          <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative bg-white rounded-3xl w-full max-w-sm p-6 space-y-4 text-slate-850 shadow-2xl border border-indigo-200"
+            >
+              <div className="flex justify-between items-center border-b pb-3 text-slate-950 font-black uppercase text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-indigo-600">
+                  <Sparkles className="w-4 h-4 text-indigo-500" /> Onboarding Assisté (Pas à Pas)
+                </span>
+                <span className="text-slate-400">Étape {guidedTourStep + 1} de {TOUR_STEPS.length}</span>
+              </div>
+
+              <div className="space-y-2">
+                <h5 className="text-sm font-extrabold text-slate-900 leading-tight">{TOUR_STEPS[guidedTourStep].title}</h5>
+                <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
+                  {TOUR_STEPS[guidedTourStep].description}
+                </p>
+              </div>
+
+              {/* Action buttons of user guide overlay */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGuidedTourStep(null);
+                    logAction('TOUR_GUIDE_SKIP', "L'utilisateur a quitté la visite guidée d'onboarding.", 'WARNING');
+                  }}
+                  className="py-2 px-3 hover:bg-slate-100 text-slate-400 hover:text-slate-705 text-[10px] font-black uppercase tracking-wider rounded-lg outline-none cursor-pointer"
+                >
+                  Passer
+                </button>
+
+                <div className="flex gap-2">
+                  {guidedTourStep > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setGuidedTourStep(prev => prev !== null ? prev - 1 : null)}
+                      className="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer border"
+                    >
+                      Précédent
+                    </button>
+                  )}
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (guidedTourStep < TOUR_STEPS.length - 1) {
+                        setGuidedTourStep(prev => prev !== null ? prev + 1 : null);
+                      } else {
+                        setGuidedTourStep(null);
+                        logAction('TOUR_GUIDE_COMPLETE', "L'utilisateur a complété la visite guidée d'onboarding.", 'SUCCESS');
+                      }
+                    }}
+                    className="py-2 px-4 bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer shadow-md"
+                  >
+                    {guidedTourStep === TOUR_STEPS.length - 1 ? "Terminer" : "Suivant"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
