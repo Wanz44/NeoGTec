@@ -107,7 +107,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
         [moduleId]: !prev[moduleId]
       }));
     }
-    onModuleChange(moduleId);
+    if (moduleId === 'settings') {
+      onModuleChange('governance');
+    } else {
+      onModuleChange(moduleId);
+    }
   };
 
   return (

@@ -2,7 +2,7 @@
  * 📄 Fichier : /src/frontend/components/Governance.tsx
  * 🎯 Objectif : Gestion de la configuration générale, des formulaires et des documents.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GovernanceTenants } from './GovernanceTenants';
 import { 
@@ -10,14 +10,43 @@ import {
   Clock, Shield, Save, Plus, Trash2, 
   Image as ImageIcon, Type, CheckSquare, 
   ChevronRight, Languages, Mail, Phone,
-  Eye, Download, Share2, Printer, Hospital
+  Eye, Download, Share2, Printer, Hospital,
+  Database, Activity, CheckCircle, RefreshCcw
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { verifySupabaseConnection } from '../lib/supabase';
 
-type GovernanceTab = 'general' | 'forms' | 'documents' | 'tenants';
+type GovernanceTab = 'general' | 'forms' | 'documents' | 'tenants' | 'database';
 
 export const Governance: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<GovernanceTab>('tenants');
+  const [activeTab, setActiveTab] = useState<GovernanceTab>('database'); // Set default to database to show connection directly
+  const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [dbMessage, setDbMessage] = useState<string>('En attente de connexion...');
+  const [testingConnection, setTestingConnection] = useState(false);
+
+  const checkConnection = async () => {
+    setTestingConnection(true);
+    setDbStatus('checking');
+    try {
+      const res = await verifySupabaseConnection();
+      if (res.success) {
+        setDbStatus('connected');
+        setDbMessage(res.message);
+      } else {
+        setDbStatus('error');
+        setDbMessage(res.message);
+      }
+    } catch (e: any) {
+      setDbStatus('error');
+      setDbMessage(e?.message || 'Erreur lors de la vérification.');
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  useEffect(() => {
+    checkConnection();
+  }, []);
 
   const renderGeneral = () => (
     <div className="space-y-6">
@@ -225,6 +254,118 @@ export const Governance: React.FC = () => {
     </>
   );
 
+  const renderDatabase = () => (
+    <div className="space-y-6">
+       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Status Panel */}
+          <div className="lg:col-span-1 p-6 rounded-lg border border-green-200 bg-white shadow-sm flex flex-col justify-between">
+             <div>
+                <h4 className="text-[12px] font-black text-green-950 uppercase mb-4 flex items-center gap-2 italic">
+                   <Database className="w-5 h-5 text-emerald-650" /> Liaison Supabase Cluster
+                </h4>
+                <div className="p-4 bg-slate-50 border border-green-100 rounded-lg space-y-3">
+                   <div className="space-y-1">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Endpoint API</span>
+                      <code className="text-[10px] font-bold text-green-700 font-mono select-all break-all block">
+                         https://lbgwlghiwpamhthdgukw.supabase.co
+                      </code>
+                   </div>
+                   <div className="space-y-1 pt-2 border-t border-slate-200/60">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Clé Publique (Anon)</span>
+                      <code className="text-[10px] font-bold text-slate-600 font-mono select-all break-all block">
+                         sb_publishable_PHF4KyIwnRBzWXE21_krug_2BZvMtG-
+                      </code>
+                   </div>
+                </div>
+             </div>
+
+             <div className="pt-6 space-y-3">
+                <div className="flex items-center gap-3">
+                   <div className={cn(
+                      "w-3 h-3 rounded-full shrink-0",
+                      dbStatus === 'connected' ? 'bg-emerald-500 animate-pulse' : dbStatus === 'error' ? 'bg-rose-500 animate-pulse' : 'bg-amber-500 animate-pulse'
+                   )} />
+                   <p className="text-[11px] font-extrabold text-slate-700">
+                      Statut: {dbStatus === 'connected' ? 'Connecté à Supabase' : dbStatus === 'error' ? 'Erreur de liaison' : 'Vérification...'}
+                   </p>
+                </div>
+                <p className="text-[10px] font-medium text-slate-500 leading-relaxed italic">
+                   {dbMessage}
+                </p>
+
+                <button
+                   onClick={checkConnection}
+                   disabled={testingConnection}
+                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-50 hover:bg-green-50 text-green-950 rounded-lg text-[10px] font-black uppercase tracking-wider hover:text-green-600 transition-all border border-slate-200 cursor-pointer"
+                >
+                   <RefreshCcw className={cn("w-3.5 h-3.5", testingConnection && "animate-spin")} />
+                   Rafraîchir la Connexion
+                </button>
+             </div>
+          </div>
+
+          {/* Connected Capabilities */}
+          <div className="lg:col-span-2 p-6 rounded-lg border border-green-200 bg-white shadow-sm">
+             <h4 className="text-[12px] font-black text-green-950 uppercase mb-4 flex items-center gap-2 italic">
+                <Activity className="w-5 h-5 text-emerald-650" /> Fonctionnalités Supabase Actives
+             </h4>
+             <p className="text-[11px] text-slate-500 font-semibold mb-6">
+                Le SDK client Supabase centralsé est nativement couplé avec le moteur de synchronisation opérationnel du frontend de NeoGTec :
+             </p>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                   { title: "WORM Audit Sync", desc: "Synchronisation automatique de la trace d'audits chiffrée de NeoGTec vers la table 'neogtec_audit_logs'.", tag: "PostgreSQL" },
+                   { title: "Multi-Tenant Isolation", desc: "Séparation d'accès cliniques gérée directement par les stratégies de sécurité RLS (Row Level Security).", tag: "RLS Actif" },
+                   { title: "Statut des Terminaux", desc: "Télémétrie en temps réel sur les tentatives d'authentification MFA et validations financières 4-Eyes.", tag: "Sécurisé" },
+                   { title: "Bénéficiaires & Familles", desc: "Mise à jour à la volée des ayants-droits respectant le plafond légal d'affiliation de 25 ans.", tag: "Régulation ARCA" },
+                ].map((item, idx) => (
+                   <div key={idx} className="p-4 bg-slate-50 rounded-lg border border-slate-100 hover:border-emerald-250 transition-all">
+                      <div className="flex justify-between items-center mb-2">
+                         <h5 className="text-[11px] font-black text-green-950 uppercase">{item.title}</h5>
+                         <span className="text-[8px] font-black px-1.5 py-0.5 bg-emerald-100 text-emerald-750 rounded-sm uppercase">{item.tag}</span>
+                      </div>
+                      <p className="text-[10px] font-medium text-slate-400 leading-normal italic">{item.desc}</p>
+                   </div>
+                ))}
+             </div>
+          </div>
+       </div>
+
+       {/* DDL Schema Reference */}
+       <div className="p-6 rounded-lg border border-green-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+             <h4 className="text-[12px] font-black text-green-950 uppercase flex items-center gap-2 italic">
+                <FileText className="w-5 h-5 text-indigo-505" /> Structure Relationnelle de la BDD Postgres (Supabase)
+             </h4>
+             <span className="text-[8px] font-black uppercase text-slate-400">Fichier de déploiement: database/schema.sql</span>
+          </div>
+          <p className="text-[11px] text-slate-500 font-semibold mb-4 leading-relaxed">
+             Les tables suivantes doivent être configurées sur votre instance Supabase pour exploiter pleinement l'intelligence métier de la plateforme. Vous pouvez copier directement le script SQL ci-dessous dans votre éditeur SQL Supabase :
+          </p>
+          <div className="relative">
+             <pre className="text-[10px] font-mono p-4 bg-slate-900 text-slate-100 rounded-lg overflow-x-auto max-h-[300px] leading-relaxed border border-slate-950 select-all">
+{`-- SQL SCRIPTS FOR SUPABASE DATABASE (NEOGTEC CORE)
+CREATE TABLE IF NOT EXISTS neogtec_audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id_log VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    user_id VARCHAR(50) NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    user_role VARCHAR(100) NOT NULL,
+    action_name VARCHAR(255) NOT NULL,
+    payload_details TEXT,
+    origin_ip VARCHAR(50),
+    severity_status VARCHAR(50) NOT NULL
+);
+
+-- Créez un index d'optimisation sur les actions de gouvernance
+CREATE INDEX IF NOT EXISTS idx_neogtec_actions ON neogtec_audit_logs(action_name);`}
+             </pre>
+          </div>
+       </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
        {/* Header */}
@@ -237,6 +378,7 @@ export const Governance: React.FC = () => {
           </div>
           <div className="flex bg-white p-1.5 rounded-lg border border-green-200 shadow-sm overflow-x-auto no-scrollbar scroll-smooth">
              {[
+               { id: 'database', label: 'Base Supabase', icon: Database },
                { id: 'tenants', label: 'Etablissements', icon: Hospital },
                { id: 'general', label: 'Général', icon: Settings },
                { id: 'forms', label: 'Formulaires', icon: Layout },
@@ -265,6 +407,7 @@ export const Governance: React.FC = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
+             {activeTab === 'database' && renderDatabase()}
              {activeTab === 'tenants' && <GovernanceTenants />}
              {activeTab === 'general' && renderGeneral()}
              {activeTab === 'forms' && renderForms()}

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { syncAuditLogToSupabase } from './supabase';
 
 export type UserRole = 
   | 'SUPER_ADMIN' 
@@ -294,6 +295,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       status
     };
     setAuditLogs(prev => [newLog, ...prev]);
+    
+    // Background async sync with Supabase PostgreSQL
+    syncAuditLogToSupabase(newLog).catch(err => {
+      console.warn('Silent Supabase log bypass:', err);
+    });
   };
 
   const registerNewUser = (user: Partial<UserProfile>) => {
