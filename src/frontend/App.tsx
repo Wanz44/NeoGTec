@@ -39,13 +39,16 @@ import { Settings } from './components/Settings';
 import { SystemConfig } from './components/SystemConfig';
 import { useLanguage } from './lib/LanguageContext';
 import { Login } from './components/Login';
+import { UserProfilePanel } from './components/users/UserProfilePanel';
+
+import { useApp } from './lib/AppContext';
 
 // Sous-composant pour la section d'aide dynamique (FAQ)
 const FAQSection = () => {
   const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center bg-green-50/20 rounded-fluent border border-dashed border-green-200">
-      <h3 className="text-xl font-bold text-green-950 mb-2">{t('app.help')} & FAQ</h3>
+      <h3 className="text-xl font-bold text-green-950 mb-2">{t('app.help')} &amp; FAQ</h3>
       <p className="text-green-950/50 max-w-sm">{t('app.no_notifications', 'Le centre d\'aide est actuellement vide.')}</p>
     </div>
   );
@@ -73,16 +76,36 @@ const SearchInput = () => {
 // Composant racine de l'application
 export default function App() {
   const { language, setLanguage, t } = useLanguage();
-  const [currentUser, setCurrentUser] = React.useState<{ email: string; name: string; role: string } | null>(null);
-  const [activeModule, setActiveModule] = React.useState('dashboard'); // Hook d'état : Module courant | 🔗 Source: constants.ts
+  const { 
+    currentUser, 
+    setCurrentUser, 
+    activeModule, 
+    setActiveModule, 
+    countryEntity, 
+    setCountryEntity, 
+    quickSwitchRole,
+    logAction
+  } = useApp();
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
-  
-  // Multi-filiales & Devises (I1, I2)
-  const [countryEntity, setCountryEntity] = React.useState('RDC');
   const [globalToast, setGlobalToast] = React.useState<string | null>(null);
 
-  if (!currentUser) {
-    return <Login onLoginSuccess={(user) => setCurrentUser(user)} />;
+  if (!isLoggedIn) {
+    return (
+      <Login 
+        onLoginSuccess={(user) => {
+          setIsLoggedIn(true);
+          setCurrentUser({
+            ...currentUser,
+            email: user.email,
+            name: user.name,
+            role: user.role as any
+          });
+          logAction('CONNEXION_ESPACE_ADMIN', `Administrateur ${user.name} connecté via le portail d'authentification double-facteur.`);
+        }} 
+      />
+    );
   }
 
   const handleSwitchEntity = (entity: string, currency: string) => {
@@ -93,6 +116,7 @@ export default function App() {
 
     setCountryEntity(entity);
     setGlobalToast(`Filiale ${entity} activée. Taux de change de référence appliqué : ${rate}`);
+    logAction('CHANGEMENT_FILIALE', `Commutation de filiale vers l'entité ${entity}. Taux de change de référence appliqué : ${rate}`);
     setTimeout(() => {
       setGlobalToast(null);
     }, 4500);
@@ -174,6 +198,7 @@ export default function App() {
         return <Partners subModule={activeModule} />;
       case 'admin': return <Admin />;
       case 'system-config': return <SystemConfig />;
+      case 'profile': return <UserProfilePanel />;
       case 'settings':
         return <Settings onModuleChange={setActiveModule} />;
       default: return ( // Fallback pour les modules non encore implémentés (Placeholders)
@@ -359,7 +384,7 @@ export default function App() {
                   </div>
                   <div className="flex gap-3 p-2 rounded-[8px] hover:bg-green-50/50 transition-colors cursor-default">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                    <p className="text-[11px] text-green-950/80 leading-relaxed font-medium">Audit RGPD hebdomadaire : 100% conformité détectée sur le module Operational.</p>
+                    <p className="text-[11px] text-green-950/80 leading-relaxed font-medium">Audit RGPD hebdomadaire : 100% de conformité.</p>
                   </div>
                 </div>
               </div>
@@ -370,30 +395,65 @@ export default function App() {
             {/* Profile Dropdown with Session Controls */}
             <div className="relative group z-50">
               <button className="flex items-center gap-2 hover:bg-slate-50 p-1 rounded-full border border-slate-200/60 transition-all cursor-pointer outline-none md:pr-2.5">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black bg-gradient-to-tr from-indigo-500 to-emerald-500 text-white shadow-md uppercase">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black bg-gradient-to-tr from-green-500 to-emerald-500 text-white shadow-md uppercase">
                   {currentUser?.name.substring(0, 2)}
                 </div>
                 <div className="hidden xl:flex flex-col text-left">
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-800 leading-tight">{currentUser?.name}</span>
-                  <span className="text-[8.5px] font-mono text-slate-400 leading-none">{currentUser?.email}</span>
+                  <span className="text-[8.5px] font-mono text-slate-400 leading-none">{currentUser?.role}</span>
                 </div>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
               
-              <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-md p-2 shadow-2xl opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-[100] border border-slate-150 flex flex-col gap-1">
-                <span className="text-[8.5px] font-black text-slate-400 uppercase tracking-widest block px-2 py-1 border-b">Session d'Administration</span>
+              <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-md p-2 shadow-2xl opacity-0 scale-95 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-[100] border border-slate-150 flex flex-col gap-1">
+                <span className="text-[8.5px] font-black text-slate-400 uppercase tracking-widest block px-2 py-1 border-b">Session Active &amp; Métier</span>
                 
                 <div className="px-2 py-2 text-slate-700">
                   <p className="text-xs font-black text-slate-900">{currentUser?.name}</p>
                   <p className="text-[9.5px] text-slate-400 truncate mt-0.5">{currentUser?.email}</p>
-                  <span className="mt-1.5 inline-block px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-black uppercase text-amber-600">ROLE_SUPER_ADMIN</span>
+                  <span className="mt-1.5 inline-block px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-[8px] font-black uppercase text-green-700">
+                    {currentUser?.role}
+                  </span>
                 </div>
                 
+                <button 
+                  onClick={() => {
+                    setActiveModule('profile');
+                  }}
+                  className="mx-1 px-2 py-1.5 rounded-lg text-xs font-black text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/65 transition-all flex items-center justify-between cursor-pointer outline-none"
+                >
+                  <span>👤 Mon profil</span>
+                  <span className="text-[8.5px] font-mono text-indigo-500 font-bold">CNIL-RGPD</span>
+                </button>
+                
+                <div className="border-t border-slate-100 my-1"></div>
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block px-2">Tester un autre Rôle :</span>
+                
+                <div className="flex flex-col gap-0.5 max-h-48 overflow-y-auto px-1 py-1 bg-slate-50 rounded">
+                  {[
+                    { id: 'SUPER_ADMIN', label: '👑 Super Admin' },
+                    { id: 'GESTIONNAIRE_SINISTRES', label: '🩺 Médecin Conseil' },
+                    { id: 'GESTIONNAIRE_FINANCE', label: '📊 Comptable / Finance' },
+                    { id: 'AUDITEUR_EXTERNE', label: '🔎 Auditeur Externe' }
+                  ].map(r => (
+                    <button
+                      key={r.id}
+                      onClick={() => quickSwitchRole(r.id as any)}
+                      className={cn(
+                        "w-full text-left px-2 py-1 text-[10px] font-bold rounded transition-all cursor-pointer outline-none",
+                        currentUser?.role === r.id ? "bg-green-600 text-white" : "text-slate-600 hover:bg-slate-100"
+                      )}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="border-t border-slate-100 my-1"></div>
                 
                 <button 
                   onClick={() => {
-                    setCurrentUser(null);
+                    setIsLoggedIn(false);
                     setActiveModule('dashboard');
                   }}
                   className="w-full text-left px-2 py-1.5 rounded text-xs font-black text-rose-600 hover:bg-rose-50 transition-all flex items-center justify-between cursor-pointer outline-none"

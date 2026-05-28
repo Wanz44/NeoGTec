@@ -7,29 +7,23 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, UserPlus, X, Heart, Shield, Plus, ChevronRight, 
   History as HistoryIcon, Trash2, Camera, User, AlertTriangle, 
-  Check, CreditCard, ShieldAlert, ShieldCheck, Mail
+  Check, CreditCard, ShieldAlert, ShieldCheck, Mail, Edit3, Trash, QrCode
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-
-export interface Beneficiary {
-  id: string;
-  name: string;
-  relation: 'Conjoint' | 'Enfant' | 'Parent' | 'Autre';
-  age: number;
-  status: 'Actif' | 'En attente' | 'Suspendu';
-  photo?: string;
-  cardCode: string;
-}
-
-const INITIAL_BENEFICIARIES: Beneficiary[] = [
-  { id: 'BEN-WAN-01', name: 'Sabrina Wanzambi', relation: 'Conjoint', age: 28, status: 'Actif', cardCode: 'ADNA-CRD-890214' },
-  { id: 'BEN-WAN-02', name: 'Isaac Wanzambi', relation: 'Enfant', age: 6, status: 'Actif', cardCode: 'ADNA-CRD-890215' },
-  { id: 'BEN-WAN-03', name: 'Léa Wanzambi', relation: 'Enfant', age: 3, status: 'En attente', cardCode: 'ADNA-CRD-890216' },
-];
+import { useApp } from '../../lib/AppContext';
 
 export const BeneficiariesMgmt: React.FC = () => {
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(INITIAL_BENEFICIARIES);
+  const { 
+    beneficiaries, 
+    addFamilyMember, 
+    updateFamilyMember, 
+    deleteFamilyMember,
+    logAction 
+  } = useApp();
+
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedEditMember, setSelectedEditMember] = useState<any | null>(null);
 
   // New Beneficiary Form state
   const [formName, setFormName] = useState('');
@@ -37,8 +31,14 @@ export const BeneficiariesMgmt: React.FC = () => {
   const [formAge, setFormAge] = useState<number>(12);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Edit Beneficiary Form state
+  const [editName, setEditName] = useState('');
+  const [editRelation, setEditRelation] = useState<'Conjoint' | 'Enfant' | 'Parent' | 'Autre'>('Enfant');
+  const [editAge, setEditAge] = useState<number>(12);
+  const [editErrorMessage, setEditErrorMessage] = useState<string | null>(null);
+
   // Digital card preview state
-  const [selectedCardMember, setSelectedCardMember] = useState<Beneficiary | null>(INITIAL_BENEFICIARIES[0]);
+  const [selectedCardMember, setSelectedCardMember] = useState<any | null>(beneficiaries[0] || null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const triggerToast = (msg: string) => {
@@ -67,6 +67,24 @@ export const BeneficiariesMgmt: React.FC = () => {
     }
   };
 
+  const handleEditAgeChange = (ageVal: number) => {
+    setEditAge(ageVal);
+    if (editRelation === 'Enfant' && ageVal > 25) {
+      setEditErrorMessage("La législation d'assurance en RDC stipule que l'âge limite d'un enfant d'ayant-droit éligible est de 25 ans.");
+    } else {
+      setEditErrorMessage(null);
+    }
+  };
+
+  const handleEditRelationChange = (relVal: 'Conjoint' | 'Enfant' | 'Parent' | 'Autre') => {
+    setEditRelation(relVal);
+    if (relVal === 'Enfant' && editAge > 25) {
+      setEditErrorMessage("La législation d'assurance en RDC stipule que l'âge limite d'un enfant d'ayant-droit éligible est de 25 ans.");
+    } else {
+      setEditErrorMessage(null);
+    }
+  };
+
   const handleAddBeneficiary = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim()) return;
@@ -77,35 +95,76 @@ export const BeneficiariesMgmt: React.FC = () => {
       return;
     }
 
-    const newBen: Beneficiary = {
-      id: `BEN-WAN-0${beneficiaries.length + 1}`,
+    const res = addFamilyMember({
       name: formName,
       relation: formRelation,
       age: formAge,
-      status: 'En attente',
-      cardCode: `ADNA-CRD-${Math.floor(100000 + Math.random() * 900000)}`
-    };
+      status: 'En attente'
+    });
 
-    setBeneficiaries([...beneficiaries, newBen]);
-    setShowAddModal(false);
-    triggerToast(`Bénéficiaire "${formName}" ajouté avec succès (En attente de contrôle biométrique).`);
-    
-    // Reset form
-    setFormName('');
-    setFormRelation('Enfant');
-    setFormAge(12);
-    setErrorMessage(null);
+    if (res.success) {
+      setShowAddModal(false);
+      triggerToast(`Bénéficiaire "${formName}" ajouté avec succès.`);
+      
+      // Select the newly added member
+      const newB = beneficiaries[beneficiaries.length - 1];
+      if (newB) setSelectedCardMember(newB);
+
+      // Reset form
+      setFormName('');
+      setFormRelation('Enfant');
+      setFormAge(12);
+      setErrorMessage(null);
+    } else {
+      setErrorMessage(res.error || "Une erreur s'est produite.");
+    }
   };
 
-  const handleToggleStatus = (id: string) => {
-    setBeneficiaries(prev => prev.map(b => {
-      if (b.id === id) {
-        const nextStatusVal = b.status === 'Actif' ? 'Suspendu' : 'Actif';
-        triggerToast(`Le statut de ${b.name} est maintenant: ${nextStatusVal}.`);
-        return { ...b, status: nextStatusVal as any };
+  const handleOpenEdit = (b: any) => {
+    setSelectedEditMember(b);
+    setEditName(b.name);
+    setEditRelation(b.relation);
+    setEditAge(b.age);
+    setEditErrorMessage(null);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEditMember) return;
+
+    if (editRelation === 'Enfant' && editAge > 25) {
+      setEditErrorMessage("Sauvegarde bloquée : Limite d'âge de 25 ans Dépassée pour un enfant.");
+      return;
+    }
+
+    updateFamilyMember(selectedEditMember.id, {
+      name: editName,
+      relation: editRelation,
+      age: editAge
+    });
+
+    setShowEditModal(false);
+    triggerToast(`Bénéficiaire "${editName}" modifié avec succès.`);
+    logAction('MODIFIER_AYANT_DROIT', `Profil d'ayant-droit ${editName} mis à jour avec succès dans le module famille.`);
+  };
+
+  const handleDeleteMember = (id: string, name: string) => {
+    if (window.confirm(`Voulez-vous vraiment détacher le membre de couverture familiale "${name}" d'id ${id} ? Cette action est irréversible.`)) {
+      deleteFamilyMember(id);
+      triggerToast(`Le membre "${name}" a été détaché de ce dossier d'assurance.`);
+      logAction('SUPPRIMER_AYANT_DROIT', `Suppression définitive du bénéficiaire ${name} (${id}) de la couverture familiale.`);
+      if (selectedCardMember?.id === id) {
+        setSelectedCardMember(beneficiaries[0] || null);
       }
-      return b;
-    }));
+    }
+  };
+
+  const handleToggleStatus = (id: string, currentStatus: string) => {
+    const nextStatus = currentStatus === 'Actif' ? 'Suspendu' : 'Actif';
+    updateFamilyMember(id, { status: nextStatus as any });
+    triggerToast(`Statut de l'ayant-droit modifié en : ${nextStatus}`);
+    logAction('EDITION_STATUT_AYANT_DROIT', `Passage du membre d'id ${id} au statut ${nextStatus}.`);
   };
 
   return (
@@ -120,14 +179,14 @@ export const BeneficiariesMgmt: React.FC = () => {
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             className="fixed top-6 right-6 z-[250] max-w-sm bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border border-white/10 flex items-start gap-3"
           >
-            <div className="p-2 bg-rose-500 rounded-xl text-white shrink-0">
+            <div className="p-2 bg-emerald-500 rounded-xl text-white shrink-0">
               <Check className="w-4 h-4" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-black uppercase tracking-wider text-rose-400">Gestion de Famille</p>
-              <p className="text-xs text-slate-350 font-bold mt-1 leading-relaxed">{toastMessage}</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-emerald-400">Gestion de Famille</p>
+              <p className="text-xs text-slate-350 font-semibold mt-1 leading-relaxed">{toastMessage}</p>
             </div>
-            <button onClick={() => setToastMessage(null)} className="text-slate-550 hover:text-white transition-colors p-1">
+            <button onClick={() => setToastMessage(null)} className="text-slate-500 hover:text-white transition-colors p-1 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           </motion.div>
@@ -140,8 +199,10 @@ export const BeneficiariesMgmt: React.FC = () => {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between pb-2">
             <div>
-              <h4 className="text-sm font-black text-slate-1000 uppercase italic">Couverture Familiale de l&apos;Assuré Principal</h4>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Sabrina, Isaac, Léa Wanzambi rattachés</p>
+              <h4 className="text-sm font-black text-slate-900 uppercase italic">Membres rattachés à la Couverture Familiale</h4>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                {beneficiaries.length} ayants droit déclarés dans le dossier d'assurance
+              </p>
             </div>
 
             <button 
@@ -158,7 +219,7 @@ export const BeneficiariesMgmt: React.FC = () => {
                 key={b.id}
                 onClick={() => setSelectedCardMember(b)}
                 className={cn(
-                  "p-5 rounded-[2rem] border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between h-48",
+                  "p-5 rounded-[2rem] border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between h-52",
                   selectedCardMember?.id === b.id ? "bg-slate-900 text-white border-slate-900 shadow-xl" : "bg-white border-slate-150 hover:border-slate-300"
                 )}
               >
@@ -179,12 +240,14 @@ export const BeneficiariesMgmt: React.FC = () => {
                     <p className="text-[10px] font-bold text-slate-400 mt-0.5">{b.age} ans • {b.id}</p>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/50 flex items-center justify-center font-black text-xs text-slate-800">
-                    {b.name.substring(0, 1)}
+                  <div className="flex flex-col gap-1">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center font-black text-xs text-slate-800">
+                      {b.name.substring(0, 1)}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-slate-100/10 pt-3">
+                <div className="flex items-center justify-between border-t border-slate-100/10 pt-3 z-10">
                   <span className={cn(
                     "text-[9px] font-black uppercase tracking-widest",
                     b.status === 'Actif' ? "text-emerald-400" : b.status === 'Suspendu' ? "text-rose-400 animate-pulse" : "text-amber-400"
@@ -192,15 +255,33 @@ export const BeneficiariesMgmt: React.FC = () => {
                     ● {b.status}
                   </span>
 
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1">
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleToggleStatus(b.id);
+                        handleOpenEdit(b);
                       }}
-                      className="px-2 py-1 bg-rose-500/20 text-rose-300 rounded text-[8.5px] font-black uppercase tracking-wider hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                      className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[8px] font-black uppercase border"
+                    >
+                      <Edit3 className="w-2.5 h-2.5" />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleStatus(b.id, b.status);
+                      }}
+                      className="px-2.5 py-1 bg-slate-950 text-white hover:bg-slate-800 rounded text-[8px] font-black uppercase"
                     >
                       Statut
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteMember(b.id, b.name);
+                      }}
+                      className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded text-[8px] font-black uppercase border border-rose-100"
+                    >
+                      <Trash className="w-2.5 h-2.5" />
                     </button>
                   </div>
                 </div>
@@ -227,9 +308,9 @@ export const BeneficiariesMgmt: React.FC = () => {
                 </div>
 
                 <div>
-                  <p className="text-[9px] font-bold text-white/40 uppercase">Bénéficiaire Adhérent</p>
+                  <p className="text-[9px] font-bold text-white/45">Bénéficiaire Adhérent</p>
                   <p className="text-base font-black uppercase tracking-wider font-mono">{selectedCardMember.name}</p>
-                  <p className="text-[10px] font-mono mt-1 text-emerald-400">Réf: {selectedCardMember.cardCode}</p>
+                  <p className="text-[10px] font-mono mt-1 text-emerald-400">Réf: {selectedCardMember.cardCode || 'ADNA-67721'}</p>
                 </div>
 
                 <div className="flex justify-between items-end border-t border-white/10 pt-4">
@@ -240,7 +321,7 @@ export const BeneficiariesMgmt: React.FC = () => {
                   
                   {/* Generated QR Code simulator placeholder */}
                   <div className="p-1 bg-white rounded-lg">
-                    <div className="w-10 h-10 bg-slate-900 flex items-center justify-center font-black text-[6.5px] text-white">QR CAP</div>
+                    <QrCode className="w-8 h-8 text-slate-950" />
                   </div>
                 </div>
               </div>
@@ -253,7 +334,7 @@ export const BeneficiariesMgmt: React.FC = () => {
                 >
                   <Check className="w-4 h-4 text-emerald-400" /> Régénérer Code QR NFC
                 </button>
-                <p className="text-[9px] text-slate-400 font-bold uppercase text-center">Taux d&apos;émission de carte physique évité: 100% (Green-SaaS)</p>
+                <p className="text-[9px] text-slate-400 font-bold uppercase text-center">Taux d&apos;émission de carte physique évité: 100% (Green-SaaS CD)</p>
               </div>
 
             </div>
@@ -271,115 +352,196 @@ export const BeneficiariesMgmt: React.FC = () => {
       {/* ======================================= */}
       <AnimatePresence>
         {showAddModal && (
-          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowAddModal(false)}
-              className="absolute inset-0"
-            />
-
-            <motion.div 
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              className="relative bg-white rounded-[3rem] w-full max-w-md overflow-hidden shadow-2xl border border-slate-100"
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0" onClick={() => setShowAddModal(false)} />
+            
+            <form 
+              onSubmit={handleAddBeneficiary}
+              className="relative bg-white rounded-[3rem] w-full max-w-md overflow-hidden shadow-2xl border border-slate-250 z-10 p-8 space-y-4"
             >
-              <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center border border-rose-100 text-rose-500">
                     <Heart className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-black text-slate-950 uppercase italic">Ajouter un Ayant-Droit</h3>
                 </div>
-                <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:text-slate-700 cursor-pointer">
+                <button type="button" onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:text-slate-700 cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleAddBeneficiary} className="p-8 space-y-4">
-                
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Nom Complet Bénéficiaire</label>
+                <input 
+                  type="text" 
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  placeholder="Ex: David Wanzambi"
+                  className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-xs font-bold text-slate-800 focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Nom Complet Bénéficiaire</label>
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Relation</label>
+                  <select 
+                    value={formRelation}
+                    onChange={(e) => handleRelationChange(e.target.value as any)}
+                    className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 text-xs font-bold"
+                  >
+                    <option value="Conjoint">Conjoint</option>
+                    <option value="Enfant">Enfant</option>
+                    <option value="Parent">Parent</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Âge du Bénéficiaire</label>
                   <input 
-                    type="text" 
-                    value={formName}
-                    onChange={(e) => setFormName(e.target.value)}
-                    placeholder="Ex: David Wanzambi"
-                    className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/10"
+                    type="number" 
+                    value={formAge}
+                    onChange={(e) => handleAgeChange(Number(e.target.value))}
+                    className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 text-xs font-bold"
                     required
                   />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Relation</label>
-                    <select 
-                      value={formRelation}
-                      onChange={(e) => handleRelationChange(e.target.value as any)}
-                      className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-xs font-bold"
-                    >
-                      <option value="Conjoint">Conjoint</option>
-                      <option value="Enfant">Enfant</option>
-                      <option value="Parent">Parent</option>
-                      <option value="Autre">Autre</option>
-                    </select>
+              {/* AGE EXCLUSION BARRIER ERROR MESSAGE DISPLAY (F1 Requirement) */}
+              {errorMessage && (
+                <div className="p-4 bg-rose-50 border border-rose-150 rounded-xl space-y-1">
+                  <div className="flex items-center gap-1.5 text-rose-600 text-[10px] font-black uppercase">
+                    <AlertTriangle className="w-4 h-4 text-rose-500" /> INFRACTION CONTRAT RDC
                   </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Âge du Bénéficiaire</label>
-                    <input 
-                      type="number" 
-                      value={formAge}
-                      onChange={(e) => handleAgeChange(Number(e.target.value))}
-                      className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-xs font-bold"
-                      required
-                    />
-                  </div>
+                  <p className="text-[11px] font-semibold text-rose-800 leading-normal">
+                    {errorMessage}
+                  </p>
                 </div>
+              )}
 
-                {/* AGE EXCLUSION BARRIER ERROR MESSAGE DISPLAY (F1 Requirement) */}
-                <AnimatePresence>
-                  {errorMessage && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-1"
-                    >
-                      <div className="flex items-center gap-1.5 text-rose-600 text-[10px] font-black uppercase">
-                        <AlertTriangle className="w-4 h-4 text-rose-500" /> INFRACTION CONTRAT
-                      </div>
-                      <p className="text-[11px] font-semibold text-rose-800 leading-normal">
-                        {errorMessage}
-                      </p>
-                    </motion.div>
+              <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-black text-[10px] uppercase cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit"
+                  disabled={!!errorMessage}
+                  className={cn(
+                    "flex-1 py-3 text-white rounded-xl font-black text-[10px] uppercase shadow-md cursor-pointer",
+                    errorMessage ? "bg-slate-300 cursor-not-allowed" : "bg-rose-600 hover:bg-rose-700"
                   )}
-                </AnimatePresence>
+                >
+                  Rattacher Membre
+                </button>
+              </div>
 
-                <div className="pt-4 border-t border-slate-100 flex gap-3">
-                  <button 
-                    type="button" 
-                    onClick={() => setShowAddModal(false)}
-                    className="flex-1 py-4 border border-slate-200 text-slate-500 rounded-xl font-black text-[10px] uppercase tracking-widest text-center cursor-pointer"
+            </form>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ======================================= */}
+      {/* EDIT MEMBER POP-UP DIALOG MODAL           */}
+      {/* ======================================= */}
+      <AnimatePresence>
+        {showEditModal && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0" onClick={() => setShowEditModal(false)} />
+            
+            <form 
+              onSubmit={handleSaveEdit}
+              className="relative bg-white rounded-[3rem] w-full max-w-md overflow-hidden shadow-2xl border border-slate-250 z-10 p-8 space-y-4 text-slate-800"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100 text-indigo-500">
+                    <Edit3 className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-base font-black text-slate-950 uppercase italic">Modifier un Ayant-Droit</h3>
+                </div>
+                <button type="button" onClick={() => setShowEditModal(false)} className="p-2 text-slate-400 hover:text-slate-700 cursor-pointer">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Nom Complet</label>
+                <input 
+                  type="text" 
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-xs font-bold text-slate-800 focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Relation</label>
+                  <select 
+                    value={editRelation}
+                    onChange={(e) => handleEditRelationChange(e.target.value as any)}
+                    className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 text-xs font-bold"
                   >
-                    Fermer
-                  </button>
-                  <button 
-                    type="submit"
-                    disabled={!!errorMessage}
-                    className={cn(
-                      "flex-1 py-4 text-white rounded-xl font-black text-[10px] uppercase tracking-widest text-center cursor-pointer shadow-lg",
-                      errorMessage ? "bg-slate-300 cursor-not-allowed shadow-none" : "bg-rose-600 hover:bg-rose-700 shadow-rose-600/10"
-                    )}
-                  >
-                    Valider Rattachement
-                  </button>
+                    <option value="Conjoint">Conjoint</option>
+                    <option value="Enfant">Enfant</option>
+                    <option value="Parent">Parent</option>
+                    <option value="Autre">Autre</option>
+                  </select>
                 </div>
 
-              </form>
-            </motion.div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Âge</label>
+                  <input 
+                    type="number" 
+                    value={editAge}
+                    onChange={(e) => handleEditAgeChange(Number(e.target.value))}
+                    className="w-full h-12 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 text-xs font-bold"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* AGE EXCLUSION BARRIER ERROR MESSAGE DISPLAY */}
+              {editErrorMessage && (
+                <div className="p-4 bg-rose-50 border border-rose-150 rounded-xl space-y-1">
+                  <div className="flex items-center gap-1.5 text-rose-600 text-[10px] font-black uppercase">
+                    <AlertTriangle className="w-4 h-4 text-rose-500" /> INFRACTION CONTRAT RDC
+                  </div>
+                  <p className="text-[11px] font-semibold text-rose-800 leading-normal">
+                    {editErrorMessage}
+                  </p>
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-xl font-black text-[10px] uppercase cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit"
+                  disabled={!!editErrorMessage}
+                  className={cn(
+                    "flex-1 py-3 text-white rounded-xl font-black text-[10px] uppercase shadow-md cursor-pointer",
+                    editErrorMessage ? "bg-slate-300 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
+                  )}
+                >
+                  Mettre à jour
+                </button>
+              </div>
+
+            </form>
           </div>
         )}
       </AnimatePresence>
