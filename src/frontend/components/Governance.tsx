@@ -4,7 +4,6 @@
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GovernanceTenants } from './GovernanceTenants';
 import { 
   Settings, FileText, Layout, Globe, Bell, 
   Clock, Shield, Save, Plus, Trash2, 
@@ -16,7 +15,7 @@ import {
 import { cn } from '../lib/utils';
 import { verifySupabaseConnection } from '../lib/supabase';
 
-type GovernanceTab = 'general' | 'forms' | 'documents' | 'tenants' | 'database';
+type GovernanceTab = 'general' | 'forms' | 'documents' | 'database';
 
 export const Governance: React.FC = () => {
   const [activeTab, setActiveTab] = useState<GovernanceTab>('database'); // Set default to database to show connection directly
@@ -379,7 +378,6 @@ CREATE INDEX IF NOT EXISTS idx_neogtec_actions ON neogtec_audit_logs(action_name
           <div className="flex bg-white p-1.5 rounded-lg border border-green-200 shadow-sm overflow-x-auto no-scrollbar scroll-smooth">
              {[
                { id: 'database', label: 'Base Supabase', icon: Database },
-               { id: 'tenants', label: 'Etablissements', icon: Hospital },
                { id: 'general', label: 'Général', icon: Settings },
                { id: 'forms', label: 'Formulaires', icon: Layout },
                { id: 'documents', label: 'Documents', icon: FileText },
@@ -408,7 +406,6 @@ CREATE INDEX IF NOT EXISTS idx_neogtec_actions ON neogtec_audit_logs(action_name
             transition={{ duration: 0.2 }}
           >
              {activeTab === 'database' && renderDatabase()}
-             {activeTab === 'tenants' && <GovernanceTenants />}
              {activeTab === 'general' && renderGeneral()}
              {activeTab === 'forms' && renderForms()}
              {activeTab === 'documents' && renderDocuments()}

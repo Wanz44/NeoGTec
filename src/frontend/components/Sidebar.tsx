@@ -80,6 +80,8 @@ const SUB_MODULES_PARTNERS = [
 
 const SUB_MODULES_SYSTEM = [
   { id: 'governance', name: 'Paramétrage & Governance', icon: Settings },
+  { id: 'saas-tenants', name: 'Module K.12 (SaaS / Locataires)', icon: Building2 },
+  { id: 'team-permissions', name: 'Module K.13 (Équipe & Permissions)', icon: Users },
   { id: 'users-list', name: 'Utilisateurs & Rôles', icon: Users },
   { id: 'users-digital', name: 'Inscription Digitale', icon: Plus },
   { id: 'users-selfcare', name: 'Portail Self-Care', icon: LayoutDashboard },

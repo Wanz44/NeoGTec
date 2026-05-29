@@ -37,6 +37,8 @@ import { Contracts } from './components/Contracts';
 import { Partners } from './components/Partners';
 import { Settings } from './components/Settings';
 import { SystemConfig } from './components/SystemConfig';
+import { SaasTenants } from './components/SaaSTenants';
+import { TeamPermissions } from './components/TeamPermissions';
 import { useLanguage } from './lib/LanguageContext';
 import { Login } from './components/Login';
 import { UserProfilePanel } from './components/users/UserProfilePanel';
@@ -170,6 +172,8 @@ export default function App() {
       case 'users-beneficiaries':
         return <UsersView subModule={activeModule} />;
       case 'governance': return <Governance />; // Module 1 | 🔗 Fichier lié: Governance.tsx
+      case 'saas-tenants': return <SaasTenants />;
+      case 'team-permissions': return <TeamPermissions />;
       case 'alerts': return <Alerts />;
       case 'contracts':
       case 'contracts-config':
