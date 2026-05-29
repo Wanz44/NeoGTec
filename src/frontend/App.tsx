@@ -92,7 +92,7 @@ export default function App() {
     logAction
   } = useApp();
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
   const [globalToast, setGlobalToast] = React.useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
