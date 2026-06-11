@@ -464,12 +464,18 @@ export default function App() {
                 <div className="border-t border-slate-100 my-1"></div>
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block px-2">Tester un autre Rôle :</span>
                 
-                <div className="flex flex-col gap-0.5 max-h-48 overflow-y-auto px-1 py-1 bg-slate-50 rounded">
+                <div className="flex flex-col gap-0.5 max-h-56 overflow-y-auto px-1 py-1 bg-slate-50 rounded custom-scrollbar">
                   {[
-                    { id: 'SUPER_ADMIN', label: '👑 Super Admin' },
-                    { id: 'GESTIONNAIRE_SINISTRES', label: '🩺 Médecin Conseil' },
-                    { id: 'GESTIONNAIRE_FINANCE', label: '📊 Comptable / Finance' },
-                    { id: 'AUDITEUR_EXTERNE', label: '🔎 Auditeur Externe' }
+                    { id: 'SUPER_ADMIN', label: '👑 Paul (Super Admin)' },
+                    { id: 'RH_ENTREPRISE', label: '🏢 Marie KAPEND (RH Acme)' },
+                    { id: 'SUPPORT_CLIENT', label: '📞 Jean MUKENDI (Support)' },
+                    { id: 'MEDECIN', label: '🩺 Dr. Sarah LOKO (Médecin)' },
+                    { id: 'ADMIN_PRESTATAIRE', label: '🏥 Admin Hôpital Ngaliema' },
+                    { id: 'PHARMACIEN', label: '💊 Pharmacien KinPharma' },
+                    { id: 'FINANCE_MANAGER', label: '💰 Fin. Sunu (Finance Manager)' },
+                    { id: 'AUDITEUR_EXTERNE', label: '🔎 Auditeur CNAM (Audit)' },
+                    { id: 'ASSURE', label: '📱 Jean PATIENT (Assuré Mobile)' },
+                    { id: 'SUPPORT_NEOGTEC', label: '🛠️ Support NeoGTec N1' }
                   ].map(r => (
                     <button
                       key={r.id}

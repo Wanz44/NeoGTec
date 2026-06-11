@@ -1,6 +1,6 @@
 /**
  * 📄 Fichier : /src/frontend/components/Telemedicine.tsx
- * 🎯 Objectif : Hub de Télémédecine complet (F1. Consultation Vidéo, F2. DME, F3. Ordonnance, F4. Dashboard Dr).
+ * 🎯 Objectif : Hub de Téléconsultation complet (F1. Consultation Vidéo, F2. DME, F3. Ordonnance, F4. Dashboard Dr).
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -225,7 +225,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
     } else {
       setConsultations([newAppointment, ...consultations]);
       setShowAddConsultationModal(false);
-      triggerToast(`Rendez-vous de télémédecine avec un praticien (${formLanguage}) enregistré.`);
+      triggerToast(`Rendez-vous de téléconsultation avec un praticien (${formLanguage}) enregistré.`);
     }
   };
 
@@ -363,7 +363,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
               <ShieldCheck className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-black uppercase tracking-wider text-green-400">Télémédecine Nationale &amp; Diaspora</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-green-400">Téléconsultation Nationale &amp; Diaspora</p>
               <p className="text-xs text-slate-300 font-bold mt-1 leading-relaxed">{toast}</p>
             </div>
             <button onClick={() => setToast(null)} className="text-slate-500 hover:text-white transition-colors p-1">
@@ -377,7 +377,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
       <div className="flex items-center justify-between pb-2 border-b border-slate-200">
         <div className="flex items-center gap-1.5">
           <Stethoscope className="w-5 h-5 text-green-600" />
-          <h2 className="text-sm font-black text-slate-900 uppercase">F. Espace Praticiens &amp; Télémédecine</h2>
+          <h2 className="text-sm font-black text-slate-900 uppercase">F. Espace Praticiens &amp; Téléconsultation</h2>
         </div>
 
         <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
