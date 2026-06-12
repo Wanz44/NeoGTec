@@ -41,6 +41,7 @@ import { SaasTenants } from './components/SaaSTenants';
 import { TeamPermissions } from './components/TeamPermissions';
 import { useLanguage } from './lib/LanguageContext';
 import { Login } from './components/Login';
+import { LandingPage } from './components/LandingPage';
 import { UserProfilePanel } from './components/users/UserProfilePanel';
 import { HelpSystem } from './components/HelpSystem';
 import { NotificationCenter } from './components/NotificationCenter';
@@ -93,6 +94,7 @@ export default function App() {
   } = useApp();
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [showPortalLogin, setShowPortalLogin] = React.useState(false);
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
   const [globalToast, setGlobalToast] = React.useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
@@ -126,19 +128,31 @@ export default function App() {
   ];
 
   if (!isLoggedIn) {
+    if (!showPortalLogin) {
+      return <LandingPage onNavigateToLogin={() => setShowPortalLogin(true)} />;
+    }
     return (
-      <Login 
-        onLoginSuccess={(user) => {
-          setIsLoggedIn(true);
-          setCurrentUser({
-            ...currentUser,
-            email: user.email,
-            name: user.name,
-            role: user.role as any
-          });
-          logAction('CONNEXION_ESPACE_ADMIN', `Administrateur ${user.name} connecté via le portail d'authentification double-facteur.`);
-        }} 
-      />
+      <div className="relative w-full h-screen">
+        {/* Floating manual return helper to site public */}
+        <button
+          onClick={() => setShowPortalLogin(false)}
+          className="fixed top-6 left-6 z-[1000] inline-flex h-10 items-center gap-1.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-850 hover:bg-slate-50 transition-all font-black text-[11px] uppercase cursor-pointer"
+        >
+          ← Retour au site public
+        </button>
+        <Login 
+          onLoginSuccess={(user) => {
+            setIsLoggedIn(true);
+            setCurrentUser({
+              ...currentUser,
+              email: user.email,
+              name: user.name,
+              role: user.role as any
+            });
+            logAction('CONNEXION_ESPACE_ADMIN', `Administrateur ${user.name} connecté via le portail d'authentification double-facteur.`);
+          }} 
+        />
+      </div>
     );
   }
 
