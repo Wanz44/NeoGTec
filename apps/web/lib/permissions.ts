@@ -88,6 +88,10 @@ export const PERMISSIONS = {
   ONBOARDING_SUBMIT: "onboarding.submit",
   SECURITY_POLICY_UPDATE: "security.policy.update",
   AUDIT_LOGS_EXPORT: "audit_logs.export",
+
+  // Contrats Groupe & Bulletin Adhésion
+  CONTRAT_GROUPE_CREATE: "contrat_groupe.create",
+  BULLETIN_ADHESION_VALIDATE: "bulletin_adhesion.validate",
 } as const;
 
 export type PermissionCode = typeof PERMISSIONS[keyof typeof PERMISSIONS];
