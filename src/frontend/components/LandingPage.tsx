@@ -62,7 +62,7 @@ import { ComplianceBanner } from './public/ComplianceBanner';
 import { CountrySelector, AFRICAN_COUNTRIES } from './public/CountrySelector';
 import { YoutubeDialog } from './ui/youtube-dialog';
 import { getWording } from '../lib/wording';
-import { HeaderPro } from './public/HeaderPro';
+import { HeaderAir } from './public/HeaderAir';
 
 type Route = '/' | '/risques' | '/solutions' | '/modules' | '/tarifs' | '/faq' | '/affiliation' | '/confidentialite' | '/cgu' | '/arca-rdc' | '/merci';
 
@@ -282,7 +282,7 @@ export function LandingPage({ onNavigateToLogin }: LandingPageProps) {
       <ComplianceBanner />
 
       {/* 🟢 NAVIGATION NAV - BLENDED AND TRANSPARENT OVER STARLIGHT HERO (OR WHITE ON SUBPAGES) */}
-      <HeaderPro 
+      <HeaderAir 
         onNavigateTo={navigateTo}
         onNavigateToLogin={onNavigateToLogin}
         currentRoute={currentRoute}
