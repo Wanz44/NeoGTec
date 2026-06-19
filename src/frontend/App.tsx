@@ -32,6 +32,7 @@ import { Telemedicine } from './components/Telemedicine';
 import { BI } from './components/BI';
 import { Integrations } from './components/Integrations';
 import { Admin } from './components/Admin';
+import { SuperAdminDashboard } from './components/super-admin/SuperAdminDashboard';
 import { UsersView } from './components/Users';
 import { Contracts } from './components/Contracts';
 import { Partners } from './components/Partners';
@@ -246,7 +247,11 @@ export default function App() {
       case 'partners-quality':
       case 'partners-tariffs':
         return <Partners subModule={activeModule} />;
-      case 'admin': return <Admin />;
+      case 'admin': 
+        if (currentUser?.role === 'SUPER_ADMIN') {
+          return <SuperAdminDashboard />;
+        }
+        return <Admin />;
       case 'system-config': return <SystemConfig />;
       case 'profile': return <UserProfilePanel />;
       case 'settings':
