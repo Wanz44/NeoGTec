@@ -171,6 +171,12 @@ export default function App() {
     }, 4500);
   };
 
+  const handlePlatformLogout = () => {
+    setIsLoggedIn(false);
+    setShowPortalLogin(false);
+    logAction('DECONNEXION_ESPACE_ADMIN', `Administrateur ${currentUser?.name || ''} s'est déconnecté de la plateforme.`);
+  };
+
   // Logique de routage interne simplifiée pour le rendu des modules
   const renderContent = () => {
     if (showFAQ) return <FAQSection />; // Priorité d'affichage à la FAQ si activée
@@ -248,10 +254,10 @@ export default function App() {
       case 'partners-tariffs':
         return <Partners subModule={activeModule} />;
       case 'admin': 
-        if (currentUser?.role === 'SUPER_ADMIN') {
-          return <SuperAdminDashboard />;
-        }
-        return <Admin />;
+          if (currentUser?.role === 'SUPER_ADMIN') {
+            return <SuperAdminDashboard onLogout={handlePlatformLogout} />;
+          }
+          return <Admin />;
       case 'system-config': return <SystemConfig />;
       case 'profile': return <UserProfilePanel />;
       case 'settings':
@@ -272,6 +278,10 @@ export default function App() {
       );
     }
   };
+
+  if (isLoggedIn && currentUser?.role === 'SUPER_ADMIN') {
+    return <SuperAdminDashboard onLogout={handlePlatformLogout} />;
+  }
 
   return (
     <div className="flex h-screen bg-brand-beige text-slate-900 font-sans selection:bg-green-500 selection:text-white overflow-hidden relative p-4 gap-4">
@@ -304,7 +314,11 @@ export default function App() {
         <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-white/40 blur-[100px] rounded-full" />
       </div>
 
-      <Sidebar activeModule={activeModule} onModuleChange={(id) => { setActiveModule(id); setShowFAQ(false); }} />
+      <Sidebar 
+        activeModule={activeModule} 
+        onModuleChange={(id) => { setActiveModule(id); setShowFAQ(false); }} 
+        onLogout={handlePlatformLogout}
+      />
 
       <main className="flex-1 flex flex-col overflow-hidden relative z-10 rounded-2xl bg-white border border-white/40 shadow-xl">
         {/* Fluent Header (Acrylic) */}

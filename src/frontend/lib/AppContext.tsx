@@ -469,6 +469,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     setCurrentUserState(targetProfile);
+    setActiveModule('dashboard');
     logAction('CHANGEMENT_DE_ROLE_DEMO', `Audit de changement d'accès : Session transférée vers l'identité de ${targetProfile.name} (Rôle professionnel : ${role}, Tenant : ${targetProfile.tenantId || 'SaaS Global'})`, 'WARNING');
   };
 
