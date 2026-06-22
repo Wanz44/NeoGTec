@@ -11,7 +11,6 @@ import { DoctorDashboard } from './dashboards/DoctorDashboard';
 import { MobileAssureApp } from './dashboards/MobileAssureApp';
 import { HospitalAdminDashboard, PharmacistDashboard, PartnerFinanceDashboard, AuditorDashboard, SupportDashboard } from './dashboards/ExtendedPortals';
 import { SaaSContractDashboard } from './dashboards/SaaSContractDashboard';
-import { SuperAdminDashboard } from './super-admin/SuperAdminDashboard';
 import { CeilingConsumptionChart } from './CeilingConsumptionChart';
 import { 
   ArrowUpRight, ArrowDownRight, Activity, Filter, Plus, 
@@ -98,11 +97,11 @@ export const Dashboard: React.FC = () => {
   if (currentUser?.role === 'AUDITEUR_EXTERNE') {
     return <AuditorDashboard />;
   }
-  if (currentUser?.role === 'SUPPORT_NEOGTEC' || currentUser?.role === 'SUPPORT_CLIENT') {
+  if (currentUser?.role === 'SUPPORT_NEOGTEC') {
     return <SupportDashboard />;
   }
   if (currentUser?.role === 'SUPER_ADMIN') {
-    return <SuperAdminDashboard />;
+    return <SaaSContractDashboard />;
   }
 
   // Safe Alert Helper to prevent iframe sandboxing errors on window.alert

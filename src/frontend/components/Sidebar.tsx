@@ -15,13 +15,12 @@ import {
   ShieldCheck, ShieldAlert, BarChart3, Users, FileText, AlertCircle, Activity as ActivityIcon, 
   Plus, Clock, LayoutDashboard, Mail, Megaphone, Share2, PhoneCall, TrendingUp, HelpCircle,
   Cpu, Video, ClipboardList, Pill, CreditCard, Heart, Stethoscope,
-  Building2, MapPin, FileSignature, TabletSmartphone, Star, Calculator, LogOut
+  Building2, MapPin, FileSignature, TabletSmartphone, Star, Calculator
 } from 'lucide-react'; 
 
 interface SidebarProps {
   activeModule: string;
   onModuleChange: (id: string) => void;
-  onLogout?: () => void;
 }
 
 const SUB_MODULES_CONTRACTS = [
@@ -99,7 +98,7 @@ const SUB_MODULES_SYSTEM = [
 const SYSTEM_CHILDREN_IDS = SUB_MODULES_SYSTEM.map(s => s.id);
 const HIDDEN_IDS = [...SYSTEM_CHILDREN_IDS];
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange, onLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }) => {
   const { t } = useLanguage();
   const { currentUser } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -214,24 +213,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange, 
             });
           })()}
         </div>
-
-        {/* Dynamic Sticky Bottom Logout Button for other roles */}
-        <div className="p-3 border-t border-black/5 bg-green-50/10 shrink-0">
-          <motion.button
-            onClick={onLogout}
-            whileHover={{ scale: 1.02, backgroundColor: 'rgba(239, 68, 68, 0.08)' }}
-            whileTap={{ scale: 0.98 }}
-            className={cn(
-              "w-full flex items-center gap-3 px-4 py-2.5 rounded-sm text-xs font-bold text-rose-600 border border-rose-200/50 bg-rose-50/20 hover:text-rose-700 transition-all text-left outline-none cursor-pointer",
-              isCollapsed && "justify-center px-0"
-            )}
-            title={isCollapsed ? "Déconnexion de la plateforme" : ""}
-          >
-            <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
-            {!isCollapsed && <span>Déconnexion</span>}
-          </motion.button>
-        </div>
-
       </div>
     </motion.aside>
   );
