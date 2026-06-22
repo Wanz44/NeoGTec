@@ -72,8 +72,6 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'submodules.partners-tariffs': 'Gestion des Tarifs',
 
     'submodules.governance': 'Paramétrage & Governance',
-    'submodules.saas-tenants': 'Module K.12 (SaaS / Locataires)',
-    'submodules.team-permissions': 'Module K.13 (Équipe & Permissions)',
     'submodules.users-list': 'Utilisateurs & Rôles',
     'submodules.users-digital': 'Inscription Digitale',
     'submodules.users-selfcare': 'Portail Self-Care',
@@ -188,8 +186,6 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'submodules.partners-tariffs': 'Tariff Management',
 
     'submodules.governance': 'Configuration & Governance',
-    'submodules.saas-tenants': 'Module K.12 (SaaS / Tenants)',
-    'submodules.team-permissions': 'Module K.13 (Team & Permissions)',
     'submodules.users-list': 'Users & Roles',
     'submodules.users-digital': 'Digital Registration',
     'submodules.users-selfcare': 'Self-Care Portal',
@@ -304,8 +300,6 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'submodules.partners-tariffs': 'Gestão de Tarifas',
 
     'submodules.governance': 'Configuração e Governança',
-    'submodules.saas-tenants': 'Módulo K.12 (SaaS / Locatários)',
-    'submodules.team-permissions': 'Módulo K.13 (Equipe & Permissões)',
     'submodules.users-list': 'Usuários & Funções',
     'submodules.users-digital': 'Registo Digital',
     'submodules.users-selfcare': 'Portal Self-Care',

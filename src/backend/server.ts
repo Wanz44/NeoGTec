@@ -32,56 +32,6 @@ async function startServer() {
     });
   });
 
-  // 📂 Endpoint d'intégration B2B : Acquisition de Lead (Tunnel NeoGTec ARCA-RDC)
-  app.post("/api/lead", (req, res) => {
-    const { raison_sociale, nb_employes, assureur_actuel, besoins, nom, email_pro, phone, message, website_url_field } = req.body;
-
-    // 1. Protection anti-bot Honeypot
-    if (website_url_field) {
-      return res.status(400).json({ error: "Spam bot detecté !" });
-    }
-
-    // 2. Validation basique des données obligatoires
-    if (!raison_sociale || !nb_employes || !nom || !email_pro || !phone || !besoins || besoins.length === 0) {
-      return res.status(400).json({ error: "Certains champs obligatoires sont manquants ou incorrects." });
-    }
-
-    // 3. Logger dans les logs serveur l'opportunité commerciale
-    console.log(`
-      📬 [EXPRESS LEAD RECEIVED]
-      -----------------------------------------------
-      Raison Sociale : ${raison_sociale} (${nb_employes} salariés)
-      Assureur : ${assureur_actuel || 'Aucun'}
-      Besoins : ${besoins.join(', ')}
-      Contact : ${nom} (${email_pro} / Tél: ${phone})
-      Message : ${message || 'Aucun'}
-      -----------------------------------------------
-    `);
-
-    // 4. Assurer la persistence locale de test d'audit logs
-    const savedLeads = [];
-    const leadRecord = {
-      id: "LD-" + Math.floor(100000 + Math.random() * 900000),
-      raison_sociale,
-      nb_employes,
-      assureur_actuel,
-      besoins,
-      nom,
-      email_pro,
-      phone,
-      message,
-      status: 'DEMANDE',
-      created_at: new Date().toISOString()
-    };
-
-    // Retourner succes
-    return res.status(200).json({
-      success: true,
-      message: "Demande de contrat NeoGTec enregistrée avec succès. Un conseiller va vous contacter.",
-      lead_id: leadRecord.id
-    });
-  });
-
   // --- MIDDLEWARE VITE / STATIC SERVING ---
 
   // Configuration différentielle selon l'environnement (Dev vs Prod)

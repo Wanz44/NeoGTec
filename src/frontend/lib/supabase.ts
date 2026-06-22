@@ -1,29 +1,39 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Robust helper functions to validate environment variables or fall back correctly
-const getValidUrl = (url: any, fallback: string): string => {
-  if (typeof url === 'string' && url.trim().length > 0 && (url.startsWith('https://') || url.startsWith('http://'))) {
-    return url.trim();
+// Helper to validate and clean the Supabase URL
+function getValidSupabaseUrl(): string {
+  const envUrl = 
+    (import.meta as any).env?.VITE_SUPABASE_URL || 
+    (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    const trimmed = envUrl.trim();
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        return trimmed;
+      }
+    } catch (_) {
+      console.warn(`[Supabase] Env URL "${trimmed}" is not a valid HTTP/HTTPS URL. Using fallback.`);
+    }
   }
-  return fallback;
-};
+  return 'https://lbgwlghiwpamhthdgukw.supabase.co';
+}
 
-const getValidKey = (key: any, fallback: string): string => {
-  if (typeof key === 'string' && key.trim().length > 10 && !key.includes('PLACEholder') && key.trim() !== '') {
-    return key.trim();
+// Helper to validate and clean the Supabase Anon Key
+function getValidSupabaseKey(): string {
+  const envKey = 
+    (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 
+    (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && !envKey.includes('YOUR_')) {
+    return envKey.trim();
   }
-  return fallback;
-};
+  return 'sb_publishable_PHF4KyIwnRBzWXE21_krug_2BZvMtG-';
+}
 
-const SUPABASE_URL = getValidUrl(
-  (import.meta as any).env?.VITE_SUPABASE_URL || (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_URL,
-  'https://lbgwlghiwpamhthdgukw.supabase.co'
-);
-
-const SUPABASE_ANON_KEY = getValidKey(
-  (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  'sb_publishable_PHF4KyIwnRBzWXE21_krug_2BZvMtG-'
-);
+const SUPABASE_URL = getValidSupabaseUrl();
+const SUPABASE_ANON_KEY = getValidSupabaseKey();
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

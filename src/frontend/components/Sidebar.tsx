@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { MODULES, Module } from '../constants';
 import { useLanguage } from '../lib/LanguageContext';
-import { useApp } from '../lib/AppContext';
 import { 
   Shield, ChevronLeft, ChevronRight, Menu, Search, Key, History as HistoryIcon, Settings, Lock, 
   ShieldCheck, ShieldAlert, BarChart3, Users, FileText, AlertCircle, Activity as ActivityIcon, 
@@ -81,8 +80,6 @@ const SUB_MODULES_PARTNERS = [
 
 const SUB_MODULES_SYSTEM = [
   { id: 'governance', name: 'Paramétrage & Governance', icon: Settings },
-  { id: 'saas-tenants', name: 'Module K.12 (SaaS / Locataires)', icon: Building2 },
-  { id: 'team-permissions', name: 'Module K.13 (Équipe & Permissions)', icon: Users },
   { id: 'users-list', name: 'Utilisateurs & Rôles', icon: Users },
   { id: 'users-digital', name: 'Inscription Digitale', icon: Plus },
   { id: 'users-selfcare', name: 'Portail Self-Care', icon: LayoutDashboard },
@@ -100,7 +97,6 @@ const HIDDEN_IDS = [...SYSTEM_CHILDREN_IDS];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }) => {
   const { t } = useLanguage();
-  const { currentUser } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
 
@@ -135,12 +131,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onModuleChange }
         <div className={cn("p-8 flex flex-col items-center gap-4 border-b border-black/5 bg-green-50/10", isCollapsed && "justify-center px-0 py-5")}>
           <div className={cn("rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black shadow-xl shadow-green-500/30 shrink-0 transition-all duration-500 ease-in-out", 
             isCollapsed ? "w-10 h-10 text-[10px] border-2 border-white/50" : "w-[120px] h-[120px] text-4xl border-[6px] border-white/80")}>
-            {currentUser?.name ? currentUser.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'AL'}
+            AL
           </div>
           {!isCollapsed && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center text-center w-full">
-              <p className="text-[11px] font-black text-green-950 uppercase tracking-widest leading-none mb-1">{currentUser?.name || 'Utilisateur'}</p>
-              <p className="text-[8px] text-green-800 font-bold uppercase tracking-[0.2em] opacity-60 truncate max-w-full px-1">{currentUser?.email || 'admin@neogtec.com'}</p>
+              <p className="text-[11px] font-black text-green-950 uppercase tracking-widest leading-none mb-1">Adonaï WANZAMBI</p>
+              <p className="text-[8px] text-green-800 font-bold uppercase tracking-[0.2em] opacity-60">adonai@cloud.com</p>
             </motion.div>
           )}
         </div>

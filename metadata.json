@@ -1,6 +1,6 @@
 {
-  "name": "NeoGTec - Assurance Santé B2B",
-  "description": "Plateforme SaaS B2B d'assurance santé panafricaine certifiée ARCA-RDC et conforme Loi n°18/035.",
+  "name": "AssurAdvancé - Santé & Gestion",
+  "description": "Plateforme avancée de gestion d'assurance santé multi-tenancy avec interface Windows 11 Orange.",
   "requestFramePermissions": [
     "camera",
     "microphone",
