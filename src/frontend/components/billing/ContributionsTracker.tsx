@@ -15,12 +15,30 @@ export interface CompanyContribution {
   id: string;
   companyName: string;
   plan: string;
-  period: string; // e.g. "Mai 2026"
+  period: string;
   amount: number;
   currency: 'USD' | 'CDF' | 'EUR';
   status: 'Payé' | 'Retard' | 'Facturé';
   dueDate: string;
   overdueDays: number;
+}
+
+export interface CotisationItem {
+  id: string;
+  entreprise: string;
+  periode: string;
+  montantDu: number;
+  montantPaye: number;
+  statut: 'DUE' | 'PAYEE';
+  clientAssure: string;
+}
+
+export interface PaiementItem {
+  id: string;
+  cotisationId: string;
+  entreprise: string;
+  montant: number;
+  date: string;
 }
 
 const INITIAL_COMPANY_CONTRIBUTIONS: CompanyContribution[] = [
@@ -30,16 +48,36 @@ const INITIAL_COMPANY_CONTRIBUTIONS: CompanyContribution[] = [
   { id: 'COT-OME-303', companyName: 'Sarl Omega Kinshasa', plan: 'Standard Bronze', period: 'Avril 2026', amount: 4120, currency: 'USD', status: 'Retard', dueDate: '2026-04-10', overdueDays: 45 },
 ];
 
+const INITIAL_COTISATIONS: CotisationItem[] = [
+  { id: 'COT-001', entreprise: 'Rawbank SARL', periode: 'Mai 2026', montantDu: 12450, montantPaye: 12450, statut: 'PAYEE', clientAssure: 'Jean-Pierre Bemba' },
+  { id: 'COT-002', entreprise: 'Vodacom RDC', periode: 'Mai 2026', montantDu: 35000, montantPaye: 0, statut: 'DUE', clientAssure: 'Marie-Claire Mbika' },
+  { id: 'COT-003', entreprise: 'Bralima SARL', periode: 'Mai 2026', montantDu: 8200, montantPaye: 8200, statut: 'PAYEE', clientAssure: 'Albert Tshimanga' },
+  { id: 'COT-004', entreprise: 'Sarl Omega Kinshasa', periode: 'Avril 2026', montantDu: 4120, montantPaye: 0, statut: 'DUE', clientAssure: 'Sarah Luzolo' },
+];
+
+const INITIAL_PAIEMENTS: PaiementItem[] = [
+  { id: 'PAY-001', cotisationId: 'COT-001', entreprise: 'Rawbank SARL', montant: 12450, date: '2026-05-05' },
+  { id: 'PAY-003', cotisationId: 'COT-003', entreprise: 'Bralima SARL', montant: 8200, date: '2026-05-15' },
+];
+
 export const ContributionsTracker: React.FC = () => {
   const [contributions, setContributions] = useState<CompanyContribution[]>(INITIAL_COMPANY_CONTRIBUTIONS);
+  const [cotisations, setCotisations] = useState<CotisationItem[]>(INITIAL_COTISATIONS);
+  const [paiements, setPaiements] = useState<PaiementItem[]>(INITIAL_PAIEMENTS);
+
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Filters for Cotisations
+  const [entrepriseFilter, setEntrepriseFilter] = useState('Toutes');
+  const [clientFilter, setClientFilter] = useState('Tous');
+
   // Modal State
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
-  const [compName, setCompName] = useState('Vodacom RDC');
+  const [selectedCotisation, setSelectedCotisation] = useState<CotisationItem | null>(null);
+  
+  // Modal Inputs
   const [payAmount, setPayAmount] = useState('35000');
-  const [payCurrency, setPayCurrency] = useState<'USD' | 'CDF' | 'EUR'>('USD');
-  const [payRef, setPayRef] = useState('CHQ-RAW-90223');
+  const [payDate, setPayDate] = useState('2026-05-24');
 
   // Interactive Live Toasts
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -56,27 +94,55 @@ export const ContributionsTracker: React.FC = () => {
     showToast(`Relance récursive envoyée avec succès par Email & SMS au contact RH de "${company}" concernant les ${amount.toLocaleString()} $ d'arriérés.`);
   };
 
-  // Record a payment
-  const handleRecordPayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!payAmount) return;
-
-    // Simulate update on corresponding retard company
-    setContributions(prev => prev.map(rec => {
-      if (rec.companyName.toLowerCase() === compName.toLowerCase() && rec.status !== 'Payé') {
-        return { ...rec, status: 'Payé', amount: Number(payAmount), currency: payCurrency, overdueDays: 0 };
-      }
-      return rec;
-    }));
-
-    setIsPayModalOpen(false);
-    showToast(`Paiement de ${Number(payAmount).toLocaleString()} ${payCurrency} enregistré avec succès pour l&apos;entreprise ${compName}. Journal comptable balancé.`);
+  // Open modal for specific cotisation
+  const openPaymentModal = (cot: CotisationItem) => {
+    setSelectedCotisation(cot);
+    setPayAmount((cot.montantDu - cot.montantPaye).toString());
+    setPayDate(new Date().toISOString().split('T')[0]);
+    setIsPayModalOpen(true);
   };
 
-  const filteredCont = contributions.filter(item => 
-    item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    item.plan.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Submit recorded payment
+  const handleRecordPaymentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCotisation || !payAmount || !payDate) return;
+
+    const amountNum = Number(payAmount);
+
+    // Update cotisations state
+    setCotisations(prev => prev.map(c => {
+      if (c.id === selectedCotisation.id) {
+        const nextPay = c.montantPaye + amountNum;
+        const nextStatut = nextPay >= c.montantDu ? 'PAYEE' : 'DUE';
+        return {
+          ...c,
+          montantPaye: nextPay,
+          statut: nextStatut
+        };
+      }
+      return c;
+    }));
+
+    // Create a line in payments log
+    const newPaiement: PaiementItem = {
+      id: 'PAY-' + Math.floor(1000 + Math.random() * 9000),
+      cotisationId: selectedCotisation.id,
+      entreprise: selectedCotisation.entreprise,
+      montant: amountNum,
+      date: payDate
+    };
+    setPaiements(prev => [newPaiement, ...prev]);
+
+    setIsPayModalOpen(false);
+    showToast(`Paiement de ${amountNum.toLocaleString()} $ enregistré pour l'entreprise ${selectedCotisation.entreprise}. Cotisation mise à jour.`);
+  };
+
+  // Filter cotisations list
+  const filteredCotisations = cotisations.filter(c => {
+    const matchesEntreprise = entrepriseFilter === 'Toutes' || c.entreprise === entrepriseFilter;
+    const matchesClient = clientFilter === 'Tous' || c.clientAssure === clientFilter;
+    return matchesEntreprise && matchesClient;
+  });
 
   return (
     <div className="space-y-6">
@@ -138,90 +204,85 @@ export const ContributionsTracker: React.FC = () => {
         </div>
       </div>
 
-      {/* Corporate billing list (D1 requirement) */}
-      <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
-        <div className="p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">Registre des Cotisations par Entreprise</h3>
-            
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="Filtrer par entreprise..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none"
-              />
-            </div>
+      {/* ======================================================= */}
+      {/* SECTION : SUIVI DE COTISATIONS (Point 2.1 & 2.2)         */}
+      {/* ======================================================= */}
+      <div className="bg-white border border-slate-150 rounded-[2.5rem] shadow-sm overflow-hidden space-y-4">
+        <div className="p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-black text-slate-900 uppercase italic">Suivi de cotisations</h3>
+            <p className="text-[9.5px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Filtres et registre des paiements échus</p>
           </div>
 
-          <button 
-            onClick={() => setIsPayModalOpen(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer outline-none"
-          >
-            Enregistrer Paiement
-          </button>
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Filtre Entreprise */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Entreprise:</span>
+              <select
+                value={entrepriseFilter}
+                onChange={(e) => setEntrepriseFilter(e.target.value)}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none"
+              >
+                <option value="Toutes">Toutes</option>
+                {Array.from(new Set(cotisations.map(c => c.entreprise))).map(ent => (
+                  <option key={ent} value={ent}>{ent}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Filtre Client/Assuré */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Client/Assuré:</span>
+              <select
+                value={clientFilter}
+                onChange={(e) => setClientFilter(e.target.value)}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none"
+              >
+                <option value="Tous">Tous</option>
+                {Array.from(new Set(cotisations.map(c => c.clientAssure))).map(cli => (
+                  <option key={cli} value={cli}>{cli}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left font-sans col-auto">
+          <table className="w-full text-left font-sans border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                <th className="py-4 px-6">Cotisation par Entreprise</th>
-                <th className="py-4 px-6">Formule Contrat</th>
+                <th className="py-4 px-6">Entreprise</th>
+                <th className="py-4 px-6">Client / Assuré</th>
                 <th className="py-4 px-6">Période</th>
-                <th className="py-4 px-6 text-right">Montant Exigible</th>
-                <th className="py-4 px-6">Échéance</th>
-                <th className="py-4 px-6">Délai / Seuil</th>
-                <th className="py-4 px-6">Statut actif</th>
+                <th className="py-4 px-6 text-right">Montant dû</th>
+                <th className="py-4 px-6 text-right">Montant payé</th>
+                <th className="py-4 px-6 text-center">Statut</th>
                 <th className="py-4 px-6 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-              {filteredCont.map((tx) => (
-                <tr key={tx.id} className="hover:bg-slate-50/40 transition-colors">
-                  <td className="py-4 px-6 font-extrabold text-slate-900 uppercase">
-                    {tx.companyName}
-                  </td>
-                  <td className="py-4 px-6 font-bold text-slate-500">
-                    {tx.plan}
-                  </td>
-                  <td className="py-4 px-6 font-bold uppercase text-[10px] text-slate-400">
-                    {tx.period}
-                  </td>
-                  <td className="py-4 px-6 text-right font-black text-slate-900">
-                    {tx.amount.toLocaleString()} {tx.currency}
-                  </td>
-                  <td className="py-4 px-6 font-mono font-bold text-slate-400">
-                    {tx.dueDate}
-                  </td>
-                  <td className="py-4 px-6">
-                    {tx.overdueDays > 0 ? (
-                      <span className="text-rose-600 font-black text-[10px] inline-flex items-center gap-1 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
-                        ⚠️ Retard {tx.overdueDays} jours
-                      </span>
-                    ) : (
-                      <span className="text-slate-400 font-bold italic">-</span>
-                    )}
-                  </td>
-                  <td className="py-4 px-6">
+            <tbody className="divide-y divide-slate-100 text-xs">
+              {filteredCotisations.map((c) => (
+                <tr key={c.id} className="hover:bg-slate-50/40 transition-colors">
+                  <td className="py-4 px-6 font-extrabold text-slate-900 uppercase">{c.entreprise}</td>
+                  <td className="py-4 px-6 font-semibold text-slate-600">{c.clientAssure}</td>
+                  <td className="py-4 px-6 font-bold text-slate-400 uppercase text-[10px]">{c.periode}</td>
+                  <td className="py-4 px-6 text-right font-black text-slate-900">{c.montantDu.toLocaleString()} $</td>
+                  <td className="py-4 px-6 text-right font-black text-green-600">{c.montantPaye.toLocaleString()} $</td>
+                  <td className="py-4 px-6 text-center">
                     <span className={cn(
                       "px-2.5 py-1 text-[8px] font-black uppercase tracking-widest rounded-lg border",
-                      tx.status === 'Payé' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                      tx.status === 'Retard' ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-slate-100 text-slate-500 border-slate-200"
+                      c.statut === 'PAYEE' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-rose-50 text-rose-600 border-rose-100"
                     )}>
-                      {tx.status}
+                      {c.statut === 'PAYEE' ? 'PAYÉE' : 'DUE'}
                     </span>
                   </td>
                   <td className="py-4 px-6 text-center">
-                    {tx.status === 'Retard' && (
+                    {c.statut !== 'PAYEE' && (
                       <button 
-                        onClick={() => handleSendReminder(tx.companyName, tx.amount)}
-                        className="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-black rounded-lg uppercase tracking-wider transition-colors flex items-center gap-1 mx-auto cursor-pointer"
-                        title="Envoyer une relance par mail et SMS"
+                        onClick={() => openPaymentModal(c)}
+                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black rounded-lg uppercase tracking-wider transition-colors cursor-pointer"
                       >
-                        <Mail className="w-3.5 h-3.5" /> Relancer
+                        Enregistrer paiement
                       </button>
                     )}
                   </td>
@@ -232,11 +293,44 @@ export const ContributionsTracker: React.FC = () => {
         </div>
       </div>
 
+      {/* ======================================================= */}
+      {/* HISTORIQUE DES PAIEMENTS LOGS (Point 2.4)                */}
+      {/* ======================================================= */}
+      <div className="bg-white border border-slate-150 rounded-[2.5rem] p-6 shadow-sm space-y-4">
+        <div>
+          <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">Journal des Paiements</h4>
+          <p className="text-[9.5px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Historique des transactions d'encaissement de cotisations</p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left font-sans">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                <th className="py-3 px-4">Ref Paiement</th>
+                <th className="py-3 px-4">Entreprise</th>
+                <th className="py-3 px-4 text-right">Montant Encaissé</th>
+                <th className="py-3 px-4 text-center">Date versement</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-xs text-slate-600">
+              {paiements.map((p) => (
+                <tr key={p.id}>
+                  <td className="py-3 px-4 font-mono font-bold text-slate-900">{p.id}</td>
+                  <td className="py-3 px-4 font-extrabold uppercase text-slate-800">{p.entreprise}</td>
+                  <td className="py-3 px-4 text-right font-black text-[#00A86B]">{p.montant.toLocaleString()} $</td>
+                  <td className="py-3 px-4 text-center font-mono font-bold text-slate-400">{p.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* ========================================= */}
-      {/* RECORD PAYMENT MANUAL MODAL (D1)          */}
+      {/* RECORD PAYMENT MANUAL MODAL (Point 2.3)   */}
       {/* ========================================= */}
       <AnimatePresence>
-        {isPayModalOpen && (
+        {isPayModalOpen && selectedCotisation && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }}
@@ -250,7 +344,7 @@ export const ContributionsTracker: React.FC = () => {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="relative bg-white rounded-[2.5rem] border border-slate-100 w-full max-w-md overflow-hidden shadow-2xl"
+              className="relative bg-white rounded-[2.5rem] border border-slate-150 w-full max-w-md overflow-hidden shadow-2xl"
             >
               <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <div className="flex items-center gap-3">
@@ -264,55 +358,27 @@ export const ContributionsTracker: React.FC = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleRecordPayment} className="p-8 space-y-4">
-                <p className="text-xs text-slate-500 italic pb-2">Enregistrement manuel de chèques, virements bancaires reçus ou fonds compensés.</p>
+              <form onSubmit={handleRecordPaymentSubmit} className="p-8 space-y-4">
+                <p className="text-xs text-slate-500 italic pb-2">Veuillez renseigner le montant perçu et la date effective pour clôturer la cotisation de <strong>{selectedCotisation.entreprise}</strong>.</p>
                 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Entreprise débitrice</label>
-                  <select 
-                    value={compName}
-                    onChange={(e) => setCompName(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold font-medium"
-                  >
-                    <option value="Vodacom RDC">Vodacom RDC (Retard de 35,000 $)</option>
-                    <option value="Sarl Omega Kinshasa">Sarl Omega Kinshasa (Retard de 4,120 $)</option>
-                    <option value="Bralima SARL">Bralima SARL (Facturé - 8,200 $)</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Montant payé</label>
-                    <input 
-                      type="number"
-                      value={payAmount}
-                      onChange={(e) => setPayAmount(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Devise</label>
-                    <select 
-                      value={payCurrency}
-                      onChange={(e) => setPayCurrency(e.target.value as any)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
-                    >
-                      <option value="USD">USD ($)</option>
-                      <option value="CDF">CDF (FC)</option>
-                      <option value="EUR">EUR (€)</option>
-                    </select>
-                  </div>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Montant payé ($)</label>
+                  <input 
+                    type="number"
+                    value={payAmount}
+                    onChange={(e) => setPayAmount(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-250 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 focus:bg-white"
+                    required
+                  />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Référence du versement (Chèque, Swift, TRSF)</label>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block font-bold">Date de versement</label>
                   <input 
-                    type="text"
-                    value={payRef}
-                    onChange={(e) => setPayRef(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold"
+                    type="date"
+                    value={payDate}
+                    onChange={(e) => setPayDate(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-250 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 focus:bg-white"
                     required
                   />
                 </div>
@@ -329,7 +395,7 @@ export const ContributionsTracker: React.FC = () => {
                     type="submit"
                     className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest text-center cursor-pointer shadow-lg shadow-indigo-600/15"
                   >
-                    Enregistrer paiement
+                    Valider le Paiement
                   </button>
                 </div>
               </form>

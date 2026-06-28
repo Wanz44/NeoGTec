@@ -44,7 +44,7 @@ export const MODULES: Module[] = [
   { id: 'reclamation', name: 'Module Réclamation', icon: AlertCircle, category: 'core', description: "Gestion des litiges" },
   { id: 'payment', name: 'Gestion Financière', icon: CreditCard, category: 'core', description: "Cotisations, Mobile Money & Comptabilité" },
   { id: 'crm', name: 'CRM & Commercial', icon: UserCheck, category: 'core', description: "Gestion relation client" },
-  { id: 'telemedicine', name: 'Module Télémédecine', icon: Stethoscope, category: 'core', description: "Consultations à distance" },
+  { id: 'telemedicine', name: 'Téléconsultation', icon: Stethoscope, category: 'core', description: "Consultations à distance" },
   { id: 'claims', name: 'Sinistres & Contentieux', icon: ShieldCheck, category: 'core', description: "Déclarations, Litiges & Expertise" },
   { id: 'partners', name: 'Partenaires Hospitaliers', icon: Building2, category: 'core', description: "Réseau de soins et prestataires" },
   { id: 'integrations', name: 'Interopérabilité', icon: Network, category: 'system', description: "Connexions SNIS, APIs & Télémédecine" },

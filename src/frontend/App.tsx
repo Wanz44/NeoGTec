@@ -32,13 +32,17 @@ import { Telemedicine } from './components/Telemedicine';
 import { BI } from './components/BI';
 import { Integrations } from './components/Integrations';
 import { Admin } from './components/Admin';
+import { SuperAdminDashboard } from './components/super-admin/SuperAdminDashboard';
 import { UsersView } from './components/Users';
 import { Contracts } from './components/Contracts';
 import { Partners } from './components/Partners';
 import { Settings } from './components/Settings';
 import { SystemConfig } from './components/SystemConfig';
+import { SaasTenants } from './components/SaaSTenants';
+import { TeamPermissions } from './components/TeamPermissions';
 import { useLanguage } from './lib/LanguageContext';
 import { Login } from './components/Login';
+import { LandingPage } from './components/LandingPage';
 import { UserProfilePanel } from './components/users/UserProfilePanel';
 import { HelpSystem } from './components/HelpSystem';
 import { NotificationCenter } from './components/NotificationCenter';
@@ -90,7 +94,8 @@ export default function App() {
     logAction
   } = useApp();
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [showPortalLogin, setShowPortalLogin] = React.useState(false);
   const [showFAQ, setShowFAQ] = React.useState(false); // Hook d'état : Affichage FAQ | 🔗 Déclencheur: Header Button
   const [globalToast, setGlobalToast] = React.useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = React.useState(false);
@@ -124,19 +129,31 @@ export default function App() {
   ];
 
   if (!isLoggedIn) {
+    if (!showPortalLogin) {
+      return <LandingPage onNavigateToLogin={() => setShowPortalLogin(true)} />;
+    }
     return (
-      <Login 
-        onLoginSuccess={(user) => {
-          setIsLoggedIn(true);
-          setCurrentUser({
-            ...currentUser,
-            email: user.email,
-            name: user.name,
-            role: user.role as any
-          });
-          logAction('CONNEXION_ESPACE_ADMIN', `Administrateur ${user.name} connecté via le portail d'authentification double-facteur.`);
-        }} 
-      />
+      <div className="relative w-full h-screen">
+        {/* Floating manual return helper to site public */}
+        <button
+          onClick={() => setShowPortalLogin(false)}
+          className="fixed top-6 left-6 z-[1000] inline-flex h-10 items-center gap-1.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-850 hover:bg-slate-50 transition-all font-black text-[11px] uppercase cursor-pointer"
+        >
+          ← Retour au site public
+        </button>
+        <Login 
+          onLoginSuccess={(user) => {
+            setIsLoggedIn(true);
+            setCurrentUser({
+              ...currentUser,
+              email: user.email,
+              name: user.name,
+              role: user.role as any
+            });
+            logAction('CONNEXION_ESPACE_ADMIN', `Administrateur ${user.name} connecté via le portail d'authentification double-facteur.`);
+          }} 
+        />
+      </div>
     );
   }
 
@@ -152,6 +169,12 @@ export default function App() {
     setTimeout(() => {
       setGlobalToast(null);
     }, 4500);
+  };
+
+  const handlePlatformLogout = () => {
+    setIsLoggedIn(false);
+    setShowPortalLogin(false);
+    logAction('DECONNEXION_ESPACE_ADMIN', `Administrateur ${currentUser?.name || ''} s'est déconnecté de la plateforme.`);
   };
 
   // Logique de routage interne simplifiée pour le rendu des modules
@@ -170,6 +193,7 @@ export default function App() {
       case 'users-beneficiaries':
         return <UsersView subModule={activeModule} />;
       case 'governance': return <Governance />; // Module 1 | 🔗 Fichier lié: Governance.tsx
+      case 'team-permissions': return <TeamPermissions />;
       case 'alerts': return <Alerts />;
       case 'contracts':
       case 'contracts-config':
@@ -228,7 +252,11 @@ export default function App() {
       case 'partners-quality':
       case 'partners-tariffs':
         return <Partners subModule={activeModule} />;
-      case 'admin': return <Admin />;
+      case 'admin': 
+          if (currentUser?.role === 'SUPER_ADMIN') {
+            return <SuperAdminDashboard onLogout={handlePlatformLogout} />;
+          }
+          return <Admin />;
       case 'system-config': return <SystemConfig />;
       case 'profile': return <UserProfilePanel />;
       case 'settings':
@@ -249,6 +277,10 @@ export default function App() {
       );
     }
   };
+
+  if (isLoggedIn && currentUser?.role === 'SUPER_ADMIN') {
+    return <SuperAdminDashboard onLogout={handlePlatformLogout} />;
+  }
 
   return (
     <div className="flex h-screen bg-brand-beige text-slate-900 font-sans selection:bg-green-500 selection:text-white overflow-hidden relative p-4 gap-4">
@@ -281,7 +313,11 @@ export default function App() {
         <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-white/40 blur-[100px] rounded-full" />
       </div>
 
-      <Sidebar activeModule={activeModule} onModuleChange={(id) => { setActiveModule(id); setShowFAQ(false); }} />
+      <Sidebar 
+        activeModule={activeModule} 
+        onModuleChange={(id) => { setActiveModule(id); setShowFAQ(false); }} 
+        onLogout={handlePlatformLogout}
+      />
 
       <main className="flex-1 flex flex-col overflow-hidden relative z-10 rounded-2xl bg-white border border-white/40 shadow-xl">
         {/* Fluent Header (Acrylic) */}
@@ -460,12 +496,18 @@ export default function App() {
                 <div className="border-t border-slate-100 my-1"></div>
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block px-2">Tester un autre Rôle :</span>
                 
-                <div className="flex flex-col gap-0.5 max-h-48 overflow-y-auto px-1 py-1 bg-slate-50 rounded">
+                <div className="flex flex-col gap-0.5 max-h-56 overflow-y-auto px-1 py-1 bg-slate-50 rounded custom-scrollbar">
                   {[
-                    { id: 'SUPER_ADMIN', label: '👑 Super Admin' },
-                    { id: 'GESTIONNAIRE_SINISTRES', label: '🩺 Médecin Conseil' },
-                    { id: 'GESTIONNAIRE_FINANCE', label: '📊 Comptable / Finance' },
-                    { id: 'AUDITEUR_EXTERNE', label: '🔎 Auditeur Externe' }
+                    { id: 'SUPER_ADMIN', label: '👑 Paul (Super Admin)' },
+                    { id: 'RH_ENTREPRISE', label: '🏢 Marie KAPEND (RH Acme)' },
+                    { id: 'SUPPORT_CLIENT', label: '📞 Jean MUKENDI (Support)' },
+                    { id: 'MEDECIN', label: '🩺 Dr. Sarah LOKO (Médecin)' },
+                    { id: 'ADMIN_PRESTATAIRE', label: '🏥 Admin Hôpital Ngaliema' },
+                    { id: 'PHARMACIEN', label: '💊 Pharmacien KinPharma' },
+                    { id: 'FINANCE_MANAGER', label: '💰 Fin. Sunu (Finance Manager)' },
+                    { id: 'AUDITEUR_EXTERNE', label: '🔎 Auditeur CNAM (Audit)' },
+                    { id: 'ASSURE', label: '📱 Jean PATIENT (Assuré Mobile)' },
+                    { id: 'SUPPORT_NEOGTEC', label: '🛠️ Support NeoGTec N1' }
                   ].map(r => (
                     <button
                       key={r.id}

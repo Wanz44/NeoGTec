@@ -10,7 +10,13 @@ export type UserRole =
   | 'RH_ENTREPRISE'
   | 'PARTENAIRE_HOPITAL'
   | 'AGENT_COMMERCIAL'
-  | 'DATA_SCIENTIST';
+  | 'DATA_SCIENTIST'
+  | 'MEDECIN'
+  | 'ADMIN_PRESTATAIRE'
+  | 'PHARMACIEN'
+  | 'FINANCE_MANAGER'
+  | 'ASSURE'
+  | 'SUPPORT_NEOGTEC';
 
 export interface UserProfile {
   id: string;
@@ -28,6 +34,7 @@ export interface UserProfile {
   deviceTrusted: boolean;
   contractName: string;
   creationDate: string;
+  tenantId?: string | null;
 }
 
 export interface Beneficiary {
@@ -400,30 +407,70 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const quickSwitchRole = (role: UserRole) => {
-    // Log connection change for non-superuser tracking
-    const matchedUser = INITIAL_USERS.find(u => u.role === role) || {
-      id: `USR-00${Math.floor(1 + Math.random() * 9)}`,
+    // Generate role specific profiles
+    let targetProfile: UserProfile = {
+      id: `USR-${role.substring(0, 3)}-01`,
       name: role.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' '),
       email: `${role.toLowerCase()}@neogtec.com`,
-      phone: '+243 000 000',
-      address: 'Siège Social',
-      status: 'Actif' as const,
+      phone: '+243 812 345 678',
+      address: 'Kinshasa, Gombe',
+      role,
+      status: 'Actif',
       biometricsEnabled: true,
       biometricsLinked: true,
-      cardCode: 'POL-AUTO',
+      cardCode: `POL-${role.substring(0, 3)}-AUTO`,
       mfaEnabled: true,
       deviceTrusted: true,
-      contractName: 'Contrat Interne Professionnel',
-      creationDate: '01/01/2026'
+      contractName: 'Contrat Assurance Standard',
+      creationDate: '01/01/2026',
+      tenantId: null
     };
 
-    const targetProfile: UserProfile = {
-      ...matchedUser,
-      role
-    } as any;
+    if (role === 'SUPER_ADMIN') {
+      targetProfile.name = 'Paul NEOGTEC';
+      targetProfile.email = 'paul@neogtec.com';
+      targetProfile.tenantId = null;
+    } else if (role === 'RH_ENTREPRISE') {
+      targetProfile.name = 'Marie KAPEND';
+      targetProfile.email = 'm.kapend@acme.cd';
+      targetProfile.tenantId = 'acme';
+    } else if (role === 'SUPPORT_CLIENT') {
+      targetProfile.name = 'Jean MUKENDI';
+      targetProfile.email = 'jean.m@acme.cd';
+      targetProfile.tenantId = 'acme';
+    } else if (role === 'MEDECIN') {
+      targetProfile.name = 'Dr. Sarah LOKO';
+      targetProfile.email = 'sarah.loko@ngaliema.cd';
+      targetProfile.tenantId = 'ngaliema';
+    } else if (role === 'ADMIN_PRESTATAIRE') {
+      targetProfile.name = 'Admin Hôpital Ngaliema';
+      targetProfile.email = 'admin@ngaliema.cd';
+      targetProfile.tenantId = 'ngaliema';
+    } else if (role === 'PHARMACIEN') {
+      targetProfile.name = 'Pharmacien KinPharma';
+      targetProfile.email = 'pharma@kinpharma.cd';
+      targetProfile.tenantId = 'kinpharma';
+    } else if (role === 'FINANCE_MANAGER') {
+      targetProfile.name = 'Gestionnaire Finance Sunu';
+      targetProfile.email = 'finance@sunu.cd';
+      targetProfile.tenantId = 'sunu';
+    } else if (role === 'AUDITEUR_EXTERNE') {
+      targetProfile.name = 'Auditeur CNAM';
+      targetProfile.email = 'auditeur@cnam.gov';
+      targetProfile.tenantId = null;
+    } else if (role === 'ASSURE') {
+      targetProfile.name = 'Jean PATIENT (Assuré)';
+      targetProfile.email = 'jean.patient@gmail.com';
+      targetProfile.tenantId = 'acme';
+    } else if (role === 'SUPPORT_NEOGTEC') {
+      targetProfile.name = 'Support NeoGTec N1';
+      targetProfile.email = 'support-n1@neogtec.com';
+      targetProfile.tenantId = null;
+    }
 
     setCurrentUserState(targetProfile);
-    logAction('CHANGEMENT_DE_ROLE_DEMO', `Audit de changement d'accès : Session transférée vers l'identité de ${targetProfile.name} (Rôle professionnel : ${role})`, 'WARNING');
+    setActiveModule('dashboard');
+    logAction('CHANGEMENT_DE_ROLE_DEMO', `Audit de changement d'accès : Session transférée vers l'identité de ${targetProfile.name} (Rôle professionnel : ${role}, Tenant : ${targetProfile.tenantId || 'SaaS Global'})`, 'WARNING');
   };
 
   return (

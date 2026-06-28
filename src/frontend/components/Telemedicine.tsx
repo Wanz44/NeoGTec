@@ -1,6 +1,6 @@
 /**
  * 📄 Fichier : /src/frontend/components/Telemedicine.tsx
- * 🎯 Objectif : Hub de Télémédecine complet (F1. Consultation Vidéo, F2. DME, F3. Ordonnance, F4. Dashboard Dr).
+ * 🎯 Objectif : Hub de Téléconsultation complet (F1. Consultation Vidéo, F2. DME, F3. Ordonnance, F4. Dashboard Dr).
  */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -15,6 +15,7 @@ import {
   AlertTriangle, UploadCloud, RefreshCw, Send, ShieldAlert, CheckSquare, Eye, Printer, ShieldCheck
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useApp } from '../lib/AppContext';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, PieChart, Pie, Cell, Legend
@@ -97,6 +98,8 @@ const PHARMACIES = [
 ];
 
 export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) => {
+  const { currentUser } = useApp();
+  const [alerts, setAlerts] = useState<Record<string, boolean>>({});
   const [view, setView] = useState<'schedule' | 'call' | 'epr' | 'dashboard'>('schedule');
   const [consultations, setConsultations] = useState<Consultation[]>(INITIAL_CONSULTATIONS);
   const [activeConsultation, setActiveConsultation] = useState<Consultation | null>(null);
@@ -225,7 +228,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
     } else {
       setConsultations([newAppointment, ...consultations]);
       setShowAddConsultationModal(false);
-      triggerToast(`Rendez-vous de télémédecine avec un praticien (${formLanguage}) enregistré.`);
+      triggerToast(`Rendez-vous de téléconsultation avec un praticien (${formLanguage}) enregistré.`);
     }
   };
 
@@ -363,7 +366,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
               <ShieldCheck className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-black uppercase tracking-wider text-green-400">Télémédecine Nationale &amp; Diaspora</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-green-400">Téléconsultation Nationale &amp; Diaspora</p>
               <p className="text-xs text-slate-300 font-bold mt-1 leading-relaxed">{toast}</p>
             </div>
             <button onClick={() => setToast(null)} className="text-slate-500 hover:text-white transition-colors p-1">
@@ -377,7 +380,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
       <div className="flex items-center justify-between pb-2 border-b border-slate-200">
         <div className="flex items-center gap-1.5">
           <Stethoscope className="w-5 h-5 text-green-600" />
-          <h2 className="text-sm font-black text-slate-900 uppercase">F. Espace Praticiens &amp; Télémédecine</h2>
+          <h2 className="text-sm font-black text-slate-900 uppercase">F. Espace Praticiens &amp; Téléconsultation</h2>
         </div>
 
         <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
@@ -408,6 +411,14 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
           >
             TDB Dr. &amp; Épidémies (F4)
           </button>
+          {(currentUser?.role === 'SUPER_ADMIN' || currentUser?.role?.toLowerCase() === 'super_admin') && (
+            <button 
+              onClick={() => { window.location.hash = '#/admin/tdr-epidemies'; }}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shadow cursor-pointer font-bold"
+            >
+              TDR Dr. Épidémies
+            </button>
+          )}
         </div>
       </div>
 
@@ -419,7 +430,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             {/* Left : Active slots and low bandwidth indicator */}
-            <div className="md:col-span-2 space-y-4">
+            <div className="md:col-span-3 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-black text-slate-900 uppercase italic">Garde Télémédicale Active (RDC / Diaspora / Rural)</h4>
@@ -510,6 +521,24 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                           )}
                           <p className="font-mono text-[9px]">Ref: {c.id}</p>
                         </div>
+
+                        <div className="flex items-center gap-4 mt-2">
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={!!alerts[c.id]}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                setAlerts(prev => ({ ...prev, [c.id]: checked }));
+                                if (checked) {
+                                  alert(`Notification cron configurée : une alerte sera déclenchée 1h avant la téléconsultation (${c.time}) avec ${c.doctorName}.`);
+                                }
+                              }}
+                              className="rounded border-slate-300 text-green-600 focus:ring-green-500 w-3.5 h-3.5"
+                            />
+                            <span className="text-[10px] font-extrabold text-green-700 uppercase tracking-wider">Alerte 1h avant</span>
+                          </label>
+                        </div>
                       </div>
                     </div>
 
@@ -531,39 +560,6 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                 ))}
               </div>
 
-            </div>
-
-            {/* Right side information card for telemedine */}
-            <div className="bg-white border border-slate-150 rounded-[2.5rem] p-6 shadow-sm space-y-6">
-              <span className="text-xs font-black text-slate-900 uppercase">Qualité Mondiale de Soin</span>
-              
-              <div className="space-y-4 text-xs text-slate-600 font-medium">
-                <p>
-                  Adonaï Care connecte de façon transparente des praticiens certifiés en RDC et à l&apos;étranger (France, Belgique, Inde, Diaspora) avec les collaborateurs d&apos;entreprises locales ou en zones éloignées.
-                </p>
-
-                <div className="divide-y divide-slate-100">
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="font-bold text-slate-400">Flux audio/vidéo adaptatif</span>
-                    <span className="text-slate-900 font-black">Actif d&apos;office (AVC/HEVC)</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="font-bold text-slate-400">Protection DME cryptée</span>
-                    <span className="text-slate-900 font-black">Conforme HIPAA &amp; RGPD</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="font-bold text-slate-400">Match Langue &amp; Culture</span>
-                    <span className="text-green-600 font-black">Lingala / Swahili dispo</span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-indigo-950 text-indigo-300 rounded-2xl">
-                  <span className="text-[8.5px] font-black uppercase text-indigo-400">Conseil Pratique :</span>
-                  <p className="text-[11px] font-semibold mt-1 leading-normal">
-                    Lorsque vous lancez un appel en zone isolée, la passerelle WebRTC réduit dynamiquement la définition vidéo pour privilégier l&apos;intelligibilité parfaite de la voix thérapeutique.
-                  </p>
-                </div>
-              </div>
             </div>
 
           </div>

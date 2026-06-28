@@ -5,6 +5,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useApp } from '../lib/AppContext';
+import { EnterpriseRHDashboard } from './dashboards/EnterpriseRHDashboard';
+import { DoctorDashboard } from './dashboards/DoctorDashboard';
+import { MobileAssureApp } from './dashboards/MobileAssureApp';
+import { HospitalAdminDashboard, PharmacistDashboard, PartnerFinanceDashboard, AuditorDashboard, SupportDashboard } from './dashboards/ExtendedPortals';
+import { SaaSContractDashboard } from './dashboards/SaaSContractDashboard';
+import { SuperAdminDashboard } from './super-admin/SuperAdminDashboard';
+import { CeilingConsumptionChart } from './CeilingConsumptionChart';
 import { 
   ArrowUpRight, ArrowDownRight, Activity, Filter, Plus, 
   MapPin, Clock, Calendar, CheckCircle2, AlertTriangle, 
@@ -66,6 +74,37 @@ interface PreAuthRequest {
 }
 
 export const Dashboard: React.FC = () => {
+  const { currentUser } = useApp();
+
+  // Route to the corresponding portal organically:
+  if (currentUser?.role === 'RH_ENTREPRISE') {
+    return <EnterpriseRHDashboard />;
+  }
+  if (currentUser?.role === 'MEDECIN') {
+    return <DoctorDashboard />;
+  }
+  if (currentUser?.role === 'ASSURE') {
+    return <MobileAssureApp />;
+  }
+  if (currentUser?.role === 'ADMIN_PRESTATAIRE') {
+    return <HospitalAdminDashboard />;
+  }
+  if (currentUser?.role === 'PHARMACIEN') {
+    return <PharmacistDashboard />;
+  }
+  if (currentUser?.role === 'FINANCE_MANAGER') {
+    return <PartnerFinanceDashboard />;
+  }
+  if (currentUser?.role === 'AUDITEUR_EXTERNE') {
+    return <AuditorDashboard />;
+  }
+  if (currentUser?.role === 'SUPPORT_NEOGTEC' || currentUser?.role === 'SUPPORT_CLIENT') {
+    return <SupportDashboard />;
+  }
+  if (currentUser?.role === 'SUPER_ADMIN') {
+    return <SuperAdminDashboard />;
+  }
+
   // Safe Alert Helper to prevent iframe sandboxing errors on window.alert
   const safeAlert = (message: string) => {
     try {
@@ -539,6 +578,9 @@ export const Dashboard: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Real-time Ceiling Consumption Chart */}
+      <CeilingConsumptionChart />
 
       {/* Critical Alert Feed */}
       <section className="bg-rose-50/40 border border-rose-100 p-8 rounded-[2.5rem] space-y-6">
