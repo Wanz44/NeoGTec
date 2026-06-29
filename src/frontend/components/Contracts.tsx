@@ -109,7 +109,7 @@ export const Contracts: React.FC<{ subModule?: string }> = ({ subModule }) => {
                  activeTab === 'offers' ? "bg-white text-[#00A86B] shadow-md" : "text-slate-400 hover:text-slate-600"
                )}
              >
-                Contrat CIMA (7 étapes)
+                Nouveau Contrat (CIMA)
              </button>
           </div>
        </div>

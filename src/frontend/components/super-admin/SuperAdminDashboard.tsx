@@ -157,7 +157,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
     }
   };
 
-  const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMINISTRATEUR';
+  const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN' || (currentUser?.role as any) === 'ADMINISTRATEUR';
 
   const toggleNode = (id: string) => {
     setExpandedNodes(prev => ({ ...prev, [id]: !prev[id] }));
@@ -567,8 +567,8 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
                     </div>
 
                     <DonutChart 
-                      data={sourcesData} 
-                      category="total" 
+                      data={sourcesData.map(item => ({ name: item.name, value: item.total }))} 
+                      category="value" 
                       index="name" 
                       colors={["emerald", "teal", "slate", "red"]} 
                       label="2 847" // Hardcoded display value from specification

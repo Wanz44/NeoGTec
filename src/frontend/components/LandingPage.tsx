@@ -64,8 +64,9 @@ import { YoutubeDialog } from './ui/youtube-dialog';
 import { getWording } from '../lib/wording';
 import { HeaderAir } from './public/HeaderAir';
 import { ContractConfig } from './contracts/ContractConfig';
+import { PolicePrintVierge } from './contracts/PoliceForm';
 
-type Route = '/' | '/risques' | '/solutions' | '/modules' | '/tarifs' | '/faq' | '/affiliation' | '/confidentialite' | '/cgu' | '/arca-rdc' | '/merci';
+type Route = '/' | '/risques' | '/solutions' | '/modules' | '/tarifs' | '/faq' | '/affiliation' | '/confidentialite' | '/cgu' | '/arca-rdc' | '/merci' | '/contrat/print-vierge';
 
 interface LandingPageProps {
   onNavigateToLogin: () => void;
@@ -275,6 +276,10 @@ export function LandingPage({ onNavigateToLogin }: LandingPageProps) {
     item.q.toLowerCase().includes(searchFAQ.toLowerCase()) || 
     item.a.toLowerCase().includes(searchFAQ.toLowerCase())
   );
+
+  if (currentRoute === '/contrat/print-vierge') {
+    return <PolicePrintVierge />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-[#00A86B] selection:text-white relative">

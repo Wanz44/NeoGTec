@@ -130,7 +130,7 @@ export const PharmacistDashboard: React.FC = () => {
     setTimeout(() => {
       setIsOtpRequesting(false);
       setOtpSent(true);
-      logAction('SCAN_PRESCRIPTION_PHARMACIE', `Pharmacien KinPharma a scanné l'ordonnance ${prescriptionHash} pour approbation tiers payant.`, 'INFO');
+      logAction('SCAN_PRESCRIPTION_PHARMACIE', `Pharmacien KinPharma a scanné l'ordonnance ${prescriptionHash} pour approbation tiers payant.`, 'SUCCESS');
     }, 1500);
   };
 
@@ -138,7 +138,7 @@ export const PharmacistDashboard: React.FC = () => {
     e.preventDefault();
     if (otpCode === '2026') {
       setDispensingStatus("DÉLIVRANCE AUTORISÉE : Prise en charge à 100% approuvée par le comptoir assureur. Vous pouvez remettre les médicaments.");
-      logAction('DELIVRANCE_PRESCRIPTION_CONFIRMEE', `Signature OTP validée pour ${prescriptionHash}. Médicaments délivrés par Pharmacien KinPharma.`, 'INFO');
+      logAction('DELIVRANCE_PRESCRIPTION_CONFIRMEE', `Signature OTP validée pour ${prescriptionHash}. Médicaments délivrés par Pharmacien KinPharma.`, 'SUCCESS');
     } else {
       setDispensingStatus("Code OTP invalide. Double sécurité active : veuillez demander un nouveau jeton.");
       logAction('DELIVRANCE_PRESCRIPTION_ECHEC_MFA', `Échec de validation OTP sur la délivrance de prescription ${prescriptionHash}.`, 'WARNING');
@@ -226,7 +226,7 @@ export const PartnerFinanceDashboard: React.FC = () => {
   const performDailyReconciliation = () => {
     setReconcilDone(true);
     setClaimsSum(0);
-    logAction('RECONCILIATION_COMPTABLE_EXECUTE', "Le Gestionnaire Finance Sunu a fermé l'exercice quotidien de rapprochement bancaire avec la Rawbank. Écarts de compensation résolus.", "INFO");
+    logAction('RECONCILIATION_COMPTABLE_EXECUTE', "Le Gestionnaire Finance Sunu a fermé l'exercice quotidien de rapprochement bancaire avec la Rawbank. Écarts de compensation résolus.", "SUCCESS");
   };
 
   return (
@@ -301,7 +301,7 @@ export const AuditorDashboard: React.FC = () => {
   ]);
 
   const runIntegrityAuditing = () => {
-    logAction('INTEGRITY_COMPLIANCE_CNAM_RUN', "L'auditeur externe de la CNAM a lancé le script de vérification cryptographique de l'arbre d'audit.", "INFO");
+    logAction('INTEGRITY_COMPLIANCE_CNAM_RUN', "L'auditeur externe de la CNAM a lancé le script de vérification cryptographique de l'arbre d'audit.", "SUCCESS");
     alert("Vérification terminée : Ligne d'intégrité de l'arbre de hashage cryptographique (SHA-256) validée à 100%. Aucune altération détectée.");
   };
 

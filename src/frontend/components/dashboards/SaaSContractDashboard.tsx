@@ -111,7 +111,7 @@ export const SaaSContractDashboard: React.FC = () => {
 
   const handleSignArcaGate = (tenantId: string) => {
     setContracts(prev => prev.map(c => c.id === tenantId ? { ...c, isSignedByArca: true } : c));
-    logAction('ARCA_CONTRACT_SIGN', `Super Admin Paul a apposé le certificat légal de signature ARCA RDC pour la convention du locataire ID ${tenantId}.`, 'INFO');
+    logAction('ARCA_CONTRACT_SIGN', `Super Admin Paul a apposé le certificat légal de signature ARCA RDC pour la convention du locataire ID ${tenantId}.`, 'SUCCESS');
     triggerToast("Signature ARCA validée !", "Le contrat de Tiers Payant est validé au niveau national. L'établissement bénéficie de la tarification légale.");
   };
 

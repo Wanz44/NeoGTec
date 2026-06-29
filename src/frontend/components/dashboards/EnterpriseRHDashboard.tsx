@@ -155,7 +155,7 @@ export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string)
       logAction(
         'MOBILE_MONEY_COMPENSATION', 
         `Paiement compensé de ${selectedCotisation.primeDue - selectedCotisation.montantPaye} USD par Mobile Money (${momoOperator} : ${momoPhone}) pour l'affilié ${selectedCotisation.assureName}. Son QR Code a été réactivé immédiatement.`,
-        'INFO'
+        'SUCCESS'
       );
       
       triggerToast(
@@ -167,7 +167,7 @@ export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string)
   };
 
   const handleApproveDerogation = (al: AlerteCritique) => {
-    logAction('DEROGATION_APPROUVEE', `Marie KAPEND a signé l'accord de dérogation budgétaire de 650 USD pour ${al.employee} (SLA restante: ${al.slaMinutesLeft} min).`, 'INFO');
+    logAction('DEROGATION_APPROUVEE', `Marie KAPEND a signé l'accord de dérogation budgétaire de 650 USD pour ${al.employee} (SLA restante: ${al.slaMinutesLeft} min).`, 'SUCCESS');
     setAlertesFeed(prev => prev.filter(a => a.id !== al.id));
     triggerToast(
       "Dérogation Approuvée",
@@ -583,7 +583,7 @@ export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string)
                     ) : al.type === 'HOSPITALISATION' ? (
                       <button 
                         onClick={() => {
-                          logAction('CONTACT_CLINIQUE', `Marie KAPEND a émis un appel d'urgence au médecin conseil d'HJ Hospitals concernant Guy NKULU.`, 'INFO');
+                          logAction('CONTACT_CLINIQUE', `Marie KAPEND a émis un appel d'urgence au médecin conseil d'HJ Hospitals concernant Guy NKULU.`, 'SUCCESS');
                           triggerToast("Appel d'urgence initialisé", "Liaison sécurisée Voix/IP avec le secrétariat administratif d'HJ Hospitals...", "success");
                         }}
                         className="px-3.5 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-800 text-white font-black text-[10px] rounded-xl tracking-wider uppercase flex items-center gap-1.5"

@@ -13,6 +13,7 @@ import {
 
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
+import { PoliceForm } from './PoliceForm';
 
 interface CimaContractWizardProps {
   onBackToOffers?: () => void;
@@ -30,6 +31,7 @@ const INITIAL_GARANTIES = [
 ];
 
 export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackToOffers, logAction }) => {
+  const [creationMode, setCreationMode] = useState<'groupe' | 'individuel'>('groupe');
   const [step, setStep] = useState(1);
   const [contractCreated, setContractCreated] = useState(false);
   const [contractId, setContractId] = useState('POL-CIMA-' + Math.floor(100000 + Math.random() * 900000));
@@ -259,64 +261,98 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
           </div>
         </div>
 
-        {/* 7-Segment Step Indicator Track */}
-        <div className="bg-white p-4.5 rounded-2xl border border-slate-250/60 shadow-sm mb-6 flex items-center justify-between gap-1 overflow-x-auto">
-          {[
-            { s: 1, name: 'Souscripteur', i: Building2 },
-            { s: 2, name: 'Garanties', i: BookOpen },
-            { s: 3, name: 'Membres', i: Users },
-            { s: 4, name: 'Clauses', i: ListOrdered },
-            { s: 5, name: 'Cotisation', i: CreditCard },
-            { s: 6, name: 'Actuariat', i: Calculator },
-            { s: 7, name: 'Vie Contrat', i: CheckCircle2 },
-          ].map((item) => {
-            const Icon = item.i;
-            const isCompleted = item.s < step || policyStatus === 'ACTIF';
-            const isActive = item.s === step;
-            return (
-              <button
-                key={item.s}
-                onClick={() => {
-                  if (policyStatus === 'ACTIF') {
-                    setStep(item.s);
-                  } else if (item.s <= 6 || isPopImported) {
-                    setStep(item.s);
-                  }
-                }}
-                className={cn(
-                  "flex-1 min-w-[110px] flex items-center gap-2.5 px-3 py-2 rounded-xl text-left border transition-all cursor-pointer outline-none relative overflow-hidden",
-                  isActive ? "bg-[#00A86B] text-white border-[#00A86B] shadow-md shadow-[#00A86B]/15" :
-                  isCompleted ? "bg-emerald-50 text-emerald-700 border-emerald-150" :
-                  "bg-white text-slate-500 hover:bg-slate-50 border-slate-200"
-                )}
-              >
-                <div className={cn(
-                  "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0",
-                  isActive ? "bg-white text-[#00A86B]" :
-                  isCompleted ? "bg-emerald-100 text-[#00A86B]" :
-                  "bg-slate-50 text-slate-400"
-                )}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-[9.5px] font-black uppercase tracking-widest opacity-60">Étape {item.s}</div>
-                  <div className="text-xs font-bold whitespace-nowrap leading-none mt-0.5">{item.name}</div>
-                </div>
-              </button>
-            );
-          })}
+        {/* Creation Mode Selector */}
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-center bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm gap-4">
+          <div>
+            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">Type de Contrat d'Assistance CIMA</h3>
+            <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Sélectionnez le format réglementaire d'émission du contrat</p>
+          </div>
+          <div className="flex bg-slate-100 p-1 rounded-xl">
+            <button
+              onClick={() => setCreationMode('groupe')}
+              className={cn(
+                "px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer outline-none",
+                creationMode === 'groupe' ? "bg-white text-[#00A86B] shadow-sm" : "text-slate-500 hover:text-slate-800"
+              )}
+            >
+              👥 Contrat de Groupe
+            </button>
+            <button
+              onClick={() => setCreationMode('individuel')}
+              className={cn(
+                "px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer outline-none",
+                creationMode === 'individuel' ? "bg-white text-rose-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              )}
+            >
+              👤 Contrat Individuel
+            </button>
+          </div>
         </div>
 
-        {/* Dynamic Panel Workspace */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={step}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.2 }}
-            >
+        {creationMode === 'individuel' ? (
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-8">
+            <PoliceForm />
+          </div>
+        ) : (
+          <>
+            {/* 7-Segment Step Indicator Track */}
+            <div className="bg-white p-4.5 rounded-2xl border border-slate-250/60 shadow-sm mb-6 flex items-center justify-between gap-1 overflow-x-auto">
+              {[
+                { s: 1, name: 'Souscripteur', i: Building2 },
+                { s: 2, name: 'Garanties', i: BookOpen },
+                { s: 3, name: 'Membres', i: Users },
+                { s: 4, name: 'Clauses', i: ListOrdered },
+                { s: 5, name: 'Cotisation', i: CreditCard },
+                { s: 6, name: 'Actuariat', i: Calculator },
+                { s: 7, name: 'Vie Contrat', i: CheckCircle2 },
+              ].map((item) => {
+                const Icon = item.i;
+                const isCompleted = item.s < step || policyStatus === 'ACTIF';
+                const isActive = item.s === step;
+                return (
+                  <button
+                    key={item.s}
+                    onClick={() => {
+                      if (policyStatus === 'ACTIF') {
+                        setStep(item.s);
+                      } else if (item.s <= 6 || isPopImported) {
+                        setStep(item.s);
+                      }
+                    }}
+                    className={cn(
+                      "flex-1 min-w-[110px] flex items-center gap-2.5 px-3 py-2 rounded-xl text-left border transition-all cursor-pointer outline-none relative overflow-hidden",
+                      isActive ? "bg-[#00A86B] text-white border-[#00A86B] shadow-md shadow-[#00A86B]/15" :
+                      isCompleted ? "bg-emerald-50 text-emerald-700 border-emerald-150" :
+                      "bg-white text-slate-500 hover:bg-slate-50 border-slate-200"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0",
+                      isActive ? "bg-white text-[#00A86B]" :
+                      isCompleted ? "bg-emerald-100 text-[#00A86B]" :
+                      "bg-slate-50 text-slate-400"
+                    )}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-[9.5px] font-black uppercase tracking-widest opacity-60">Étape {item.s}</div>
+                      <div className="text-xs font-bold whitespace-nowrap leading-none mt-0.5">{item.name}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Dynamic Panel Workspace */}
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.2 }}
+                >
               
               {/* STATUS DEVIS AT STEP < 6 */}
               {step < 6 && policyStatus !== 'ACTIF' && (
@@ -1275,6 +1311,8 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
             </motion.div>
           </AnimatePresence>
         </div>
+      </>
+    )}
 
       </div>
 

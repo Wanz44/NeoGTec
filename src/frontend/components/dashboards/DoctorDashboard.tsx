@@ -128,7 +128,7 @@ export const DoctorDashboard: React.FC = () => {
 
   // Log action calls to audit logs (Prompt 2 requirement)
   const logClickCommunication = (claimName: string, channel: 'GSM' | 'WhatsApp') => {
-    logAction('CONDUITE_URGENTE_MEDECIN', `Dr. Sarah LOKO a initié un contact urgent via ${channel} avec l'assuré ou le médecin conseil concernant la demande de prise en charge PEC de "${claimName}".`, 'INFO');
+    logAction('CONDUITE_URGENTE_MEDECIN', `Dr. Sarah LOKO a initié un contact urgent via ${channel} avec l'assuré ou le médecin conseil concernant la demande de prise en charge PEC de "${claimName}".`, 'SUCCESS');
     triggerToast(
       `Appel Urgent ${channel} lancé`,
       `Communication redirigée vers votre terminal avec l'identifiant patient de "${claimName}".`
@@ -146,7 +146,7 @@ export const DoctorDashboard: React.FC = () => {
         logAction('DME_ACCES_REFUSE_NO_CONSENT', "Tentative d'accès au DME de Jean PATIENT MUKENDI bloquée (absence de consentement actif).", "WARNING");
       } else {
         setSearchFeedback("ACCÈS AUTORISÉ : DME-8842 - Jean PATIENT MUKENDI | Diagnostics: Hypertension artérielle modérée, Diabète de type II insulinodépendant | Allergies: Pénicilline G | IP de log: 192.168.1.12");
-        logAction('DME_ACCES_AUTORISE', "Dr. Sarah LOKO a accédé de manière sécurisée au DME de Jean PATIENT suite au scan de sa carte.", "INFO");
+        logAction('DME_ACCES_AUTORISE', "Dr. Sarah LOKO a accédé de manière sécurisée au DME de Jean PATIENT suite au scan de sa carte.", "SUCCESS");
       }
     } else {
       setSearchFeedback("Erreur DME: Consentement non donné ou carte introuvable.");
@@ -166,7 +166,7 @@ export const DoctorDashboard: React.FC = () => {
       attachment: `Certif_Appr_${claim.id}.pdf`
     };
     setDecisionLogs([newLog, ...decisionLogs]);
-    logAction('EDITION_PEC_ACCEPTATION', `Dr. Sarah LOKO a formellement approuvé la PEC ${claim.id} pour un montant de ${claim.amount} USD.`, 'INFO');
+    logAction('EDITION_PEC_ACCEPTATION', `Dr. Sarah LOKO a formellement approuvé la PEC ${claim.id} pour un montant de ${claim.amount} USD.`, 'SUCCESS');
     triggerToast("PEC Approuvée", `La prise en charge pour ${claim.patientName} a été transmise au tiers payant.`);
   };
 
@@ -199,7 +199,7 @@ export const DoctorDashboard: React.FC = () => {
   };
 
   const downloadCertifiedPDF = () => {
-    logAction('EXPORT_TIMELINE_CERTIFIEE_ISO', "Exportation et certification numérique de la timeline de décision conforme ISO 27001.", "INFO");
+    logAction('EXPORT_TIMELINE_CERTIFIEE_ISO', "Exportation et certification numérique de la timeline de décision conforme ISO 27001.", "SUCCESS");
     triggerToast("PDF Numérique Certifié", "Le rapport d'audit signé numériquement par l'autorité d'accréditation a été téléchargé cryptographiquement.");
   };
 
@@ -297,7 +297,7 @@ export const DoctorDashboard: React.FC = () => {
                     localStorage.setItem("assur_consent_logs", JSON.stringify(updated));
                     
                     // Log the security confirmation
-                    logAction('GRANT_PATIENT_CONSENT_DME', `Le médecin a recueilli et validé le consentement d'accès DME pour "Jean PATIENT MUKENDI" depuis l'IP 192.168.1.12.`, 'INFO');
+                    logAction('GRANT_PATIENT_CONSENT_DME', `Le médecin a recueilli et validé le consentement d'accès DME pour "Jean PATIENT MUKENDI" depuis l'IP 192.168.1.12.`, 'SUCCESS');
                     
                     setSearchFeedback("ACCÈS AUTORISÉ (Nouveau Consentement Actif) : DME-8842 - Jean PATIENT MUKENDI | Antécédents: Diabète Type II insulinodépendant, Hypertension modérée | Allergies: Pénicilline G | IP Signature: 192.168.1.12");
                   }}

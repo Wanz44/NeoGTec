@@ -25,7 +25,7 @@ export const MobileAssureApp: React.FC = () => {
 
   const triggerQRScanSimMessage = () => {
     setShowQRModal(true);
-    logAction('GENERATE_HEALTH_QR_MIMIC', "Jean PATIENT a généré un pass QR d'autorisation chiffré à validité temporaire (60 secondes) pour présentation en pharmacie.", "INFO");
+    logAction('GENERATE_HEALTH_QR_MIMIC', "Jean PATIENT a généré un pass QR d'autorisation chiffré à validité temporaire (60 secondes) pour présentation en pharmacie.", "SUCCESS");
   };
 
   const copyPrescriptionHash = () => {
