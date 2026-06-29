@@ -183,26 +183,6 @@ export const Payment: React.FC<{ subModule?: string }> = ({ subModule }) => {
              </div>
           </div>
        </div>
-
-       <div className="flex items-center gap-6 p-6 bg-white border border-green-200 rounded-3xl overflow-hidden relative group shadow-sm">
-          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
-             <ShieldCheck className="w-40 h-40 text-green-600" />
-          </div>
-          <div className="flex items-center gap-6 relative z-10 w-full justify-between">
-             <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-green-50 rounded-2xl border border-green-100 flex items-center justify-center">
-                   <Lock className="w-8 h-8 text-green-600" />
-                </div>
-                <div>
-                   <h4 className="text-xl font-black text-green-950 uppercase tracking-tight italic">Sécurité Certifiée PCI DSS</h4>
-                   <p className="text-xs text-slate-400 tracking-tight italic">Toutes les données sensibles (PAN, Token) sont cryptées en AES-256 avec validation 3D Secure 2.0.</p>
-                </div>
-             </div>
-             <button className="whitespace-nowrap px-8 py-3 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-600/30 hover:bg-green-500 transition-all relative z-10 border border-green-700">
-                Vérifier l'Audit Compliance
-             </button>
-          </div>
-       </div>
     </div>
   );
 
