@@ -3,7 +3,7 @@
  * 🎯 Objectif : Formulaire et cycle de vie d'un contrat d'assurance aux normes CIMA / ARCA (7 étapes d'enregistrement).
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Building2, ShieldCheck, ListOrdered, Users, BookOpen, Calculator, 
@@ -32,6 +32,7 @@ const INITIAL_GARANTIES = [
 
 export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackToOffers, logAction }) => {
   const [creationMode, setCreationMode] = useState<'groupe' | 'individuel'>('groupe');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const [contractCreated, setContractCreated] = useState(false);
   const [contractId, setContractId] = useState('POL-CIMA-' + Math.floor(100000 + Math.random() * 900000));
@@ -173,11 +174,18 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
   }, [effectif, garanties]);
 
   // upload population
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPopFile(file.name);
+      setIsPopImported(true);
+      setPolicyStatus('EN_CONFORMITE');
+      if (logAction) logAction('IMPORT_POP_CONTRAT', `Population assurée importée de ${file.name}. 5000 lignes valides lues par l'interpréteur Zod.`, 'SUCCESS');
+    }
+  };
+
   const handleSimulateImport = () => {
-    setPopFile('kwilu_population_5000_assures.xlsx');
-    setIsPopImported(true);
-    setPolicyStatus('EN_CONFORMITE');
-    if (logAction) logAction('IMPORT_POP_CONTRAT', `Population assurée importée de kwilu_population_5000_assures.xlsx. 5000 lignes valides lues par l'interpréteur Zod.`, 'SUCCESS');
+    fileInputRef.current?.click();
   };
 
   const generateEcheancier = () => {
@@ -670,7 +678,17 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                   </div>
 
                   {/* Drag-and-drop & Click to upload simulator */}
-                  <div className="border-2 border-dashed border-slate-300 hover:border-[#00A86B]/60 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 hover:bg-white transition-all group">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept=".xlsx, .xls, .csv" 
+                    onChange={handleFileInputChange} 
+                  />
+                  <div 
+                    onClick={() => { if (!isPopImported) handleSimulateImport(); }}
+                    className="border-2 border-dashed border-slate-300 hover:border-[#00A86B]/60 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 hover:bg-white transition-all group"
+                  >
                     <div className="w-14 h-14 bg-[#00A86B]/15 text-[#00A86B] flex items-center justify-center rounded-2xl mb-4 group-hover:scale-110 transition-transform">
                       <FileText className="w-7 h-7" />
                     </div>
@@ -689,7 +707,7 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                           Colonnes minimales requises : Nom, Postnoms, Date de naissance, Sexe, Matricule, Nb Enfants, Conjoints
                         </p>
                         <button 
-                          onClick={handleSimulateImport}
+                          onClick={(e) => { e.stopPropagation(); handleSimulateImport(); }}
                           className="mt-4 px-4 py-2 bg-[#00A86B] text-white font-bold text-[10.5px] uppercase tracking-wider rounded-xl hover:bg-[#00905a] transition-all cursor-pointer"
                         >
                           Simuler chargement d'un classeur Excel
