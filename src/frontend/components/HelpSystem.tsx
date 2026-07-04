@@ -233,7 +233,7 @@ export const HelpSystem: React.FC<HelpSystemProps> = ({
                 </div>
                 <div>
                   <h4 className="text-sm font-black uppercase tracking-wider">Centre d'Aide</h4>
-                  <span className="text-[9px] text-white/70 tracking-widest font-mono uppercase block leading-none">Support Interactif Google Nest</span>
+                  <span className="text-[9px] text-white/70 tracking-widest font-mono uppercase block leading-none">Support Interactif NeoGTec</span>
                 </div>
               </div>
               <button 

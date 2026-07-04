@@ -123,7 +123,7 @@ export default function App() {
     },
     {
       id: "tour-4",
-      title: "🕹️ Assistance Active Google Support",
+      title: "🕹️ Assistance Active NeoGTec Support",
       description: "Cliquez sur l'option d'Aide à tout moment pour lire les bases de connaissances interactives, simuler un bot WhatsApp, ou créer un ticket."
     }
   ];
@@ -429,7 +429,7 @@ export default function App() {
             <button 
               onClick={() => {
                 setShowHelpPanel(true);
-                logAction('OUVERTURE_PANNEAU_AIDE', 'Ouverture du support client intégré niveau Google depuis le header.', 'SUCCESS');
+                logAction('OUVERTURE_PANNEAU_AIDE', 'Ouverture du support client intégré niveau plateforme depuis le header.', 'SUCCESS');
               }}
               className="p-2 rounded-sm transition-all border outline-none font-medium text-sm flex items-center gap-2 bg-white/50 text-green-950 hover:bg-white/80 active:scale-95 cursor-pointer border-white/20 relative"
             >
@@ -606,7 +606,7 @@ export default function App() {
             logAction('CLIC_WIDGET_FLOAT_AIDE', 'Clic sur le Widget flottant d\'assistance en bas à droite.', 'SUCCESS');
           }}
           className="w-14 h-14 bg-gradient-to-tr from-green-600 to-emerald-700 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 outline-none cursor-pointer group border-2 border-white/25 relative"
-          title="Besoin d'aide ? (Google Support)"
+          title="Besoin d'aide ? (NeoGTec Support)"
         >
           <HelpCircle className="w-6 h-6 shrink-0 group-hover:rotate-12 transition-transform" />
           <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white border border-white animate-bounce shadow">

@@ -41,7 +41,7 @@ const MODULES_CORES = [
   { name: "Calculateur de Cotisations", desc: "Ajustements automatiques.", tag: "Core" },
   { name: "Éligibilité Portative", desc: "Vérification par QR code.", tag: "Nouveau" },
   { name: "Clearing h-24", desc: "Règlement direct des cliniques.", tag: "Core" },
-  { name: "Contrôle d'Identité IA", desc: "Détection de fraude faciale.", tag: "Nouveau" },
+  { name: "Contrôle d'Identité Algorithmique", desc: "Détection de fraude faciale.", tag: "Nouveau" },
   { name: "Rapport Réglementaire ARCA", desc: "Génération en un clic.", tag: "Core" }
 ];
 
@@ -169,7 +169,7 @@ export function HeaderPro({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
 
     // Search targets
     const targets = [
-      { title: "Lutte anti-fraude par IA", category: "Sécurité", route: "/risques", desc: "Stopper 99% des abus de soins" },
+      { title: "Lutte anti-fraude Algorithmique", category: "Sécurité", route: "/risques", desc: "Stopper 99% des abus de soins" },
       { title: "Climat de confiance de l'ARCA", category: "Régulation", route: "/arca-rdc", desc: "Agrément officiel ARCA n°0127" },
       { title: "Clearing h-24 en RDC", category: "Finance", route: "/solutions", desc: "Comment nous payons les cliniques le jeudi" },
       { name: "Modules Cores de Assurance Collective", category: "Produit", route: "/modules", desc: "16 modules configurables pour les DRH" },

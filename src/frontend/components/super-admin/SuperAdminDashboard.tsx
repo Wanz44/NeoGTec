@@ -934,7 +934,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
                     <div>
                       <h4 className="text-xs font-black uppercase text-slate-800">Forcer le protocole MFA</h4>
                       <p className="text-[11px] text-slate-450 mt-1 leading-relaxed font-semibold">
-                        Empêcher la connexion de l'équipe RH ou des prestataires hospitaliers s'ils n'ont pas validé l'authentification double-facteur (SMS Relais ou Google Authenticator).
+                        Empêcher la connexion de l'équipe RH ou des prestataires hospitaliers s'ils n'ont pas validé l'authentification double-facteur (SMS Relais ou MFA Authenticator).
                       </p>
                     </div>
                     <div className="mt-4 flex gap-4">

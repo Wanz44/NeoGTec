@@ -170,7 +170,7 @@ export const Privileges: React.FC = () => {
                  </div>
                  <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center gap-2">
                     <Zap className="w-4 h-4 text-indigo-500" />
-                    <span className="text-[9px] font-black text-indigo-600 uppercase">AI-Suggested Profile</span>
+                    <span className="text-[9px] font-black text-indigo-600 uppercase">Algorithmic-Suggested Profile</span>
                  </div>
               </div>
 

@@ -30,7 +30,7 @@ export const CostForecasting: React.FC = () => {
              </div>
              <div>
                 <h2 className="text-3xl font-black text-slate-900 italic uppercase tracking-tighter leading-none">Prévisions & Simulations</h2>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2 italic">Modélisation Actuarielle Intelligence IA</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2 italic">Modélisation Actuarielle Intelligence Algorithmique</p>
              </div>
           </div>
           <button className="px-10 py-5 bg-green-600 text-white rounded-[32px] font-black text-xs uppercase tracking-widest shadow-2xl shadow-green-600/20 hover:scale-105 transition-all">

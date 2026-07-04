@@ -492,7 +492,7 @@ export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
                       {[
                         { title: "Législation ARCA RDC", desc: "Agrément courtage n°0127", href: "/arca-rdc", icon: ShieldAlert },
                         { title: "Données de santé Loi 18/035", desc: "Souveraineté des dossiers à Gombe", href: "/confidentialite", icon: Lock },
-                        { title: "Prévenir la fraude par IA", desc: "Stopper les usurpations d'identité", href: "/risques", icon: AlertTriangle },
+                        { title: "Prévenir la fraude algorithmique", desc: "Stopper les usurpations d'identité", href: "/risques", icon: AlertTriangle },
                         { title: "Comment s'affilier", desc: "Formulaire simple d'entrée pour DRH", href: "/affiliation", icon: MapPin }
                       ].map(item => (
                         <button

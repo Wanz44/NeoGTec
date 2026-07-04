@@ -110,7 +110,7 @@ export const SystemConfig: React.FC = () => {
                    </div>
                    <div className="flex items-center justify-between">
                       <p className="text-[10px] font-black text-slate-500 uppercase">Destination</p>
-                      <span className="text-xs font-black text-green-600">Google Cloud / S3</span>
+                      <span className="text-xs font-black text-green-600">Cloud Stockage / S3</span>
                    </div>
                 </div>
                 <button className="w-full py-3 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-600/30">Lancer une sauvegarde manuelle</button>

@@ -27,7 +27,7 @@ export const FraudDetection: React.FC = () => {
              <div className="flex-1 space-y-3">
                 <h2 className="text-3xl font-black italic tracking-tighter uppercase leading-none">Neural Fraud Detection</h2>
                 <p className="text-sm font-bold text-white/70 italic leading-relaxed max-w-xl">
-                   Le moteur IA analyse les schémas de consommation pour identifier les abus, les doublons de facturation et les usurpations d'identité en temps réel.
+                   Le moteur algorithmique analyse les schémas de consommation pour identifier les abus, les doublons de facturation et les usurpations d'identité en temps réel.
                 </p>
                 <div className="flex items-center gap-4 py-1.5 px-4 bg-white/10 rounded-full border border-white/10 w-fit">
                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -87,7 +87,7 @@ export const FraudDetection: React.FC = () => {
              </div>
           </div>
 
-          {/* Right Sidebar: AI Performance */}
+          {/* Right Sidebar: Performance Algorithmique */}
           <div className="space-y-8">
              <div className="bg-slate-950 p-10 rounded-[48px] text-white shadow-2xl space-y-10 relative overflow-hidden flex flex-col justify-between">
                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-1000">

@@ -310,7 +310,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       {/* Dynamic Background */}
       <div className="absolute inset-x-0 top-0 h-1 bg-green-500" />
       
-      {/* Top micro bar like style of Google screen */}
+      {/* Top micro bar like style of standard screen */}
       <div className="w-full bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded bg-green-600/10 border border-green-500/20 flex items-center justify-center text-green-650 font-extrabold shadow-3xs text-sm">
@@ -800,7 +800,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                           <QrCode className="w-32 h-32 text-indigo-900" />
                         </div>
                         <p className="text-[10px] text-slate-450 font-bold text-center leading-normal">
-                          Scannez ce QR Code avec votre application de sécurité (Google Authenticator, Microsoft Auth) puis tapez le jeton généré.
+                          Scannez ce QR Code avec votre application de sécurité (Authenticator standard, Microsoft Auth) puis tapez le jeton généré.
                         </p>
                       </div>
                     ) : (

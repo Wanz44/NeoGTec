@@ -1,6 +1,6 @@
 /**
  * 📄 Fichier : /src/frontend/components/partners/ContractingDigital.tsx
- * 🎯 Objectif : Conventionnement digital, négociation des délais de paiement, analyse d'abus d'office par IA et signature OTP (H2).
+ * 🎯 Objectif : Conventionnement digital, négociation des délais de paiement, analyse d'abus d'office algorithmique et signature OTP (H2).
  */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -71,7 +71,7 @@ export const ContractingDigital: React.FC = () => {
         {[
           { label: "Conventions nègociées", value: "48 hôpitaux", desc: "Signés via plateforme", color: "text-emerald-700" },
           { label: "Délai Payement Moyen", value: "42.4 jours", desc: "Cible contractuelle 45j", color: "text-indigo-700" },
-          { label: "Contrôles clauses AI active", value: "100%", desc: "Scan automatique des PDF", color: "text-amber-700" }
+          { label: "Contrôles clauses Algorithme active", value: "100%", desc: "Scan automatique des PDF", color: "text-amber-700" }
         ].map((c, idx) => (
           <div key={idx} className="bg-white border border-slate-150 rounded-[2rem] p-5 shadow-sm space-y-1">
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-bold block">{c.label}</span>
@@ -120,7 +120,7 @@ export const ContractingDigital: React.FC = () => {
                   <span>Délai cible: {a.paymentDelay} jours</span>
                   {a.abusiveClausesCount > 0 && (
                     <span className="text-rose-600 flex items-center gap-1 font-bold text-[9px] uppercase">
-                      ⚠️ Abus AI: {a.abusiveClausesCount}
+                      ⚠️ Abus Algorithme: {a.abusiveClausesCount}
                     </span>
                   )}
                 </div>
@@ -187,12 +187,12 @@ export const ContractingDigital: React.FC = () => {
                 </p>
               </div>
 
-              {/* H2.3 AI Clause Analyzer module */}
+              {/* H2.3 Algorithm Clause Analyzer module */}
               <div className="space-y-3.5 border p-5 rounded-3xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-indigo-600" />
-                    <span className="text-xs font-black text-slate-900 uppercase">H2.3 Analyseur de Clauses Légales (IA)</span>
+                    <span className="text-xs font-black text-slate-900 uppercase">H2.3 Analyseur de Clauses Légales (Algorithmique)</span>
                   </div>
                   <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[8.5px] font-mono rounded font-black uppercase tracking-wider">
                     Model: Gemini-Flash-Pro

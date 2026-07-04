@@ -40,7 +40,7 @@ const INITIAL_TIERS: ContractTier[] = [
     status: 'Publié',
     countryCode: ['RDC', 'France'],
     target: 'Entreprise >50 employés',
-    rules: ['Si âge > 60 alors prime +20%', 'IA Pricing Optionnel']
+    rules: ['Si âge > 60 alors prime +20%', 'Pricing Algorithmique Optionnel']
   },
   { 
     id: 'T2', 
@@ -54,7 +54,7 @@ const INITIAL_TIERS: ContractTier[] = [
     status: 'Publié',
     countryCode: ['RDC'],
     target: 'TPE / PME',
-    rules: ['IA Pricing Désactivé']
+    rules: ['Pricing Algorithmique Désactivé']
   },
   { 
     id: 'T3', 
@@ -68,7 +68,7 @@ const INITIAL_TIERS: ContractTier[] = [
     status: 'Brouillon',
     countryCode: ['France', 'UAE'],
     target: 'Toutes tailles',
-    rules: ['Activer IA pricing auto']
+    rules: ['Activer pricing algorithmique auto']
   }
 ];
 
@@ -104,7 +104,7 @@ export const ContractConfig: React.FC = () => {
   const [tempDeductible, setTempDeductible] = useState('20');
   const [tempTicket, setTempTicket] = useState('10%');
 
-  // Form step 3: Rules and AI pricing
+  // Form step 3: Rules and algorithm pricing
   const [ageOverSixtyRule, setAgeOverSixtyRule] = useState(true);
   const [maternityWaitingRule, setMaternityWaitingRule] = useState(false);
   const [iaPricingAuto, setIaPricingAuto] = useState(true);
@@ -173,7 +173,7 @@ export const ContractConfig: React.FC = () => {
     const generatedRules: string[] = [];
     if (ageOverSixtyRule) generatedRules.push('Si âge > 60 alors prime +20%');
     if (maternityWaitingRule) generatedRules.push('Délai carence maternité: 9 mois');
-    if (iaPricingAuto) generatedRules.push('Pricing Dynamique IA Activé');
+    if (iaPricingAuto) generatedRules.push('Pricing Dynamique Algorithmique Activé');
 
     const newOffer: ContractTier = {
       id: `T${Date.now()}`,
@@ -394,7 +394,7 @@ export const ContractConfig: React.FC = () => {
                   </div>
                </div>
                <p className="text-xs text-slate-500 leading-relaxed italic">
-                 Le moteur IA optionnel assiste les assureurs lors de la phase 3 en analysant l&apos;évolution épidémiologique régionale pour suggérer de meilleurs tarifs au lancement.
+                 Le moteur algorithmique optionnel assiste les assureurs lors de la phase 3 en analysant l&apos;évolution épidémiologique régionale pour suggérer de meilleurs tarifs au lancement.
                </p>
             </div>
             
@@ -685,12 +685,12 @@ export const ContractConfig: React.FC = () => {
                         />
                       </div>
 
-                      {/* AI pricing active toggle */}
+                      {/* Algorithm pricing active toggle */}
                       <div className="p-5 bg-indigo-50/50 rounded-3xl border border-indigo-100 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-5 h-5 text-indigo-600 animate-pulse" />
-                            <p className="text-xs font-black text-indigo-950 uppercase">Activer IA Pricing automatique</p>
+                            <p className="text-xs font-black text-indigo-950 uppercase">Activer le Pricing algorithmique automatique</p>
                           </div>
                           <button 
                             type="button"

@@ -284,7 +284,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
       const newDoc: MedicalDocument = {
         id: `DOC-${Math.floor(100 + Math.random() * 900)}`,
         type: ocrForm.type,
-        title: "Analyse Hémoglobine Lubumbashi - Extraction IA",
+        title: "Analyse Hémoglobine Lubumbashi - Extraction Algorithmique",
         date: ocrForm.date,
         source: 'Labo Clinique Externe (Lshi)',
         ocrDetected: 'Contrôles hémoglobine normaux, tension artérielle 13.1'
@@ -293,7 +293,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
         ...prev,
         documents: [newDoc, ...prev.documents]
       }));
-      triggerToast("OCR IA achevé : Champs analysés et rattachés au DME de Marie-Claire Mbika.");
+      triggerToast("OCR Algorithmique achevé : Champs analysés et rattachés au DME de Marie-Claire Mbika.");
     }, 1500);
   };
 
@@ -907,7 +907,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
 
                       {doc.ocrDetected && (
                         <div className="mt-2 text-[9px] text-indigo-700 bg-indigo-50/50 p-2 border border-indigo-150 rounded-lg font-bold">
-                          🧠 IA OCR : {doc.ocrDetected}
+                          🧠 Algorithme OCR : {doc.ocrDetected}
                         </div>
                       )}
                     </div>
@@ -1368,7 +1368,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                   <div className="border-2 border-dashed border-slate-200 hover:border-indigo-400 rounded-2xl p-6 text-center cursor-pointer space-y-2 bg-slate-50/50">
                     <UploadCloud className="mx-auto w-10 h-10 text-slate-350" />
                     <p className="text-xs font-bold text-slate-800">Glisser-déposer ou cliquer pour importer</p>
-                    <p className="text-[9px] text-slate-400">PDF, JPG (Max 5Mo) • Extraction auto IA</p>
+                    <p className="text-[9px] text-slate-400">PDF, JPG (Max 5Mo) • Extraction automatique algorithmique</p>
                   </div>
                 </div>
 
@@ -1383,7 +1383,7 @@ export const Telemedicine: React.FC<{ subModule?: string }> = ({ subModule }) =>
                   <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2">
                     <CheckSquare className="w-4 h-4 text-emerald-600" />
                     <div className="text-[11.5px] text-emerald-800 font-semibold leading-normal">
-                      Extracteur IA : <span className="font-bold underline">{ocrForm.file}</span> décodé. Valeurs d&apos;hémoglobine identifiées à Lubumbashi. Double saisie évitée.
+                      Extracteur Algorithmique : <span className="font-bold underline">{ocrForm.file}</span> décodé. Valeurs d&apos;hémoglobine identifiées à Lubumbashi. Double saisie évitée.
                     </div>
                   </div>
                 )}

@@ -12,7 +12,7 @@ import { createServer as createViteServer } from "vite"; // Serveur de développ
 // Fonction asynchrone d'initialisation du serveur applicatif
 async function startServer() {
   const app = express(); // Instanciation de l'application Express
-  const PORT = 3000; // Port d'écoute standard pour l'environnement AI Studio | 🔗 Contrainte système: Port 3000
+  const PORT = 3000; // Port d'écoute standard pour le serveur de production | 🔗 Contrainte système: Port 3000
 
   app.use(express.json()); // Middleware pour le parsing des corps de requêtes JSON
 

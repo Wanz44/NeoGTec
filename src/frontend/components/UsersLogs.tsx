@@ -183,7 +183,7 @@ export const UsersLogs: React.FC = () => {
           </div>
        </div>
 
-       {/* Security Summary & AI Insights */}
+       {/* Security Summary & Algorithmic Insights */}
        <div className="p-8 bg-slate-900 rounded-[2rem] text-white flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden border border-slate-700 shadow-2xl">
           <div className="absolute right-0 top-0 p-8 opacity-5">
              <Layers className="w-40 h-40" />

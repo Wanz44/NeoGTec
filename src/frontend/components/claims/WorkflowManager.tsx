@@ -1,6 +1,6 @@
 /**
  * 📄 Fichier : /src/frontend/components/claims/WorkflowManager.tsx
- * 🎯 Objectif : File d'attente intelligente, Kanban IA Anti-Fraude, et table d'instruction à 3 onglets (G1, G2).
+ * 🎯 Objectif : File d'attente intelligente, Kanban Algorithmique Anti-Fraude, et table d'instruction à 3 onglets (G1, G2).
  */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -63,7 +63,7 @@ export const WorkflowManager: React.FC = () => {
       {/* SLA & Top Statistics Shelf */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Sinistres Temps Réel", value: "48 actifs", desc: "Moteur IA en veille", color: "text-indigo-600" },
+          { label: "Sinistres Temps Réel", value: "48 actifs", desc: "Algorithme en veille", color: "text-indigo-600" },
           { label: "SLA en Souffrance (<2h)", value: "3 dossiers", desc: "Alerte critiques rouges active", color: "text-rose-600" },
           { label: "Fraude Détectée ce jour", value: "2 alertes", desc: "Score Moyen: 84%", color: "text-amber-600" },
           { label: "Taux d'automatisation", value: "81 %", desc: "No-code Rule Engine", color: "text-emerald-600" }
@@ -85,10 +85,10 @@ export const WorkflowManager: React.FC = () => {
       {/* Kanban Board Container */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Column 1: Nouveaux (IA fraud scores analyzed on load) */}
+        {/* Column 1: Nouveaux (scores d'algorithme de fraude analysés à la charge) */}
         <div className="bg-slate-50 border border-slate-200 p-5 rounded-[2.5rem] space-y-4">
           <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-            <span className="text-xs font-black text-slate-900 uppercase">1. Nouveaux Sinistres (IA analyze)</span>
+            <span className="text-xs font-black text-slate-900 uppercase">1. Nouveaux Sinistres (Algorithme)</span>
             <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-black rounded-full font-mono">
               {claims.filter(c => c.status === 'nouveau').length}
             </span>
@@ -105,7 +105,7 @@ export const WorkflowManager: React.FC = () => {
                   <span className="text-[9.5px] font-semibold text-slate-400 font-mono tracking-tight">{c.id}</span>
                   {c.fraudScore > 80 && (
                     <span className="px-2 py-0.5 bg-rose-50 text-rose-600 text-[8.5px] font-black uppercase rounded border border-rose-150 animate-pulse">
-                      IA Alarme Fraude : {c.fraudScore}%
+                      Alarme Algorithme : {c.fraudScore}%
                     </span>
                   )}
                 </div>
@@ -153,7 +153,7 @@ export const WorkflowManager: React.FC = () => {
                   <span className="text-[9.5px] font-semibold text-slate-400 font-mono tracking-tight">{c.id}</span>
                   {c.fraudScore > 80 && (
                     <span className="px-2 py-0.5 bg-rose-50 text-rose-600 text-[8.5px] font-black uppercase rounded border border-rose-150 animate-pulse">
-                      IA Alarme : {c.fraudScore}%
+                      Alarme Algorithme : {c.fraudScore}%
                     </span>
                   )}
                 </div>
@@ -230,7 +230,7 @@ export const WorkflowManager: React.FC = () => {
               <div className="p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                 <div>
                   <span className="px-2 py-0.5 bg-rose-50 text-rose-600 font-mono text-[8px] rounded uppercase font-black">
-                    IA Fraud Alert Level: {selectedClaim.fraudScore}%
+                    Niveau Alerte Algorithme: {selectedClaim.fraudScore}%
                   </span>
                   <h4 className="text-sm font-black text-slate-900 uppercase mt-1 leading-none">Instruction du dossier d&apos;assurance</h4>
                   <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">ID: {selectedClaim.id} • Émis par {selectedClaim.clinic}</p>

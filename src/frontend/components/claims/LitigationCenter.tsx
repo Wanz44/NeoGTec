@@ -1,6 +1,6 @@
 /**
  * 📄 Fichier : /src/frontend/components/claims/LitigationCenter.tsx
- * 🎯 Objectif : Gestion juridique des contentieux, attribution d'avocats (Dupont J+15) et moteur de jurisprudence IA (G3, G4).
+ * 🎯 Objectif : Gestion juridique des contentieux, attribution d'avocats (Dupont J+15) et moteur de jurisprudence algorithmique (G3, G4).
  */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -171,7 +171,7 @@ export const LitigationCenter: React.FC = () => {
               <div className="border border-slate-150 p-5 rounded-[2rem] space-y-4">
                 <div className="flex items-center gap-2">
                   <Scale className="w-5 h-5 text-indigo-600 animate-pulse" />
-                  <span className="text-xs font-black text-slate-900 uppercase italic">G4. Moteur de Jurisprudence d&apos;assurances NeoGTec (IA)</span>
+                  <span className="text-xs font-black text-slate-900 uppercase italic">G4. Moteur de Jurisprudence d&apos;assurances NeoGTec (Algorithmique)</span>
                 </div>
 
                 <form onSubmit={handleJurisprudenceSearch} className="flex gap-2.5">

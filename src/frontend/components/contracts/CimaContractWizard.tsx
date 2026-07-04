@@ -18,6 +18,7 @@ import { PoliceForm } from './PoliceForm';
 interface CimaContractWizardProps {
   onBackToOffers?: () => void;
   logAction?: (action: string, details: string, status?: 'SUCCESS' | 'WARNING' | 'CRITICAL') => void;
+  onContractCreated?: (contract: any) => void;
 }
 
 // Lignes imposées CIMA pour l'étape 2
@@ -30,12 +31,23 @@ const INITIAL_GARANTIES = [
   { famille: 'Évacuation Sanitaire', plafond: 10000, taux: 100, plafondSeance: 10000, carence: '0j', ap: 'Oui' },
 ];
 
-export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackToOffers, logAction }) => {
+export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackToOffers, logAction, onContractCreated }) => {
   const [creationMode, setCreationMode] = useState<'groupe' | 'individuel'>('groupe');
+  const [wizardContractType, setWizardContractType] = useState<'groupe' | 'famille' | 'particulier'>('groupe');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const [contractCreated, setContractCreated] = useState(false);
   const [contractId, setContractId] = useState('POL-CIMA-' + Math.floor(100000 + Math.random() * 900000));
+  
+  // States for family members
+  const [familyMembers, setFamilyMembers] = useState<Array<{ name: string; age: number; relation: string }>>([
+    { name: 'Mireille Goma', age: 34, relation: 'Conjointe' },
+    { name: 'Sarah Goma', age: 12, relation: 'Enfant' },
+    { name: 'Kévin Goma', age: 8, relation: 'Enfant' },
+  ]);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberAge, setNewMemberAge] = useState<number>(30);
+  const [newMemberRelation, setNewMemberRelation] = useState('Conjoint');
   
   // -------------------------------------------------------------
   // FORM STATES
@@ -214,9 +226,22 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
       setPolicyStatus('ACTIF');
       setStep(7);
       setIsActivating(false);
+      
+      const newContractItem = {
+        id: contractId,
+        company: raisonSociale,
+        type: wizardContractType === 'groupe' ? 'Groupe' : wizardContractType === 'famille' ? 'Famille' : 'Particulier',
+        status: 'Actif' as const,
+        monthlyPremium: totalPrimeDynamic
+      };
+      
+      if (onContractCreated) {
+        onContractCreated(newContractItem);
+      }
+      
       if (logAction) {
-        logAction('EMISSION_POLICE_CIMA', `Police d'assurance active émise pour Kwilu-Services SA. Signature cryptographique ARCA apposée.`, 'SUCCESS');
-        logAction('GENERATION_CONTRATS_QR', `Génération automatique de 5 000 QR codes d'activation d'assurés au format CIMA Art.13.`, 'SUCCESS');
+        logAction('EMISSION_POLICE_CIMA', `Police d'assurance active émise pour ${raisonSociale}. Signature cryptographique ARCA apposée.`, 'SUCCESS');
+        logAction('GENERATION_CONTRATS_QR', `Génération automatique des QR codes d'activation d'assurés au format CIMA Art.13.`, 'SUCCESS');
       }
     }, 2000);
   };
@@ -381,13 +406,66 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                   <div className="border-b border-slate-100 pb-4">
                     <h2 className="text-xl font-bold text-slate-900">1. Renseignements Souscripteur (CIMA Art. 13)</h2>
                     <p className="text-xs text-slate-500 mt-1">
-                      Identification officielle de la personne morale souscriptrice du plan d'assurance
+                      Identification officielle de la personne morale, du représentant de la famille ou de l'assuré particulier
                     </p>
+                  </div>
+
+                  {/* Filtre de type de police */}
+                  <div className="p-4.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 mb-4">
+                    <span className="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Sélectionner le type de police d'assurance</span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {[
+                        { id: 'groupe', label: '👥 Contrat de Groupe', desc: 'Assurance collective entreprise' },
+                        { id: 'famille', label: '👨‍👩‍👧‍👦 Contrat Famille', desc: 'Couverture cellule familiale' },
+                        { id: 'particulier', label: '👤 Contrat Particulier', desc: 'Individuel & Particulier' }
+                      ].map(t => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => {
+                            setWizardContractType(t.id as any);
+                            if (t.id === 'famille') {
+                              setRaisonSociale('Famille Goma');
+                              setEffectif(5);
+                              setSecteur('Cellule Familiale');
+                              setDrhNom('Sébastien Goma');
+                              setDrhEmail('sebastien.goma@gmail.com');
+                              setDrhTel('+243 812 904 555');
+                            } else if (t.id === 'particulier') {
+                              setRaisonSociale('Sébastien Goma');
+                              setEffectif(1);
+                              setSecteur('Individuel');
+                              setDrhNom('Sébastien Goma');
+                              setDrhEmail('sebastien.goma@gmail.com');
+                              setDrhTel('+243 812 904 555');
+                            } else {
+                              setRaisonSociale('Kwilu-Services SARL');
+                              setEffectif(5000);
+                              setSecteur('Mines & Industrie');
+                              setDrhNom('Sébastien Goma');
+                              setDrhEmail('drh@kwilu-services.cd');
+                              setDrhTel('+243 812 904 555');
+                            }
+                          }}
+                          className={cn(
+                            "p-3 rounded-xl border text-left transition-all cursor-pointer outline-none",
+                            wizardContractType === t.id 
+                              ? "border-[#00A86B] bg-[#00A86B]/5 shadow-sm" 
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          )}
+                        >
+                          <span className="block text-xs font-black uppercase tracking-wider text-slate-800">{t.label}</span>
+                          <span className="block text-[9px] text-slate-400 leading-tight mt-0.5">{t.desc}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
                     <div>
-                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">Raison Sociale <strong className="text-rose-500">*</strong></span>
+                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">
+                        {wizardContractType === 'groupe' ? 'Raison Sociale' : wizardContractType === 'famille' ? 'Nom du Chef de Famille' : 'Nom de l\'Assuré'} <strong className="text-rose-500">*</strong>
+                      </span>
                       <input 
                         type="text" 
                         value={raisonSociale} 
@@ -396,38 +474,42 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                       />
                     </div>
 
-                    <div>
-                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">Code Registre RCCM (Regex CD/KIN...) <strong className="text-rose-500">*</strong></span>
-                      <div className="relative">
-                        <input 
-                          type="text" 
-                          value={rccm} 
-                          onChange={(e) => { setRccm(e.target.value); setIsRccmVerified(false); }}
-                          onBlur={handleRccmBlur}
-                          placeholder="CD/KIN/RCCM/..."
-                          className="w-full pl-4 pr-10 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:border-[#00A86B] focus:bg-white rounded-xl outline-none transition-all text-slate-800 font-bold" 
-                        />
-                        <div className="absolute right-3 top-3">
-                          {isVerifyingRccm ? (
-                            <span className="w-4 h-4 border-2 border-[#00A86B] border-t-transparent rounded-full animate-spin block" />
-                          ) : isRccmVerified ? (
-                            <span className="text-[10px] font-black uppercase text-white bg-emerald-500 px-1.5 py-0.5 rounded shadow">Certifié ARCA</span>
-                          ) : (
-                            <span className="text-[10px] font-bold uppercase text-slate-400">Non certifié</span>
-                          )}
+                    {wizardContractType === 'groupe' && (
+                      <>
+                        <div>
+                          <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">Code Registre RCCM (Regex CD/KIN...) <strong className="text-rose-500">*</strong></span>
+                          <div className="relative">
+                            <input 
+                              type="text" 
+                              value={rccm} 
+                              onChange={(e) => { setRccm(e.target.value); setIsRccmVerified(false); }}
+                              onBlur={handleRccmBlur}
+                              placeholder="CD/KIN/RCCM/..."
+                              className="w-full pl-4 pr-10 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:border-[#00A86B] focus:bg-white rounded-xl outline-none transition-all text-slate-800 font-bold" 
+                            />
+                            <div className="absolute right-3 top-3">
+                              {isVerifyingRccm ? (
+                                <span className="w-4 h-4 border-2 border-[#00A86B] border-t-transparent rounded-full animate-spin block" />
+                              ) : isRccmVerified ? (
+                                <span className="text-[10px] font-black uppercase text-white bg-emerald-500 px-1.5 py-0.5 rounded shadow">Certifié ARCA</span>
+                              ) : (
+                                <span className="text-[10px] font-bold uppercase text-slate-400">Non certifié</span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div>
-                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">ID National <strong className="text-rose-500">*</strong></span>
-                      <input 
-                        type="text" 
-                        value={idNat} 
-                        onChange={(e) => setIdNat(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:border-[#00A86B] focus:bg-white rounded-xl outline-none transition-all text-slate-800 font-bold" 
-                      />
-                    </div>
+                        <div>
+                          <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">ID National <strong className="text-rose-500">*</strong></span>
+                          <input 
+                            type="text" 
+                            value={idNat} 
+                            onChange={(e) => setIdNat(e.target.value)}
+                            className="w-full px-4 py-2.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 focus:border-[#00A86B] focus:bg-white rounded-xl outline-none transition-all text-slate-800 font-bold" 
+                          />
+                        </div>
+                      </>
+                    )}
 
                     <div>
                       <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">Offre de Plan <strong className="text-rose-500">*</strong></span>
@@ -473,7 +555,9 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                     </div>
 
                     <div>
-                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">Secteur d'activité</span>
+                      <span className="block text-slate-450 font-bold uppercase tracking-wider mb-2">
+                        {wizardContractType === 'groupe' ? 'Secteur d\'activité' : wizardContractType === 'famille' ? 'Régime ou Statut Familial' : 'Profession de l\'Assuré'}
+                      </span>
                       <input 
                         type="text" 
                         value={secteur} 
@@ -483,12 +567,16 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                     </div>
                   </div>
 
-                  {/* HR representative definitions */}
+                  {/* DRH representatives */}
                   <div className="bg-slate-50 p-6 rounded-2xl border border-slate-150 space-y-4">
-                    <h4 className="text-xs font-black uppercase text-slate-500 tracking-wider">Identifiants Direction Ressources Humaines (DRH)</h4>
+                    <h4 className="text-xs font-black uppercase text-slate-500 tracking-wider">
+                      {wizardContractType === 'groupe' ? 'Identifiants Direction Ressources Humaines (DRH)' : wizardContractType === 'famille' ? 'Identifiants du Chef de Famille (Représentant)' : 'Coordonnées de l\'Assuré Particulier'}
+                    </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
                       <div>
-                        <span className="block text-slate-450 font-bold uppercase tracking-wider mb-1.5">Nom complet DRH <strong className="text-rose-500">*</strong></span>
+                        <span className="block text-slate-450 font-bold uppercase tracking-wider mb-1.5">
+                          {wizardContractType === 'groupe' ? 'Nom complet DRH' : 'Nom complet'} <strong className="text-rose-500">*</strong>
+                        </span>
                         <input 
                           type="text" 
                           value={drhNom} 
@@ -497,7 +585,7 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                         />
                       </div>
                       <div>
-                        <span className="block text-slate-450 font-bold uppercase tracking-wider mb-1.5">Email professionnel <strong className="text-rose-500">*</strong></span>
+                        <span className="block text-slate-450 font-bold uppercase tracking-wider mb-1.5">Email de contact <strong className="text-rose-500">*</strong></span>
                         <input 
                           type="email" 
                           value={drhEmail} 
@@ -520,7 +608,7 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                   <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                     <button 
                       onClick={() => setStep(2)}
-                      disabled={!raisonSociale || !rccm}
+                      disabled={!raisonSociale || (wizardContractType === 'groupe' && !rccm)}
                       className="px-6 py-2.5 bg-[#00A86B] hover:bg-[#00905a] disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-2"
                     >
                       Étape Suivante
@@ -671,86 +759,197 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
               {step === 3 && (
                 <div className="space-y-6">
                   <div className="border-b border-slate-100 pb-4">
-                    <h2 className="text-xl font-bold text-slate-900">3. Population à Assurer (Importation &amp; Parsing Actuariel)</h2>
+                    <h2 className="text-xl font-bold text-slate-900">
+                      {wizardContractType === 'groupe' ? '3. Population à Assurer (Importation & Parsing Actuariel)' : wizardContractType === 'famille' ? '3. Membres de la Famille à Assurer' : '3. Validation de l\'Assuré Unique'}
+                    </h2>
                     <p className="text-xs text-slate-500 mt-1">
-                      Importez la liste Excel des bénéficiaires pour évaluer la prime exacte et déceler les clauses spéciales criminologiques ou séniorités
+                      {wizardContractType === 'groupe' 
+                        ? "Importez la liste Excel des bénéficiaires pour évaluer la prime exacte et déceler les clauses spéciales."
+                        : wizardContractType === 'famille'
+                        ? "Renseignez la liste des membres de la famille bénéficiaires de la police."
+                        : "Veuillez valider que l'assuré unique défini à l'étape 1 est bien l'unique bénéficiaire de cette police d'assurance."}
                     </p>
                   </div>
 
-                  {/* Drag-and-drop & Click to upload simulator */}
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    className="hidden" 
-                    accept=".xlsx, .xls, .csv" 
-                    onChange={handleFileInputChange} 
-                  />
-                  <div 
-                    onClick={() => { if (!isPopImported) handleSimulateImport(); }}
-                    className="border-2 border-dashed border-slate-300 hover:border-[#00A86B]/60 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 hover:bg-white transition-all group"
-                  >
-                    <div className="w-14 h-14 bg-[#00A86B]/15 text-[#00A86B] flex items-center justify-center rounded-2xl mb-4 group-hover:scale-110 transition-transform">
-                      <FileText className="w-7 h-7" />
-                    </div>
-                    {isPopImported ? (
-                      <div className="space-y-2">
-                        <span className="text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 text-[10px] font-black uppercase rounded-full">
-                          Importation Réussie
-                        </span>
-                        <h4 className="font-extrabold text-slate-800 text-sm mt-3">{popFile}</h4>
-                        <p className="text-xs text-slate-500">Taille : 854 KB • 5,000 bénéficiaires analysés</p>
+                  {wizardContractType === 'groupe' ? (
+                    <>
+                      {/* Drag-and-drop & Click to upload simulator */}
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        className="hidden" 
+                        accept=".xlsx, .xls, .csv" 
+                        onChange={handleFileInputChange} 
+                      />
+                      <div 
+                        onClick={() => { if (!isPopImported) handleSimulateImport(); }}
+                        className="border-2 border-dashed border-slate-300 hover:border-[#00A86B]/60 rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 hover:bg-white transition-all group"
+                      >
+                        <div className="w-14 h-14 bg-[#00A86B]/15 text-[#00A86B] flex items-center justify-center rounded-2xl mb-4 group-hover:scale-110 transition-transform">
+                          <FileText className="w-7 h-7" />
+                        </div>
+                        {isPopImported ? (
+                          <div className="space-y-2">
+                            <span className="text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 text-[10px] font-black uppercase rounded-full">
+                              Importation Réussie
+                            </span>
+                            <h4 className="font-extrabold text-slate-800 text-sm mt-3">{popFile}</h4>
+                            <p className="text-xs text-slate-500">Taille : 854 KB • 5,000 bénéficiaires analysés</p>
+                          </div>
+                        ) : (
+                          <div>
+                            <h3 className="text-sm font-extrabold text-slate-800">Glissez-déposez la liste des salariés ou cliquez ici</h3>
+                            <p className="text-xs text-slate-450 mt-1 leading-relaxed">
+                              Colonnes minimales requises : Nom, Postnoms, Date de naissance, Sexe, Matricule, Nb Enfants, Conjoints
+                            </p>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); handleSimulateImport(); }}
+                              className="mt-4 px-4 py-2 bg-[#00A86B] text-white font-bold text-[10.5px] uppercase tracking-wider rounded-xl hover:bg-[#00905a] transition-all cursor-pointer"
+                            >
+                              Simuler chargement d'un classeur Excel
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div>
-                        <h3 className="text-sm font-extrabold text-slate-800">Glissez-déposez la liste des salariés ou cliquez ici</h3>
-                        <p className="text-xs text-slate-450 mt-1 leading-relaxed">
-                          Colonnes minimales requises : Nom, Postnoms, Date de naissance, Sexe, Matricule, Nb Enfants, Conjoints
-                        </p>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleSimulateImport(); }}
-                          className="mt-4 px-4 py-2 bg-[#00A86B] text-white font-bold text-[10.5px] uppercase tracking-wider rounded-xl hover:bg-[#00905a] transition-all cursor-pointer"
-                        >
-                          Simuler chargement d'un classeur Excel
-                        </button>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Detailed Analysis Output If Imported */}
-                  {isPopImported && (
+                      {/* Detailed Analysis Output If Imported */}
+                      {isPopImported && (
+                        <div className="space-y-4">
+                          <div className="p-4.5 bg-[#00A86B]/5 border border-[#00A86B]/20 rounded-2xl flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-[#00A86B]" />
+                            <span className="text-xs font-bold text-[#00A86B]">Le validateur Zod s'est exécuté avec succès. Les contrôles légaux et surprimes ont été calculés.</span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                              <span className="text-slate-450 font-bold uppercase tracking-wider">Effectif Importé</span>
+                              <span className="block text-xl font-black text-slate-800 mt-1">5 000 assurés</span>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                              <span className="text-slate-450 font-bold uppercase tracking-wider">Âge Actuariel Moyen</span>
+                              <span className="block text-xl font-black text-slate-800 mt-1">{importedMetrics.avgAge} ans</span>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                              <span className="text-slate-450 font-bold uppercase tracking-wider">Surprimes Âge (&gt;60 ans)</span>
+                              <span className="block text-xl font-black text-rose-600 mt-1 px-1 bg-rose-50 rounded w-fit">+25% (+{importedMetrics.seniorSurprimeCount} cas)</span>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                              <span className="text-slate-450 font-bold uppercase tracking-wider">Plafonnement Familles</span>
+                              <span className="block text-xl font-black text-amber-600 mt-1">Plafond 3x ({importedMetrics.largeKidsCount} cas gd enfants)</span>
+                            </div>
+                          </div>
+
+                          {/* Summary Metrics Box */}
+                          <div className="bg-slate-900 text-white rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
+                            <div>
+                              <h4 className="text-xs font-black uppercase tracking-widest text-[#00A86B]">Prime globale compilée (CIMA Art. 8)</h4>
+                              <p className="text-xs text-slate-400 mt-1">Cumul des primes individuelles, charges de gestion comprises</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="text-2xl font-black text-[#00A86B]">{importedMetrics.totalPremium.toLocaleString()}$ <span className="text-xs text-slate-300">/ mois</span></div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : wizardContractType === 'famille' ? (
                     <div className="space-y-4">
-                      <div className="p-4.5 bg-[#00A86B]/5 border border-[#00A86B]/20 rounded-2xl flex items-center gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-[#00A86B]" />
-                        <span className="text-xs font-bold text-[#00A86B]">Le validateur Zod s'est exécuté avec succès. Les contrôles légaux et surprimes ont été calculés.</span>
+                      {/* Interactive family lists */}
+                      <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                        <span className="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Membres de la famille enregistrés ({familyMembers.length})</span>
+                        
+                        <div className="space-y-2">
+                          {familyMembers.map((m, idx) => (
+                            <div key={idx} className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-slate-150">
+                              <div>
+                                <span className="font-extrabold text-slate-800 text-xs">{m.name}</span>
+                                <span className="text-[9.5px] text-slate-400 block font-mono">{m.relation} • {m.age} ans</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setFamilyMembers(prev => prev.filter((_, i) => i !== idx))}
+                                className="px-2.5 py-1 text-rose-500 hover:bg-rose-50 rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer"
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Add member form inline */}
+                        <div className="bg-white p-4 rounded-xl border border-slate-150 space-y-3">
+                          <span className="block text-[9px] font-black uppercase text-slate-500">Ajouter un nouveau membre de la famille</span>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input 
+                              type="text" 
+                              placeholder="Nom complet" 
+                              value={newMemberName}
+                              onChange={(e) => setNewMemberName(e.target.value)}
+                              className="px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:border-[#00A86B]"
+                            />
+                            <input 
+                              type="number" 
+                              placeholder="Âge" 
+                              value={newMemberAge}
+                              onChange={(e) => setNewMemberAge(parseInt(e.target.value) || 0)}
+                              className="px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:border-[#00A86B]"
+                            />
+                            <select 
+                              value={newMemberRelation}
+                              onChange={(e) => setNewMemberRelation(e.target.value)}
+                              className="px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none focus:border-[#00A86B] cursor-pointer"
+                            >
+                              <option value="Conjoint">Conjoint(e)</option>
+                              <option value="Enfant">Enfant</option>
+                              <option value="Parent">Parent</option>
+                              <option value="Autre">Autre</option>
+                            </select>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!newMemberName) return;
+                              setFamilyMembers(prev => [...prev, { name: newMemberName, age: newMemberAge, relation: newMemberRelation }]);
+                              setNewMemberName('');
+                            }}
+                            className="w-full py-2 bg-slate-900 text-white font-black text-[10px] uppercase rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+                          >
+                            Ajouter au contrat
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                          <span className="text-slate-450 font-bold uppercase tracking-wider">Effectif Importé</span>
-                          <span className="block text-xl font-black text-slate-800 mt-1">5 000 assurés</span>
-                        </div>
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                          <span className="text-slate-450 font-bold uppercase tracking-wider">Âge Actuariel Moyen</span>
-                          <span className="block text-xl font-black text-slate-800 mt-1">{importedMetrics.avgAge} ans</span>
-                        </div>
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                          <span className="text-slate-450 font-bold uppercase tracking-wider">Surprimes Âge (&gt;60 ans)</span>
-                          <span className="block text-xl font-black text-rose-600 mt-1 px-1 bg-rose-50 rounded w-fit">+25% (+{importedMetrics.seniorSurprimeCount} cas)</span>
-                        </div>
-                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                          <span className="text-slate-450 font-bold uppercase tracking-wider">Plafonnement Familles</span>
-                          <span className="block text-xl font-black text-amber-600 mt-1">Plafond 3x ({importedMetrics.largeKidsCount} cas gd enfants)</span>
-                        </div>
-                      </div>
-
-                      {/* Summary Metrics Box */}
-                      <div className="bg-slate-900 text-white rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
+                      {/* Pricing metric box */}
+                      <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-150 flex flex-col md:flex-row gap-6 items-center justify-between">
                         <div>
-                          <h4 className="text-xs font-black uppercase tracking-widest text-[#00A86B]">Prime globale compilée (CIMA Art. 8)</h4>
-                          <p className="text-xs text-slate-400 mt-1">Cumul des primes individuelles, charges de gestion comprises</p>
+                          <h4 className="text-xs font-black uppercase text-slate-500 tracking-wider">Actuariat &amp; Cotisation Globale Famille</h4>
+                          <p className="text-xs text-slate-600 mt-1">Calculé sur la base de {familyMembers.length + 1} personnes à assurer (souscripteur inclus).</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-2xl font-black text-[#00A86B]">{importedMetrics.totalPremium.toLocaleString()}$ <span className="text-xs text-slate-300">/ mois</span></div>
+                          <div className="text-2xl font-black text-slate-900">{((familyMembers.length + 1) * 45).toLocaleString()} $ <span className="text-xs font-semibold text-slate-450">/ mois</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Individual verification */}
+                      <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center space-y-3">
+                        <span className="w-12 h-12 bg-[#00A86B]/10 text-[#00A86B] flex items-center justify-center rounded-full mx-auto">
+                          <CheckCircle2 className="w-6 h-6" />
+                        </span>
+                        <h4 className="font-extrabold text-slate-800 text-xs uppercase tracking-wider">Assuré individuel validé</h4>
+                        <p className="text-xs text-slate-500 max-w-md mx-auto">
+                          L'assuré principal <strong>{raisonSociale}</strong> est enregistré comme l'unique bénéficiaire de cette police d'assurance individuelle.
+                        </p>
+                      </div>
+
+                      <div className="bg-emerald-50/50 p-6 rounded-2xl border border-[#00A86B]/20 flex flex-col md:flex-row gap-6 items-center justify-between">
+                        <div>
+                          <h4 className="text-xs font-black uppercase text-[#00A86B] tracking-wider">Cotisation Actuarielle Individuelle</h4>
+                          <p className="text-xs text-slate-600 mt-1">Prime mensuelle standard avec couverture maladie à 80% incluse.</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-2xl font-black text-slate-900">120.00 $ <span className="text-xs font-semibold text-slate-450">/ mois</span></div>
                         </div>
                       </div>
                     </div>
@@ -766,7 +965,7 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                     </button>
                     <button 
                       onClick={() => setStep(4)}
-                      disabled={!isPopImported}
+                      disabled={wizardContractType === 'groupe' && !isPopImported}
                       className="px-6 py-2.5 bg-[#00A86B] hover:bg-[#00905a] disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-2"
                     >
                       Étape Suivante
