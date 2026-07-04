@@ -342,30 +342,6 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
           
           {activeTab === 'dashboard' && (
             <>
-              {/* CAPTAIN GREETINGS AND PILL BAR */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-slate-900 tracking-tight">Bonsoir, Capitaine !</h1>
-                  <p className="text-xs text-slate-450 font-bold uppercase tracking-wider">Voyez ce qui se passe en temps réel sur la plateforme de soins.</p>
-                </div>
-
-                {/* Micro KPI Pill Banner from screenshot */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-700 shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00A86B] animate-pulse" />
-                    <span className="font-bold text-slate-900">310</span>
-                    <span className="text-slate-450 text-[11px]">accords créés</span>
-                    <BadgeDelta deltaType="increase" className="text-[9px] px-1 bg-emerald-50 text-[#00A86B] ml-1">+4,3%</BadgeDelta>
-                  </div>
-
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-700 shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <span className="font-bold text-slate-900">26</span>
-                    <span className="text-slate-450 text-[11px]">transactions conclues</span>
-                    <BadgeDelta deltaType="decrease" className="text-[9px] px-1 bg-red-50 text-red-600 ml-1">-1,9%</BadgeDelta>
-                  </div>
-                </div>
-              </div>
 
               {/* BENTO GRID: 6 KPI CARDS (LEFT BLOCK) VS TALL GRAPH BAR (RIGHT BLOCK) */}
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">

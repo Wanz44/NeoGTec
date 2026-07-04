@@ -28,7 +28,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
   colors = ['emerald']
 }) => {
   return (
-    <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 relative overflow-hidden transition-all hover:border-[#00A86B]/30">
+    <Card className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 relative overflow-hidden transition-all hover:border-[#00A86B]/40">
       <Text className="text-slate-500 font-bold text-[10px] uppercase tracking-wider">{title}</Text>
       
       <div className="flex items-baseline justify-between mt-1">
