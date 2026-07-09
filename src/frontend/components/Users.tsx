@@ -8,9 +8,6 @@ import { UsersSecurity } from './UsersSecurity';
 import { UsersLogs } from './UsersLogs';
 import { Privileges } from './Privileges';
 import { DigitalEnrollment } from './users/DigitalEnrollment';
-import { SelfCarePortal } from './users/SelfCarePortal';
-import { VirtualCard } from './users/VirtualCard';
-import { BeneficiariesMgmt } from './users/BeneficiariesMgmt';
 import { 
   Users, Shield, Lock, History as HistoryIcon, 
   Settings, UserCheck, Key, UserPlus, Fingerprint, TabletSmartphone, CreditCard, Heart

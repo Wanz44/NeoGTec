@@ -8,12 +8,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Building2, ShieldCheck, ListOrdered, Users, BookOpen, Calculator, 
   CheckCircle2, X, Search, Plus, Trash2, ShieldAlert, FileText, AlertTriangle,
-  FileDown, Upload, CreditCard, Play, Send, Calendar, Check, ArrowRight, ArrowLeft
+  FileDown, Upload, CreditCard, Play, Send, Calendar, Check, ArrowRight, ArrowLeft, Printer
 } from 'lucide-react';
 
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import { PoliceForm } from './PoliceForm';
+import { BiaPrintDocument, BiaData } from './BiaPrintDocument';
 
 interface CimaContractWizardProps {
   onBackToOffers?: () => void;
@@ -36,6 +37,8 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
   const [wizardContractType, setWizardContractType] = useState<'groupe' | 'famille' | 'particulier'>('groupe');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
+  const [wizardShowBia, setWizardShowBia] = useState(false);
+  const [wizardBiaVierge, setWizardBiaVierge] = useState(false);
   const [contractCreated, setContractCreated] = useState(false);
   const [contractId, setContractId] = useState('POL-CIMA-' + Math.floor(100000 + Math.random() * 900000));
   
@@ -262,6 +265,72 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
     setPolicyStatus('RESILIE');
     if (logAction) logAction('RESILIATION_CONTRAT_SOUBLIE', `Résiliation immédiate enregistrée pour infractions ou fin de période d'engagement. Calendrier de validité QR fixé à J+30.`, 'CRITICAL');
   };
+
+  if (wizardShowBia) {
+    // Construct BIA data from wizard state
+    const biaData: BiaData = {
+      id: `BIA-${contractId}`,
+      company: raisonSociale,
+      rccm: rccm,
+      idNat: idNat,
+      adherentNom: drhNom.split(' ')[0] || 'GOMA',
+      adherentPrenom: drhNom.split(' ').slice(1).join(' ') || 'Sébastien',
+      adherentDtn: '12/10/1982',
+      adherentLieuNais: 'Kinshasa',
+      adherentSexe: 'M',
+      adherentEtatCivil: 'Marié',
+      adherentMatricule: 'KS-88210',
+      adherentProfession: 'Superviseur Logistique',
+      adherentTel: drhTel,
+      adherentEmail: drhEmail,
+      adherentAdresse: 'Avenue de la Paix, Q/ Volcans, Goma, Nord-Kivu',
+      adherentVille: 'Goma',
+      formula: selectedOffre,
+      familyMembers: familyMembers.map((m, i) => ({
+        relation: m.relation,
+        name: m.name,
+        birthDate: m.age === 34 ? '24/05/1992' : m.age === 12 ? '05/11/2013' : '19/09/2017',
+        gender: m.relation === 'Conjointe' ? 'F' : 'M',
+        cardNum: `NGTC-${contractId}-${String(i + 1).padStart(2, '0')}`
+      }))
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 bg-slate-100 overflow-y-auto print:bg-white print:p-0">
+        <div className="max-w-5xl mx-auto my-8 no-print bg-white rounded-3xl p-6 border border-slate-200 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-emerald-50 rounded-2xl">
+              <Printer className="w-6 h-6 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="font-black text-sm text-slate-800 uppercase tracking-wide">Impression Bulletin d'Adhésion (BIA)</h3>
+              <p className="text-xs text-slate-500">Format A4 CIMA officiel — {wizardBiaVierge ? "Formulaire Vierge" : "Version Pré-remplie"}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.print()}
+              className="px-5 py-2.5 bg-[#00A86B] hover:bg-[#00905a] text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer flex items-center gap-2 border-none"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimer / PDF
+            </button>
+            <button
+              onClick={() => setWizardShowBia(false)}
+              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border-none"
+            >
+              <X className="w-4 h-4" />
+              Fermer
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-center print:block">
+          <BiaPrintDocument isVierge={wizardBiaVierge} data={biaData} />
+        </div>
+      </div>
+    );
+  }
 
 
   return (
@@ -1466,6 +1535,34 @@ export const CimaContractWizard: React.FC<CimaContractWizardProps> = ({ onBackTo
                               <span>Police d'Assurance Signée (PDF)</span>
                             </span>
                             <FileDown className="w-4 h-4 text-slate-400" />
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              setWizardBiaVierge(false);
+                              setWizardShowBia(true);
+                            }}
+                            className="w-full max-w-md px-4 py-3 bg-white hover:bg-emerald-50/30 border border-emerald-200 rounded-xl text-slate-700 font-semibold flex items-center justify-between cursor-pointer outline-none"
+                          >
+                            <span className="flex items-center gap-2.5">
+                              <Printer className="w-4 h-4 text-emerald-600" />
+                              <span>BIA Pré-rempli (Bulletin d'Adhésion A4)</span>
+                            </span>
+                            <Printer className="w-4 h-4 text-emerald-400" />
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              setWizardBiaVierge(true);
+                              setWizardShowBia(true);
+                            }}
+                            className="w-full max-w-md px-4 py-3 bg-white hover:bg-amber-50/30 border border-amber-200 rounded-xl text-slate-700 font-semibold flex items-center justify-between cursor-pointer outline-none"
+                          >
+                            <span className="flex items-center gap-2.5">
+                              <Printer className="w-4 h-4 text-amber-500" />
+                              <span>BIA Vierge (Bulletin d'Adhésion A4 à remplir)</span>
+                            </span>
+                            <Printer className="w-4 h-4 text-amber-400" />
                           </button>
 
                           <button 

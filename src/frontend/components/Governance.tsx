@@ -316,7 +316,6 @@ export const Governance: React.FC = () => {
                    { title: "WORM Audit Sync", desc: "Synchronisation automatique de la trace d'audits chiffrée de NeoGTec vers la table 'neogtec_audit_logs'.", tag: "PostgreSQL" },
                    { title: "Multi-Tenant Isolation", desc: "Séparation d'accès cliniques gérée directement par les stratégies de sécurité RLS (Row Level Security).", tag: "RLS Actif" },
                    { title: "Statut des Terminaux", desc: "Télémétrie en temps réel sur les tentatives d'authentification MFA et validations financières 4-Eyes.", tag: "Sécurisé" },
-                   { title: "Bénéficiaires & Familles", desc: "Mise à jour à la volée des ayants-droits respectant le plafond légal d'affiliation de 25 ans.", tag: "Régulation ARCA" },
                 ].map((item, idx) => (
                    <div key={idx} className="p-4 bg-slate-50 rounded-lg border border-slate-100 hover:border-emerald-250 transition-all">
                       <div className="flex justify-between items-center mb-2">

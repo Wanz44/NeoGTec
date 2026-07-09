@@ -65,6 +65,7 @@ import { getWording } from '../lib/wording';
 import { HeaderAir } from './public/HeaderAir';
 import { ContractConfig } from './contracts/ContractConfig';
 import { PolicePrintVierge } from './contracts/PoliceForm';
+import { InteractiveMap } from './InteractiveMap';
 
 type Route = '/' | '/risques' | '/solutions' | '/modules' | '/tarifs' | '/faq' | '/affiliation' | '/confidentialite' | '/cgu' | '/arca-rdc' | '/merci' | '/contrat/print-vierge';
 
@@ -284,8 +285,6 @@ export function LandingPage({ onNavigateToLogin }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-[#00A86B] selection:text-white relative">
       
-      {/* 🔴 BRAND BANNER EXACTLY AS CRAYON WARNING/ALERT BLOCK */}
-      <ComplianceBanner />
 
       {/* 🟢 NAVIGATION NAV - BLENDED AND TRANSPARENT OVER STARLIGHT HERO (OR WHITE ON SUBPAGES) */}
       <HeaderAir 
@@ -339,407 +338,403 @@ export function LandingPage({ onNavigateToLogin }: LandingPageProps) {
             {currentRoute === '/' && (
               <div className="pb-24">
                 
-                 {/* 🌌 HERO SECTION WITH HIGH-PERFORMANCE AMBIENT BG VIDEO */}
-                 <section className="relative pt-36 pb-32 md:pt-44 md:pb-40 overflow-hidden select-none bg-slate-950">
-                   {/* High performance video with poster placeholder for tight 3G budgets */}
-                   <video 
-                     poster="/src/assets/images/phare_poster_1781707154568.jpg" 
-                     autoPlay 
-                     muted 
-                     loop 
-                     playsInline 
-                     preload="none" 
-                     className="absolute inset-0 w-full h-full object-cover opacity-45 select-none pointer-events-none" 
-                   />
-                   
-                   {/* Clean mathematical overlay gradient */}
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-slate-900/30 pointer-events-none" />
-
-                   <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10 text-left">
-                     <div className="max-w-3xl space-y-6">
-                       <div className="inline-flex items-center gap-2 rounded-full border border-[#00A86B]/40 bg-[#00A86B]/10 px-3.5 py-1 text-[10px] font-black tracking-wider text-green-300 uppercase font-mono">
-                         <ShieldCheck className="w-3.5 h-3.5 text-[#00A86B] shrink-0" />
-                         <span>Agrément ARCA-RDC n°ARCA/2025/0127 | Conforme v2.1</span>
-                       </div>
-                       
-                       {/* H1 48px: Action-oriented, 11 words */}
-                       <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-black uppercase text-white leading-[1.05] tracking-tight">
-                         L’assurance santé qui fait gagner <span className="text-[#00A86B]">70% de temps</span> à vos RH
-                       </h1>
-                       
-                       {/* H2 20px: zero jargon */}
-                       <h2 className="text-lg sm:text-[20px] font-bold text-slate-350 leading-relaxed max-w-2xl">
-                         Zéro papier. 100% traçable ARCA-RDC. Paiement hôpitaux en 24h.
-                       </h2>
-
-                       {/* Double CTA */}
-                       <div className="flex flex-wrap gap-4 pt-2">
-                         <button 
-                           onClick={() => {
-                             console.log('GTM event: click_cta_demo');
-                             if (typeof window !== 'undefined' && (window as any).dataLayer) {
-                               (window as any).dataLayer.push({ event: 'click_cta_demo' });
-                             }
-                             navigateTo('/affiliation');
-                           }}
-                           className="h-12 px-6 rounded-full bg-[#00A86B] text-white hover:bg-[#007D4C] font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 cursor-pointer transition-colors duration-150"
-                         >
-                           <span>Demander une démo</span>
-                           <ArrowRight className="w-4 h-4" />
-                         </button>
-                         <button 
-                           onClick={() => setIsYoutubeOpen(true)}
-                           className="h-12 px-6 rounded-full border border-white/30 hover:border-white text-white hover:bg-white/5 font-extrabold text-xs uppercase tracking-wider cursor-pointer flex items-center gap-2 transition-colors duration-150"
-                         >
-                           <Play className="w-4 h-4 fill-current text-white shrink-0" />
-                           <span>Voir la vidéo 2min</span>
-                         </button>
-                       </div>
-
-                       {/* Social Proof: Bralima, TFM, Rawbank with N&B logos */}
-                       <div className="pt-6 space-y-2 select-none">
-                         <p className="text-[11px] font-mono font-black text-slate-400 uppercase tracking-widest block">Utilisé par Bralima, TFM, Rawbank</p>
-                         <div className="flex items-center gap-6 opacity-70 grayscale">
-                           {/* Custom elegant vector inline monochrome representations */}
-                           <div className="text-white text-xs font-mono font-black border border-white/20 px-2 py-0.5 tracking-tighter rounded">BRALIMA S.A.</div>
-                           <div className="text-white text-xs font-mono font-black border border-white/20 px-2 py-0.5 tracking-tighter rounded">TENKE FUNGURUME</div>
-                           <div className="text-white text-xs font-mono font-black border border-white/20 px-2 py-0.5 tracking-tighter rounded">RAWBANK RDC</div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                 </section>
-
-                {/* 🏷️ OFFRE ET BAREMES SECTION (Point 1.2) */}
-                <div data-testid="section-offre-bareme" className="mx-auto max-w-7xl px-6 lg:px-8 py-12">
-                  <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-xl">
-                    <div className="text-center max-w-2xl mx-auto mb-8">
-                      <span className="text-[10px] font-mono font-black text-[#00A86B] uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Transparence Actuarielle</span>
-                      <h3 className="text-2xl font-black text-slate-950 uppercase italic tracking-tight mt-3">Nos Offres &amp; Barèmes</h3>
-                      <p className="text-xs text-slate-500 mt-2">Découvrez en toute transparence les tarifs harmonisés, les taux de remboursement et plafonds par acte médical.</p>
+                {/* 3. HeroSection */}
+                <section className="relative min-h-screen flex items-center pt-36 pb-24 overflow-hidden bg-[#f8f9ff]">
+                  {/* Emerald Background Simulation */}
+                  <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute right-[-10%] top-[-20%] w-[80%] h-[140%] opacity-20 bg-gradient-to-l from-[#006948]/30 via-transparent to-transparent rotate-[-15deg]"></div>
+                    <div className="absolute left-1/2 bottom-0 w-[1px] h-[80%] bg-gradient-to-t from-[#006948]/30 to-transparent"></div>
+                    <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 70% 30%, rgba(0, 105, 72, 0.03) 0%, transparent 70%)" }}></div>
+                  </div>
+                  <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-20 items-center">
+                    <div className="space-y-10 text-left">
+                      <div className="inline-flex items-center gap-3 bg-[#006c4a]/10 text-[#006c4a] px-5 py-2 rounded-full border border-[#006c4a]/20">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#006c4a] animate-pulse"></span>
+                        <span className="font-semibold text-xs uppercase tracking-widest font-sans">Solution Certifiée ARCA</span>
+                      </div>
+                      <h1 className="font-sans text-[36px] sm:text-[42px] md:text-[52px] leading-tight font-extrabold text-[#0b1c30]">
+                        L’assurance santé qui fait gagner <br/><span className="text-[#006c4a] relative inline-block"><span className="relative z-10">70% de temps</span><span className="absolute bottom-1 left-0 w-full h-3 bg-[#68dba9]/30 -z-10 rounded-full"></span></span> à vos RH
+                      </h1>
+                      <p className="font-sans text-lg text-[#3d4a42] max-w-xl leading-relaxed text-[20px]">
+                        Zéro papier. 100% traçable ARCA-RDC. Paiement hôpitaux en 24h. La souveraineté numérique au service de votre capital humain.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-6 pt-4">
+                        <button 
+                          onClick={() => navigateTo('/affiliation')}
+                          className="bg-[#006c4a] text-white font-sans text-sm font-semibold px-10 py-5 rounded-2xl hover:brightness-110 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-[#006c4a]/20 cursor-pointer"
+                        >
+                          Démarrer l'Audit Gratuit
+                        </button>
+                        <button 
+                          onClick={() => navigateTo('/tarifs')}
+                          className="bg-white border-2 border-slate-200 text-[#0b1c30] font-sans text-sm font-semibold px-10 py-5 rounded-2xl hover:border-[#006c4a] hover:bg-slate-50 transition-all duration-300 cursor-pointer"
+                        >
+                          Consulter les Plans
+                        </button>
+                      </div>
+                      <div className="pt-16">
+                        <p className="text-xs text-[#6d7a72] mb-8 uppercase tracking-[0.2em] font-semibold">Ils nous font confiance pour leur conformité</p>
+                        <div className="flex flex-wrap items-center gap-16 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+                          <img className="h-10 object-contain" alt="Bralima S.A." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKjy-_ArQZGaQOtKvEmQNZBYvr9ESqDpaDnckUOP1CjY0F0XIQYXv_fFfBpezvF3flfBgTLRnF8_uoLIXH07_wKT_gbWpiMo_cVwjx0BYsyqYCovmxRdpvxf5b_cycMZr8RW69BhLVd1CP2JVlj2QqeCc9M90rYybUkLUYiZUrH2Lnmfq5Vm8kMPCw5kx3WfCTSjqX1LYmfMq_wPnyYyDcq55x1qOAe199Ciyi4hxQK_V2NBeMmUjpRA"/>
+                          <img className="h-10 object-contain" alt="Tenke Fungurume Mining" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuujPICbQkmPGbFv640sFMgCJtGfTN9dcPegsX_5NQqP1dWgjOZBAnhZ2IuNaHMKs0QK8Z3zSuoHoRE7Vp-FbGQIXge9HXQGvg_qg7qFcOaZhTg6le_rz6O_iEjaPgXTBJ4HoOsCc9fm2V6IbNce2pRgEKHF_woOaYjAgpKuKISt7c0bjUipFsQxHgc95ZhOoZDP1ZHUV2iWPvScQClXVKpvvwZiXdNPzKDwKnIHr4_PuEa1tVLrRv4A"/>
+                          <img className="h-10 object-contain" alt="Rawbank" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxOMGA55xdVGzrvvQzv4qvSWgvtCT1Rzd0p9abggXNWp8X_ff39LcguBG47-vPoeLieCv_XfnvSDT12N9J5o4FxkJkCGGVqZ3nIEtTDKJHaD0MQKA_zC8366NRKQTbu9WHyHh4iHFWxidCTDz2489sbD-nFpQw_cpCFtIw5EDhmXPcaHiquhboWLeqkkIoApLwCa5rGrmPzJwBXDrnGipXl4hH3aQptu5FJhnybUswypwVAOachGgR2A"/>
+                        </div>
+                      </div>
                     </div>
-                    <ContractConfig />
+                    <div className="relative group lg:pl-12">
+                      <div className="absolute -inset-4 bg-gradient-to-tr from-[#006c4a]/10 via-[#006c4a]/5 to-transparent rounded-[3rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                      <div className="relative bg-white border border-slate-100 rounded-[2.5rem] p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] h-[600px] flex items-center justify-center overflow-hidden">
+                        <div className="w-full h-full bg-[#eff4ff] rounded-[2rem] border border-[#bccac0]/30 flex flex-col items-center justify-center p-6 relative">
+                          <div className="absolute top-4 left-6 right-6 flex items-center justify-between border-b border-slate-200/50 pb-3">
+                            <span className="text-[11px] font-mono font-bold text-[#006c4a]">TIERS-PAYANT EN DIRECT</span>
+                            <span className="px-2 py-0.5 bg-[#68dba9]/20 text-[#005137] rounded-sm text-[9px] font-mono font-bold">STABLE 99.9%</span>
+                          </div>
+                          
+                          <svg className="w-full max-w-[340px] mt-6" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M120,240 Q160,200 220,180" stroke="#006c4a" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
+                            <path d="M120,240 Q100,160 110,120" stroke="#006c4a" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
+                            <path d="M220,180 Q270,190 320,230" stroke="#006c4a" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
+                            <path d="M110,120 Q160,150 220,180" stroke="#006c4a" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
+
+                            <circle cx="220" cy="180" r="14" fill="#006c4a" fillOpacity="0.15" />
+                            <circle cx="220" cy="180" r="6" fill="#006c4a" />
+                            <text x="210" y="205" fill="#0b1c30" fontSize="10" fontWeight="bold" fontFamily="monospace">Kinshasa (HQ)</text>
+
+                            <circle cx="110" cy="120" r="12" fill="#006c4a" fillOpacity="0.15" />
+                            <circle cx="110" cy="120" r="5" fill="#006c4a" />
+                            <text x="80" y="105" fill="#3f465c" fontSize="9" fontWeight="bold" fontFamily="monospace">Abidjan</text>
+
+                            <circle cx="320" cy="230" r="12" fill="#006c4a" fillOpacity="0.15" />
+                            <circle cx="320" cy="230" r="5" fill="#006c4a" />
+                            <text x="310" y="250" fill="#3f465c" fontSize="9" fontWeight="bold" fontFamily="monospace">Nairobi</text>
+
+                            <circle cx="120" cy="240" r="12" fill="#006c4a" fillOpacity="0.15" />
+                            <circle cx="120" cy="240" r="5" fill="#006c4a" />
+                            <text x="90" y="260" fill="#3f465c" fontSize="9" fontWeight="bold" fontFamily="monospace">Lagos</text>
+                          </svg>
+
+                          <div className="absolute bottom-6 left-6 right-6 bg-[#0b1c30] text-white rounded-lg p-3 text-left font-mono text-[10px] flex items-center justify-between border border-white/10 shadow-lg">
+                            <span className="text-[#68dba9]">✓ TRANSITE_SERVEUR : ACTIF</span>
+                            <span className="text-[#68dba9]">24h/24</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 4. Configuration des Garanties */}
+                <section className="py-40 bg-white relative overflow-hidden" id="tarifs">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10">
+                    <div className="text-center mb-24 space-y-6">
+                      <h2 className="text-3xl md:text-[36px] text-[#0b1c30] font-extrabold tracking-tight uppercase">Configuration des Garanties &amp; Tarifs</h2>
+                      <p className="text-[#3d4a42] text-lg max-w-2xl mx-auto leading-relaxed">
+                        Personnalisez vos limites de couverture pour répondre aux exigences de votre secteur d'activité, avec l'assurance d'une conformité totale.
+                      </p>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto mb-20 text-left">
+                      {/* Silver */}
+                      <div className="border border-slate-200 rounded-[2rem] p-10 hover:border-[#006c4a]/50 hover:shadow-xl transition-all flex flex-col group h-full bg-white">
+                        <span className="text-[#6d7a72] text-xs font-semibold mb-4 tracking-wider uppercase">PME &amp; Startups</span>
+                        <h3 className="text-[32px] font-bold text-[#0b1c30] mb-8">Standard</h3>
+                        <div className="space-y-6 mb-12 flex-grow">
+                          <div className="flex items-start gap-4">
+                            <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#3d4a42]">Plafond annuel: 5.000$ / pers.</span>
+                          </div>
+                          <div className="flex items-start gap-4">
+                            <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#3d4a42]">Soins ambulatoires 80%</span>
+                          </div>
+                          <div className="flex items-start gap-4 opacity-50">
+                            <AlertTriangle className="text-[#6d7a72] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#6d7a72]">Évacuation internationale</span>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => navigateTo('/affiliation')}
+                          className="w-full py-5 border-2 border-slate-200 rounded-xl font-semibold text-sm text-[#0b1c30] group-hover:border-[#006c4a] group-hover:text-[#006c4a] transition-all cursor-pointer"
+                        >
+                          Choisir Silver
+                        </button>
+                      </div>
+                      
+                      {/* Gold (Featured) */}
+                      <div className="relative z-10 flex flex-col h-full rounded-[2.5rem] p-[3px] bg-gradient-to-b from-[#006c4a] via-[#006c4a]/60 to-[#006c4a]/10 shadow-[0_32px_64px_-16px_rgba(0,105,72,0.25)] md:-mt-8 md:mb-8">
+                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#006c4a] text-white px-6 py-2 rounded-full text-[10px] font-bold shadow-lg border border-[#85f8c4]/20 tracking-widest uppercase">RECOMMANDÉ</div>
+                        <div className="bg-white rounded-[2.3rem] p-12 flex flex-col h-full">
+                          <span className="text-[#006c4a] text-xs font-bold mb-4 tracking-wider uppercase">Corporate &amp; Industrie</span>
+                          <h3 className="text-[40px] font-bold text-[#0b1c30] mb-8">Classique</h3>
+                          <div className="space-y-6 mb-12 flex-grow">
+                            <div className="flex items-start gap-4">
+                              <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-6 h-6" />
+                              <span className="text-base text-[#0b1c30] font-medium">Plafond annuel: 25.000$ / pers.</span>
+                            </div>
+                            <div className="flex items-start gap-4">
+                              <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-6 h-6" />
+                              <span className="text-base text-[#3d4a42]">Dentaire &amp; Optique inclus</span>
+                            </div>
+                            <div className="flex items-start gap-4">
+                              <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-6 h-6" />
+                              <span className="text-base text-[#3d4a42]">Évacuation Afrique Australe</span>
+                            </div>
+                            <div className="flex items-start gap-4">
+                              <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-6 h-6" />
+                              <span className="text-base text-[#3d4a42]">Réseau Top 50 Hôpitaux</span>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => navigateTo('/affiliation')}
+                            className="w-full py-5 bg-[#006c4a] text-white rounded-xl font-bold text-sm shadow-xl shadow-[#006c4a]/30 hover:brightness-110 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                          >
+                            Configurer Gold
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Platinum */}
+                      <div className="border border-slate-200 rounded-[2rem] p-10 hover:border-[#006c4a]/50 hover:shadow-xl transition-all flex flex-col group h-full bg-white">
+                        <span className="text-[#6d7a72] text-xs font-semibold mb-4 tracking-wider uppercase">Exécutif &amp; Mining</span>
+                        <h3 className="text-[32px] font-bold text-[#0b1c30] mb-8">Privilege</h3>
+                        <div className="space-y-6 mb-12 flex-grow">
+                          <div className="flex items-start gap-4">
+                            <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#3d4a42]">Plafond illimité certifié</span>
+                          </div>
+                          <div className="flex items-start gap-4">
+                            <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#3d4a42]">Evacuation Monde (Europe/US)</span>
+                          </div>
+                          <div className="flex items-start gap-4">
+                            <CheckCircle className="text-[#006c4a] mt-1 shrink-0 w-5 h-5" />
+                            <span className="text-sm text-[#3d4a42]">Médecin dédié 24h/24</span>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => navigateTo('/affiliation')}
+                          className="w-full py-5 border-2 border-slate-200 rounded-xl font-semibold text-sm text-[#0b1c30] group-hover:border-[#006c4a] group-hover:text-[#006c4a] transition-all cursor-pointer"
+                        >
+                          Accès Platinum
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 5. Stats Column */}
+                <section className="bg-[#006948] py-32 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, #ffffff 0%, transparent 60%)" }}></div>
+                  <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-10 grid md:grid-cols-3 gap-16 text-center">
+                    <div className="space-y-4">
+                      <p className="font-sans text-[64px] md:text-[80px] text-white font-bold tracking-tighter">200,000+</p>
+                      <p className="text-[#68dba9] font-sans text-sm md:text-[16px] tracking-[0.2em] uppercase font-medium">Assurés Actifs</p>
+                    </div>
+                    <div className="space-y-4 md:border-x border-white/10">
+                      <p className="font-sans text-[64px] md:text-[80px] text-[#85f8c4] font-bold tracking-tighter">-70%</p>
+                      <p className="text-[#68dba9] font-sans text-sm md:text-[16px] tracking-[0.2em] uppercase font-medium">Réduction Coûts Gestion</p>
+                    </div>
+                    <div className="space-y-4">
+                      <p className="font-sans text-[64px] md:text-[80px] text-white font-bold tracking-tighter">50+</p>
+                      <p className="text-[#68dba9] font-sans text-sm md:text-[16px] tracking-[0.2em] uppercase font-medium">Hôpitaux Partenaires</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 6. Nos Services (Bento Style) */}
+                <section className="py-40 bg-slate-50" id="solutions">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10">
+                    <h2 className="text-3xl md:text-[36px] text-[#0b1c30] mb-20 text-center font-bold tracking-tight uppercase">Services de Surveillance Digitale</h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+                      
+                      <div className="bg-white p-10 rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/40 hover:shadow-2xl transition-all duration-500 shadow-sm flex flex-col h-full group">
+                        <div className="w-full aspect-square mb-10 rounded-[1.5rem] overflow-hidden border border-slate-100 group-hover:scale-[1.02] transition-transform duration-500">
+                          <img alt="Direct Medical Care Validation" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvjifwEaGtz2wENY-CxsBx9nmMH9jzef_fzSLK7OikUFxWL3kgAoLnmyD_knSkQd1lUhMLmPl0nv-wt3966Tl4f1sY5z3YxA-0IbtXRb-HNzD96XVySRGyj1R4AJyiuZr-IWcxV54NOFB354YT39w8pPKpgdIdG-6TlmboESG7SitdFShWIq2EnolER0wtiPbBK-pACd2WeAl140w-js0WQb38t1Cgyy17_3DSkDv6YedXbA-j8mQSHw"/>
+                        </div>
+                        <h4 className="text-[20px] mb-4 text-[#0b1c30] font-bold">Validation Directe</h4>
+                        <p className="text-[#3d4a42] text-sm leading-relaxed flex-grow">Admission en clinique par simple scan. Suppression totale des formulaires d'admission papier.</p>
+                      </div>
+
+                      <div className="bg-white p-10 rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/40 hover:shadow-2xl transition-all duration-500 shadow-sm flex flex-col h-full group">
+                        <div className="w-full aspect-square mb-10 rounded-[1.5rem] overflow-hidden border border-slate-100 group-hover:scale-[1.02] transition-transform duration-500">
+                          <img alt="Anti-fraud QR Code System" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBics-s5Gm-c-OQh35pF4sEPHjU50Tr3VqqLF1YJY8698NXMNdRXnABuTFLFyQ_FIgRVSmuH5-qN3Wdqm1BZ4bbhbL4l5h9oYzcgLMkUT_l9JzXcwqAmEvHBYU_OEhI0e3eb68WhFD120t17TZ1ut5Bcua9l2gvxF-6CKyNtg9TM6d5Pg3pXiaCMdpaeGaoiQ3eNZKzkqQoiJR-hEFfHWYm4xyCub3dmYMFJZfCRzCJbyWLVaDjN_nyjg"/>
+                        </div>
+                        <h4 className="text-[20px] mb-4 text-[#0b1c30] font-bold">Barrage Anti-usurpation</h4>
+                        <p className="text-[#3d4a42] text-sm leading-relaxed flex-grow">Contrôle biométrique et QR Code dynamique pour éradiquer la fraude documentaire sur les soins.</p>
+                      </div>
+
+                      <div className="bg-[#00855d] text-white p-10 rounded-[2rem] border border-[#006c4a]/20 hover:shadow-[0_32px_64px_-16px_rgba(0,105,72,0.4)] transition-all duration-500 shadow-xl flex flex-col h-full group relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+                        <div className="relative z-10 w-full aspect-square mb-10 rounded-[1.5rem] overflow-hidden border border-white/20 group-hover:scale-[1.02] transition-transform duration-500">
+                          <img alt="Data Sovereignty" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVO9zypU3B_xyJ61dUdh2pUJYX-sCHxaW_jUMXeKV4M12RAdbdPGL3_UQdEQk3OLzMmmwSSIlK8qX6R-5VahkPg7nVijne62CIW4P5kMe49m96rJlxdBV7dBB50sJBRTgx9bQSn3dVffYXH_UJszIOHJe5jIwpcKnAIEubqgEUowZ-Kzj_0R6QBQ61HYEmNd6EZQdzVzYTgZCTz5Y-aoTN3zPtTamwgYE1-1cMnTn9Tg7pTVqbqrC9Gg"/>
+                        </div>
+                        <h4 className="relative z-10 text-[20px] mb-4 font-bold">Conformité Loi n°18/035</h4>
+                        <p className="relative z-10 text-white/90 text-sm leading-relaxed flex-grow">Chiffrement AES-256 de bout en bout conforme au code des télécommunications de la RDC.</p>
+                      </div>
+
+                      <div className="bg-white p-10 rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/40 hover:shadow-2xl transition-all duration-500 shadow-sm flex flex-col h-full group">
+                        <div className="w-full aspect-square mb-10 rounded-[1.5rem] overflow-hidden border border-slate-100 group-hover:scale-[1.02] transition-transform duration-500">
+                          <img alt="Accelerated Claim Settlement" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxp3Ps0Zsxll8co_AYjbe6Si5Go3dnUsGQ7p3AuTmlkPRTv4xbzeQ-C3kOD1yReV9Rc2WKHGSmm-L7X3ND_L1pkbGYho5LWPdl7UA4sqwHkAMOlVZjIlxI-np55ep8Cf12dy5f9D7Qn6-EDXQ10vVsJ7LG32RXrLm-QbUt1Qd3OzdnESn5tt2-dR1Sx2pvi2vBSlJccGWU2fej7DOGraJ-ZMqV_Y0m5GGmqQmt8WN2F_OaEwuLVWqUBQ"/>
+                        </div>
+                        <h4 className="text-[20px] mb-4 text-[#0b1c30] font-bold">Clôture Sinistre Accélérée</h4>
+                        <p className="text-[#3d4a42] text-sm leading-relaxed flex-grow">Rapprochement bancaire automatisé et liquidation des sinistres en moins de 48 heures.</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </section>
+
+                {/* 7. Espace Décideurs */}
+                <section className="py-40 bg-[#e5eeff] text-left">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center gap-20 lg:gap-32">
+                    <div className="md:w-1/2 relative">
+                      <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border-[12px] border-white/50 bg-[#eff4ff]">
+                        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/src/assets/images/neo_lighthouse_1781554684215.jpg')" }} />
+                      </div>
+                    </div>
+                    <div className="md:w-1/2 space-y-12">
+                      <h2 className="text-4xl md:text-[56px] text-[#0b1c30] leading-[1.1] font-bold">Souveraineté Numérique Totale</h2>
+                      <p className="text-lg text-[#3d4a42] leading-relaxed text-[20px]">
+                        Pour la première fois, vos données de santé d'entreprise restent en RDC. Notre infrastructure hybride garantit que <span className="font-bold text-[#006c4a]">aucun cloud étranger n'héberge vos bases médicales salariés</span>.
+                      </p>
+                      <div className="space-y-8 pt-4">
+                        <div className="flex items-start gap-8">
+                          <div className="w-16 h-16 rounded-[1.25rem] bg-white flex items-center justify-center shrink-0 shadow-lg border border-slate-100">
+                            <Server className="text-[#006c4a] w-8 h-8" />
+                          </div>
+                          <div>
+                            <p className="text-[22px] font-bold text-[#0b1c30] mb-2">Hébergement Local Certifié</p>
+                            <p className="text-sm text-[#3d4a42] leading-relaxed">Data Centers conformes aux exigences du Ministère du Numérique RDC.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-8">
+                          <div className="w-16 h-16 rounded-[1.25rem] bg-white flex items-center justify-center shrink-0 shadow-lg border border-slate-100">
+                            <ShieldCheck className="text-[#006c4a] w-8 h-8" />
+                          </div>
+                          <div>
+                            <p className="text-[22px] font-bold text-[#0b1c30] mb-2">Optimisation de Trésorerie</p>
+                            <p className="text-sm text-[#3d4a42] leading-relaxed">Primes d'assurance lissées et transparentes via l'ARCA-RDC.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 8. Communiqué de Presse */}
+                <div className="bg-[#00855d] py-20 relative overflow-hidden text-left">
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+')] opacity-50"></div>
+                  <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                    <div className="flex items-center gap-8">
+                      <div className="bg-[#006947] p-5 rounded-[1.25rem] shadow-xl border border-white/10 text-white">
+                        <Activity className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-white text-[28px] font-bold mb-2">Expansion Nationale : Phase 2</h3>
+                        <p className="text-white/80 text-lg">Lancement de nos Hubs de services au Katanga et au Nord-Kivu.</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => navigateTo('/arca-rdc')}
+                      className="text-white border-b-2 border-white/50 hover:border-white font-semibold pb-1 flex items-center gap-3 group transition-colors cursor-pointer text-sm bg-transparent"
+                    >
+                      <span>Lire le communiqué complet</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+                    </button>
                   </div>
                 </div>
 
-                {/* 📊 OVERLAPPING THREE STATS COLUMNS PANEL */}
-                <section className="relative -mt-10 mx-auto max-w-7xl px-6 lg:px-8 z-20">
-                  <div className="grid grid-cols-1 md:grid-cols-3 bg-white border border-slate-200 shadow-2xl rounded-[8px] overflow-hidden divide-y md:divide-y-0 md:divide-x select-none">
-                    <div className="p-8 md:p-10 space-y-3 hover:bg-slate-50 transition-colors">
-                      <span className="text-4xl font-black text-slate-900 block font-sans tracking-tight">200 000+</span>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider leading-relaxed">assurés comptent d&apos;ores et déjà sur NeoGTec</p>
-                      <button onClick={() => navigateTo('/modules')} className="text-xs text-[#00A86B] font-black hover:underline cursor-pointer block border-b border-transparent hover:border-[#00386B] pt-1">Découvrez les témoignages de nos clients</button>
-                    </div>
-
-                    <div className="p-8 md:p-10 space-y-3 hover:bg-slate-50 transition-colors">
-                      <span className="text-4xl font-black text-slate-900 block font-sans tracking-tight">70%</span>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider leading-relaxed">de baisse de coût de gestion des sinistres</p>
-                      <button onClick={() => navigateTo('/risques')} className="text-xs text-[#00A86B] font-black hover:underline cursor-pointer block border-b border-transparent hover:border-[#00386B] pt-1">Découvrez comment réduire vos coûts</button>
-                    </div>
-
-                    <div className="p-8 md:p-10 space-y-3 hover:bg-slate-50 transition-colors">
-                      <span className="text-4xl font-black text-slate-900 block font-sans tracking-tight">50+</span>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider leading-relaxed">hôpitaux raccordés en direct en Afrique</p>
-                      <button onClick={() => navigateTo('/affiliation')} className="text-xs text-[#00A86B] font-black hover:underline cursor-pointer block border-b border-transparent hover:border-[#00386B] pt-1">Devenez partenaire</button>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 🛠️ NOS SERVICES SECTION (Exact Screenshot 2 Match) */}
-                <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24 text-left">
-                  <div className="space-y-4 mb-16">
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900">
-                      Nos Services<span className="text-[#00A86B] font-extrabold">.</span>
-                    </h2>
-                    <p className="text-[11px] font-mono font-black text-[#00A86B]/90 tracking-widest uppercase">
-                      ARCHITECTES DE VOTRE TRANSFORMATION DIGITALE, DE LA STRATÉGIE À L&apos;EXÉCUTION.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                    {/* Left grids: 4 services */}
-                    <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 gap-y-12">
-                      <div className="space-y-4">
-                        <span className="text-[10px] font-mono font-black text-[#00A86B]/90 block">RACCORDEMENT CLINIQUE</span>
-                        <div className="w-10 h-10 bg-green-50 border border-green-150 rounded-[4px] flex items-center justify-center text-[#00A86B]">
-                          <Hospital className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-[16px] font-black text-slate-900 uppercase">Validation de soins en direct</h3>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed">Solutions intelligentes pour valider l&apos;accord de soins en guichet de clinique sans formulaires papier physiques.</p>
-                        <button onClick={() => navigateTo('/solutions')} className="text-xs text-[#00A86B] font-bold hover:underline cursor-pointer">En savoir plus</button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <span className="text-[10px] font-mono font-black text-[#00A86B]/90 block">DÉTECTION DE FRAUDE</span>
-                        <div className="w-10 h-10 bg-green-50 border border-green-150 rounded-[4px] flex items-center justify-center text-[#00A86B]">
-                          <QrCode className="w-6 h-6 animate-pulse" />
-                        </div>
-                        <h3 className="text-[16px] font-black text-slate-900 uppercase">Barrage anti-usurpation</h3>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed">Le QR Code dynamique se régénère toutes les 24h pour détruire le rachat de cartes et l&apos;emprunt de mutuelle.</p>
-                        <button onClick={() => navigateTo('/risques')} className="text-xs text-[#00A86B] font-bold hover:underline cursor-pointer">En savoir plus</button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <span className="text-[10px] font-mono font-black text-[#00A86B]/90 block">TIERS-PAYANT SOUVERAIN</span>
-                        <div className="w-10 h-10 bg-green-50 border border-green-150 rounded-[4px] flex items-center justify-center text-[#00A86B]">
-                          <ShieldCheck className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-[16px] font-black text-slate-900 uppercase">Conformité Loi n°18/035</h3>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed">Cryptage des secrets médicaux et hébergement souverain de l&apos;historique clinique sur serveurs nationaux à Kinshasa.</p>
-                        <button onClick={() => navigateTo('/solutions')} className="text-xs text-[#00A86B] font-bold hover:underline cursor-pointer">En savoir plus</button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <span className="text-[10px] font-mono font-black text-[#00A86B]/90 block">CLEARING AUTOMATISÉ</span>
-                        <div className="w-10 h-10 bg-green-50 border border-green-150 rounded-[4px] flex items-center justify-center text-[#00A86B]">
-                          <Server className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-[16px] font-black text-slate-900 uppercase">Clôture sinisre accélérée</h3>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed">Factures validées et créditées sans retards ni audits laborieux. Clearing transparent des cotisations.</p>
-                        <button onClick={() => navigateTo('/solutions')} className="text-xs text-[#00A86B] font-bold hover:underline cursor-pointer">En savoir plus</button>
-                      </div>
-                    </div>
-
-                    {/* Right column sidebar divider */}
-                    <div className="lg:col-span-4 border-l border-slate-200 pl-8 space-y-12">
-                      <div className="space-y-4">
-                        <span className="text-[11px] font-mono font-black text-slate-400 uppercase tracking-wide block">Nos Plateformes</span>
-                        <ul className="divide-y divide-slate-100 text-xs font-bold text-slate-800">
-                          {['Portail RH National', 'Portail Médecins raccordés', 'Portail Clinique Admission', 'Portail Inspecteur ARCA'].map((pName, sIdx) => (
-                            <li key={sIdx} onClick={() => navigateTo('/modules')} className="py-3 flex items-center justify-between hover:text-[#00A86B] transition-colors cursor-pointer group">
-                              <span>{pName}</span>
-                              <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-1 transition-transform" />
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="space-y-4">
-                        <span className="text-[11px] font-mono font-black text-slate-400 uppercase tracking-wide block">Notre Excellence Intégrée</span>
-                        <ul className="divide-y divide-slate-100 text-xs font-bold text-slate-800">
-                          {['Sécurité d’audit ISO 27001', 'Autorisation officielle ARCA-RDC CD-41098', 'Réseau de 50 hôpitaux nationaux'].map((pName, sIdx) => (
-                            <li key={sIdx} onClick={() => navigateTo('/arca-rdc')} className="py-3 flex items-center justify-between hover:text-[#00A86B] transition-colors cursor-pointer group">
-                              <span>{pName}</span>
-                              <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-1 transition-transform" />
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 📄 COULOMBS COMPLIMENTARY REPORT & EXPANSION BANNER (Exact Screenshot 3 Match) */}
-                <section className="bg-white border-y border-slate-200 py-20 text-left select-none">
-                  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 items-stretch">
-                      
-                      {/* Left: IDC Analayst BRIEF equivalent */}
-                      <div className="lg:col-span-4 space-y-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <span className="text-[10.5px] font-mono font-black text-[#00A86B] uppercase block">DÉCIDEURS RH & FINANCE</span>
-                          <h3 className="text-2xl font-black text-slate-900 leading-tight">Prêt pour une meilleure gestion de votre budget santé ?</h3>
-                          <p className="text-xs text-slate-500 font-semibold leading-relaxed">
-                            Avoir conscience du climat social de vos collaborateurs n&apos;a jamais été aussi stratégique au Congo. L&apos;optimisation du Tiers Payant numérique de NeoGTec supprime le gaspillage de devises.
+                {/* 9. Témoignages & Actualités */}
+                <section className="py-40 bg-white overflow-hidden text-left">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10">
+                    <div className="grid md:grid-cols-2 gap-20 lg:gap-32 mb-24">
+                      <div className="space-y-12">
+                        <h2 className="text-3xl md:text-[32px] text-[#0b1c30] font-bold tracking-tight">La voix de nos partenaires</h2>
+                        <div className="bg-white p-12 rounded-[2.5rem] border border-slate-200 relative shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] mt-8">
+                          <Quote className="absolute -top-8 -left-8 text-[120px] text-[#006947]/10 leading-none w-24 h-24" />
+                          <p className="relative z-10 text-xl font-medium text-[#3d4a42] italic leading-relaxed text-[22px]">
+                            "NeoGTec a transformé notre gestion santé. La réduction des fraudes et la rapidité de prise en charge hospitalière pour nos agents est sans precedent dans l'histoire de la Bralima S.A."
                           </p>
-                        </div>
-                        <button onClick={() => navigateTo('/risques')} className="text-xs text-[#00A86B] font-black hover:underline cursor-pointer block border-b border-transparent w-max">En savoir plus</button>
-                      </div>
-
-                      {/* Middle: Complimentary Gartner Report */}
-                      <div className="lg:col-span-4 space-y-4 border-l border-slate-200 pl-4 md:pl-8 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <span className="text-[10.5px] font-mono font-black text-[#00A86B] uppercase block">RAPPORT EXCLUSIF ARCA RDC</span>
-                          <h3 className="text-2xl font-black text-slate-900 leading-tight">Prévisions stratégiques et conformités d&apos;assurances en Afrique 2026</h3>
-                          <p className="text-xs text-slate-500 font-semibold leading-relaxed">
-                            Découvrez comment la lutte contre la fraude réglementaire et la dématérialisation des fiches d&apos;admissions re-conçoivent les marges financières de vos RH.
-                          </p>
-                        </div>
-                        <button onClick={() => navigateTo('/tarifs')} className="text-xs text-[#00A86B] font-black hover:underline cursor-pointer block border-b border-transparent w-max">Accédez au rapport →</button>
-                      </div>
-
-                      {/* Right: High fidelity mountain graphic equivalent container placeholder in brand green theme */}
-                      <div className="lg:col-span-4 relative rounded-md overflow-hidden bg-[#090D14] flex items-center justify-center text-center p-8 border border-slate-800">
-                        <div className="absolute inset-0 bg-cover bg-center opacity-40 filter grayscale" style={{ backgroundImage: "url('/src/assets/images/neo_lighthouse_1781554684215.jpg')" }} />
-                        <div className="relative z-10 space-y-3">
-                          <div className="w-12 h-12 rounded-full bg-[#00A86B] text-white flex items-center justify-center mx-auto text-lg font-black shrink-0">✓</div>
-                          <h4 className="text-xs font-mono font-black uppercase text-white tracking-widest block">Audit Souverain RDC</h4>
-                          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">Aucun cloud étranger n&apos;héberge vos bases médicales salariés.</span>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                </section>
-
-                {/* 🤝 INTERMEDIATE EXECUTIVE PRESS BANNER (Exact Screenshot 3 Match) */}
-                <section className="bg-[#0b1320] text-white py-16 text-left select-none">
-                  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                      {/* Executives photo silhouette panel */}
-                      <div className="lg:col-span-5 relative h-64 rounded-md overflow-hidden bg-cover bg-center border border-white/5" style={{ backgroundImage: "url('/src/assets/images/neo_lighthouse_1781554684215.jpg')" }}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
-                        <div className="absolute bottom-4 left-4 font-mono text-[9px] text-green-400 font-black tracking-widest">
-                          ★ PARTENAIRES SIGNATURE MOBILISÉE
-                        </div>
-                      </div>
-
-                      {/* Description column */}
-                      <div className="lg:col-span-7 space-y-4">
-                        <span className="text-[10px] font-mono text-green-400 font-black uppercase">COMMUNIQUÉ DE PRESSE</span>
-                        <h2 className="text-3xl font-black uppercase leading-tight tracking-tight">
-                          NeoGTec concrétise son expansion nationale auprès des plus grands groupes industriels et industriels miniers du pays.
-                        </h2>
-                        <button onClick={() => navigateTo('/cgu')} className="text-xs text-[#00A86B] font-extrabold hover:underline block pt-2">En savoir plus →</button>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 🌸 TESTIMONIAL BLOCK & NEWS CARDS (Exact Screenshot 4 Match) */}
-                <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24 text-left select-none">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-16">
-                    <div className="lg:col-span-5 space-y-5">
-                      <span className="text-[11px] font-mono font-black text-[#00A86B] block">TÉMOIGNAGES CLIENTS</span>
-                      <h2 className="text-4xl md:text-5xl font-black text-slate-900">
-                        Ils nous font confiance<span className="text-[#00A86B] font-extrabold">.</span>
-                      </h2>
-                      <button 
-                        onClick={() => navigateTo('/affiliation')}
-                        className="h-11 px-5 rounded-full bg-[#00A86B] hover:bg-[#008d59] text-white font-black text-[11px] uppercase tracking-wider block cursor-pointer transition-all active:scale-[0.98]"
-                      >
-                        Voir tous les témoignages clients
-                      </button>
-                    </div>
-
-                    {/* Right text quotes */}
-                    <div className="lg:col-span-7 space-y-8">
-                      <div className="space-y-2 border-b pb-6 border-slate-100">
-                        <h4 className="text-lg font-black text-slate-900 font-mono">Bralima RDC</h4>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed font-sans">
-                          &ldquo;Comment la centralisation sur NeoGTec a éliminé les fiches d&apos;admissions papier et sécurisé le climat social de 4000 collaborateurs. Plus de rachat de cartes possibles des cliniques.&rdquo;
-                        </p>
-                        <button onClick={() => navigateTo('/modules')} className="text-xs text-[#00A86B] font-black hover:underline block pt-1">En savoir plus</button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h4 className="text-lg font-black text-slate-900 font-mono">Tenke Fungurume Mining</h4>
-                        <p className="text-xs text-slate-500 font-semibold leading-relaxed font-sans">
-                          &ldquo;Le choix de NeoGTec s&apos;est imposé comme une évidence pour notre conformité ARCA et la protection de la vie privée Loi 18/035. Fraude d&apos;identité médicale éradiquée en moins d&apos;un trimestre.&rdquo;
-                        </p>
-                        <button onClick={() => navigateTo('/modules')} className="text-xs text-[#00A86B] font-black hover:underline block pt-1">En savoir plus</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* News 4 Cards Grid - Screenshot 4 lower */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                      { cat: 'NEWS', title: "NeoGTec annonce une réduction moyenne de 70% sur le délai de validation des prises en charge cliniques." },
-                      { cat: 'CONFERENCE', title: "Sommet ARCA-RDC : Promouvoir la transparence grâce à la dématérialisation et sécuriser les primes." },
-                      { cat: 'INSIGHTS', title: "Intelligence Artificielle : Notre clearing algorithmique identifie les rachets d'assurés en 2 secondes." },
-                      { cat: 'RECHERCHE', title: "Optimisation fiscale de l'assurance d'entreprise collective : Éliminer la paperasse au Congo." }
-                    ].map((ns, idx) => (
-                      <div key={idx} className="bg-white border rounded-md p-6 hover:shadow-lg transition-all flex flex-col justify-between hover:border-[#00A86B]/20">
-                        <div className="space-y-3">
-                          <span className="text-[9.5px] font-mono font-black text-[#00A86B] uppercase block">★ {ns.cat}</span>
-                          <h4 className="text-xs font-black text-slate-900 uppercase font-sans tracking-tight leading-snug">{ns.title}</h4>
-                        </div>
-                        <button onClick={() => navigateTo('/modules')} className="text-[11px] text-slate-400 hover:text-[#00A86B] font-bold text-left pt-6 block font-mono cursor-pointer transition-colors">En savoir plus</button>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 🤝 PARTNER LOGOS BAR WITH SLIDER SIMULATION (Exact Screenshot 5 Match) */}
-                <section className="bg-slate-100 py-16 text-left select-none border-t border-slate-200">
-                  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                      <div className="lg:col-span-5 space-y-4">
-                        <span className="text-[10px] font-mono text-[#00A86B] font-black uppercase">NOS ACCRÉDITATIONS</span>
-                        <h3 className="text-2xl font-black text-slate-900 leading-tight">Nous sommes agréés et raccordés avec les plus grandes institutions sanitaires nationales.</h3>
-                        <button onClick={() => navigateTo('/arca-rdc')} className="text-xs text-[#00A86B] font-extrabold hover:underline">En savoir plus</button>
-                      </div>
-
-                      {/* Logos boxes cards */}
-                      <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {['ARCA Agrément CD-41098', 'ISO 27001 Certified', 'Ministère de la Santé RDC', 'OMS Afrique'].map((pName, sIdx) => (
-                          <div key={sIdx} className="bg-white border border-slate-200/60 p-4 rounded-md text-center text-[10px] font-mono font-black text-slate-600 uppercase tracking-wider flex items-center justify-center min-h-[5rem]">
-                            <span>{pName}</span>
+                          <div className="mt-12 flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-[#eff4ff] overflow-hidden shadow-sm border-2 border-white">
+                              <img className="w-full h-full object-cover" alt="Direction RH, Bralima S.A." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbdy0gXiJERPYeRRdWWjkN9h4JNlTi2C2h_CxFBiGOrvDt2v_VH9aWi01GT20r9U-G9qwvKatr4tMSkRwxlRo42KFXQqTtQrzdv8sSNm_XEE18XXMTp-rd5xhCHjnEWoN80KCPral8jhK1RvOcDYj9TM-wX1wDXa2VJrIaPfRdmCf9oNWzrCDlqJvvxRFLOwqqJnH5MA6TEFISzWvj2FFy4h5OUNCVkTZpJvwHeJ6yk9ulbRQdjKFAEg"/>
+                            </div>
+                            <div>
+                              <p className="text-lg font-bold text-[#0b1c30]">Direction RH, Bralima S.A.</p>
+                              <p className="text-xs text-[#6d7a72] mt-1 font-medium">Kinshasa, RDC</p>
+                            </div>
                           </div>
-                        ))}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-10">
+                        <h3 className="text-xs text-[#6d7a72] uppercase tracking-[0.3em] font-semibold mb-2">Dernières Actualités</h3>
+                        
+                        <div onClick={() => navigateTo('/modules')} className="flex gap-8 items-center group cursor-pointer border-b border-slate-100 pb-8 hover:bg-[#eff4ff]/50 p-4 -ml-4 rounded-2xl transition-colors">
+                          <div className="w-32 h-32 rounded-[1.25rem] overflow-hidden shrink-0 shadow-sm border border-slate-100">
+                            <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Medical tablet" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY-Kb0_ok9dEbRY-Yv3jtlpE65jPrAiEEvx_dN4tgmzFfcUJhLZNl0849-KvNcgq4alLZs94sy7RikIW7zVm8wm0yneKHSX-S4XKktcFV-RmkV7Dn_tTsJJeJkpMHcDR3GhudxwMzMBAl9Sk2QtBd037J2gEXfdL6YDF40JwmAkokyMOQiTRuQj9PYGoC4A29f3Og_-hFQW7aD39LzIGPy1vMkgZrEQJKP5R6sDU-kc74JtNCVUNN6Sg"/>
+                          </div>
+                          <div>
+                            <p className="text-xs text-[#006c4a] font-bold mb-3 uppercase tracking-wider">Digitalisation</p>
+                            <h4 className="text-[22px] font-bold text-[#0b1c30] group-hover:text-[#006c4a] transition-colors leading-tight">NeoGTec déploie la télémédecine dans le Lualaba</h4>
+                          </div>
+                        </div>
+
+                        <div onClick={() => navigateTo('/arca-rdc')} className="flex gap-8 items-center group cursor-pointer border-b border-slate-100 pb-8 hover:bg-[#eff4ff]/50 p-4 -ml-4 rounded-2xl transition-colors">
+                          <div className="w-32 h-32 rounded-[1.25rem] overflow-hidden shrink-0 shadow-sm border border-slate-100">
+                            <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Official seal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGzauIw3F1uRcAJUQUegLdjb3jX6o2ZB-3ownMCVH1kYZZr6Kpcjl-iFp-tO-AJg30hP_WHYlfp0Tk5Cw00S-DpvZcWo6aEbJGmFzVWh3uA9g8vh12dJme6u60SJ17BiPOVWO2_oZ1SM0x5i8YSP_StxwgTYJZarrxImjq8AvClFcthAZURs5oNqtAh2y5MlZCGAhG44DfUbeK3Hxl5r2-kpNFCafpwDyAhySPQiCBwngXbqtyNW5iBg"/>
+                          </div>
+                          <div>
+                            <p className="text-xs text-[#006c4a] font-bold mb-3 uppercase tracking-wider">Conformité</p>
+                            <h4 className="text-[22px] font-bold text-[#0b1c30] group-hover:text-[#006c4a] transition-colors leading-tight">Renouvellement de l'agrément ARCA pour 2026</h4>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                {/* 🗺️ GLOBAL OFFICES & CONNECTION MAP (Exact Screenshot 5 bottom Match) */}
-                <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24 text-left select-none">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                {/* 10. Accréditations */}
+                <section className="bg-white py-24 border-y border-slate-100">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10">
+                    <p className="text-center text-[#6d7a72] text-[13px] font-semibold uppercase tracking-[0.25em] mb-16">Accréditations &amp; Certifications Internationales</p>
+                    <div className="flex flex-wrap justify-center items-center gap-24 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+                      <img className="h-16 object-contain mix-blend-multiply" alt="ARCA-RDC seal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0sh-AUarMdA9CXoNwjh452qPTov8H-K_-PKUvWBSl1y4BXZMC1CGsN_-ObAIgIhlsXgaApcSWodSqM7g-iAptAftVa9W8_2fLtpiFgUT1hPtGLUbq0PmgqsINjtGzLZqZFAez5yhYRj3H3R294_vB7ySzPAmuAagEy23kfjJiRu6OXw1S02vcVi2FXGZ3J7EEYfpC5VaAOBlqNp-C-DHNC9DSB9TnhE9Zfuzca-YbC-PIrnw6S2scyA"/>
+                      <img className="h-16 object-contain mix-blend-multiply" alt="ISO 27001" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkEiGKRKczGVqjmn9mcZKYV77ky3NeQ-cDahdPCzzVIU0sBjhiQhh3-JIbvDGfV98ezpTj_Y7cZRBcRBf19Ip0dKD2J8DpJ6g-09kz1WvKMyOR45mJiy9o0rHw_oycrK6vUhU5TT7aD_4Jpkuhcb5a_EM5j-QlBtA1na3tVn0PQswfB6YgCr9VL8IQ70X3uduzzU06seIW7GaJFgdbWuT_fWhzdjaAzNoKrRouXcI6WBrwrWk-lqeN1g"/>
+                      <img className="h-16 object-contain mix-blend-multiply" alt="Ministère de la Santé RDC" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChFZa_qTVSFBd-01Vjfsuri02wOZveqd5FJfwN0Pc19ppDJ0gTC9jfCX-rIxPEnk2FOZbxyDn_4tM66uphcVUlYAkUOKhBX0HhReWWlW_bQmjAYiW1FNY8n3sb23A82c45Rs1GeP9YSn98aGrUO80WxpFmUNBfmHc5fmplY7JLV11UtNa7hgKEX_bI8w4J2WIxr84NvNWZppZDpLrf-2MTFj49ssnIgYo5k0jxVsFW-GChl-YyT1BOVQ"/>
+                      <img className="h-16 object-contain mix-blend-multiply" alt="WHO Africa" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6vcfh12SDFTkUm3Iel-QYgDuPkiTiBFrDP43BQ25USN0mejiKSw5k-vxjc-oW0cf-oUEqz8rzD3NJRuTR2sqjSIIAI8L8EQi8HZyGlekYEFfQAlCTaK3miyEHbpbr95ZU8PS0-S2whEhZcHIswFErNmSCtzOegWd0hswqVaukgQSm05_kfYpWDcNLGU3rJJUAS2nDNfjDaZUIqT5YJtzRp9PXQpop2VSYSafzT6BI1bPxt-_Dzkq1uw"/>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 11. Carte des Hubs */}
+                <section className="py-40 bg-slate-50 relative overflow-hidden text-left">
+                  <div className="max-w-[1440px] mx-auto px-6 md:px-10 grid md:grid-cols-2 gap-20 lg:gap-32 items-center">
+                    <div className="space-y-12">
+                      <h2 className="text-4xl md:text-[48px] font-bold text-[#0b1c30] leading-tight">Un Réseau Panafricain</h2>
+                      <p className="text-lg text-[#3d4a42] leading-relaxed text-[20px]">Nos centres de contrôle et de support technique sont stratégiquement répartis pour garantir une latence minimale et une conformité régionale totale.</p>
+                      <div className="grid grid-cols-2 gap-8">
+                        <div className="p-10 bg-white rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/50 hover:shadow-xl transition-all shadow-sm">
+                          <p className="text-[24px] font-bold text-[#0b1c30] mb-3">Kinshasa</p>
+                          <p className="text-sm text-[#6d7a72]">Siège Social &amp; Data Center</p>
+                        </div>
+                        <div className="p-10 bg-white rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/50 hover:shadow-xl transition-all shadow-sm">
+                          <p className="text-[24px] font-bold text-[#0b1c30] mb-3">Lubumbashi</p>
+                          <p className="text-sm text-[#6d7a72]">Innovation &amp; AI Lab</p>
+                        </div>
+                        <div className="p-10 bg-white rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/50 hover:shadow-xl transition-all shadow-sm">
+                          <p className="text-[24px] font-bold text-[#0b1c30] mb-3">Abidjan</p>
+                          <p className="text-sm text-[#6d7a72]">Support Afrique de l'Ouest</p>
+                        </div>
+                        <div className="p-10 bg-white rounded-[2rem] border border-slate-200 hover:border-[#006c4a]/50 hover:shadow-xl transition-all shadow-sm">
+                          <p className="text-[24px] font-bold text-[#0b1c30] mb-3">Lagos</p>
+                          <p className="text-sm text-[#6d7a72]">Ops. &amp; Logistique</p>
+                        </div>
+                      </div>
+                    </div>
                     
-                    {/* Left: Office listing directories */}
-                    <div className="lg:col-span-4 space-y-6">
-                      <div className="space-y-2">
-                        <span className="text-[10px] font-mono font-black text-[#00A86B] uppercase block">DÉPLOIEMENT PANAFRICAIN</span>
-                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase">Les experts NeoGTec au plus proche de vous<span className="text-[#00A86B]">.</span></h2>
-                      </div>
-
-                      <div className="space-y-2.5">
-                        {[
-                          { id: 'rdc', label: 'Kinshasa (Gombe) • Siège national' },
-                          { id: 'ci', label: 'Abidjan (Plateau) • Hub Ouest' },
-                          { id: 'ke', label: 'Nairobi (Kilimani) • Hub Est' },
-                          { id: 'ng', label: 'Lagos (Ikeja) • Bureau d’affaires' }
-                        ].map(of => (
-                          <button
-                            key={of.id}
-                            onClick={() => setActiveOffice(of.id)}
-                            className={cn(
-                              "w-full text-left px-4 py-3.5 border rounded-md text-xs font-bold transition-all flex justify-between select-none cursor-pointer outline-none",
-                              activeOffice === of.id ? "bg-white border-[#00A86B] text-[#00A86B] shadow-sm" : "border-slate-205 text-slate-700 hover:bg-white"
-                            )}
-                          >
-                            <span>{of.label}</span>
-                            <ArrowRight className="w-4 h-4 opacity-70" />
-                          </button>
-                        ))}
-                      </div>
+                    <div className="w-full h-[500px]">
+                      <InteractiveMap />
                     </div>
-
-                    {/* Right: Beautiful Connection Map in Green Theme */}
-                    <div className="lg:col-span-8 bg-white border border-slate-200 shadow-md p-6 rounded-md relative flex items-center justify-center min-h-[400px]">
-                      <svg className="w-full h-full max-w-[500px]" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Map nodes connection lines paths in NeoGTec green */}
-                        <path d="M120,240 Q160,200 220,180" stroke="#00A86B" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
-                        <path d="M120,240 Q100,160 110,120" stroke="#00A86B" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
-                        <path d="M220,180 Q270,190 320,230" stroke="#00A86B" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
-                        <path d="M110,120 Q160,150 220,180" stroke="#00A86B" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.6" />
-
-                        {/* Node: Kinshasa */}
-                        <circle cx="220" cy="180" r="14" fill="#00A86B" fillOpacity="0.15" className="animate-pulse" />
-                        <circle cx="220" cy="180" r="6" fill="#00A86B" />
-                        <text x="210" y="205" fill="#1e293b" fontSize="10" fontWeight="bold" fontFamily="monospace">Kinshasa (HQ)</text>
-
-                        {/* Node: Abidjan */}
-                        <circle cx="110" cy="120" r="12" fill="#00A86B" fillOpacity="0.15" />
-                        <circle cx="110" cy="120" r="5" fill="#00A86B" />
-                        <text x="80" y="105" fill="#64748b" fontSize="9" fontWeight="bold" fontFamily="monospace">Abidjan</text>
-
-                        {/* Node: Nairobi */}
-                        <circle cx="320" cy="230" r="12" fill="#00A86B" fillOpacity="0.15" />
-                        <circle cx="320" cy="230" r="5" fill="#00A86B" />
-                        <text x="310" y="250" fill="#64748b" fontSize="9" fontWeight="bold" fontFamily="monospace">Nairobi</text>
-
-                        {/* Node: Lagos */}
-                        <circle cx="120" cy="240" r="12" fill="#00A86B" fillOpacity="0.15" />
-                        <circle cx="120" cy="240" r="5" fill="#00A86B" />
-                        <text x="90" y="260" fill="#64748b" fontSize="9" fontWeight="bold" fontFamily="monospace">Lagos</text>
-                      </svg>
-                      <div className="absolute bottom-4 right-4 bg-slate-900 text-white rounded-[4px] px-3 py-1.5 font-mono text-[9px] uppercase border border-white/5 font-black tracking-widest leading-none">
-                        ✓ TRANSITE_SERVEUR : ACTIF
-                      </div>
-                    </div>
-
                   </div>
                 </section>
 

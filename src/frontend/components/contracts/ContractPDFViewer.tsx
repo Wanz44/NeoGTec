@@ -5,6 +5,7 @@ import {
   PhoneCall, QrCode, Briefcase, MapPin, Check, FileCheck, DollarSign, Printer, ArrowLeft, ArrowRight
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { BiaPrintDocument, BiaData } from './BiaPrintDocument';
 
 export interface ContractItem {
   id: string;
@@ -97,12 +98,39 @@ const getContractDetails = (c?: ContractItem | null) => {
 // =========================================================================
 export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }) => {
   const [viewMode, setViewMode] = useState<'interactive' | 'printPreview'>('interactive');
-  const [activeSection, setActiveSection] = useState<'general' | 'particular'>('general');
+  const [activeSection, setActiveSection] = useState<'general' | 'particular' | 'bia'>('general');
   const [activeArticleTab, setActiveArticleTab] = useState<number>(1);
   const [activePolicePoint, setActivePolicePoint] = useState<number>(1);
 
   const details = getContractDetails(contract);
   const surname = details.insured.split(' ')[0] || 'MUKENDI';
+
+  // Construct BIA data based on active contract details
+  const biaData: BiaData = {
+    id: `BIA-${details.id}`,
+    company: details.company,
+    rccm: 'CD/KIN/RCCM/2026/B/0412',
+    idNat: '6-99-N88120L',
+    adherentNom: surname,
+    adherentPrenom: details.insured.split(' ').slice(1).join(' ') || 'Jean-Paul',
+    adherentDtn: '12/10/1982',
+    adherentLieuNais: 'Kinshasa',
+    adherentSexe: 'M',
+    adherentEtatCivil: 'Marié',
+    adherentMatricule: 'KS-88210',
+    adherentProfession: details.job,
+    adherentTel: '+243 812 904 555',
+    adherentEmail: `${surname.toLowerCase()}@gmail.com`,
+    adherentAdresse: 'Avenue de la Paix, Q/ Volcans, Goma, Nord-Kivu',
+    adherentVille: 'Goma',
+    formula: details.formula,
+    familyMembers: [
+      { relation: 'Conjointe', name: `${surname} Mireille`, birthDate: '24/05/1988', gender: 'F', cardNum: `NGTC-${details.id}-01` },
+      { relation: 'Enfant rattaché 1', name: `${surname} Sarah`, birthDate: '05/11/2014', gender: 'F', cardNum: `NGTC-${details.id}-02` },
+      { relation: 'Enfant rattaché 2', name: `${surname} Kévin`, birthDate: '19/09/2017', gender: 'M', cardNum: `NGTC-${details.id}-03` },
+      { relation: 'Enfant rattaché 3', name: '...................................................', birthDate: '..../..../........', gender: '', cardNum: '...................' }
+    ]
+  };
 
   return (
     <div className="space-y-6">
@@ -150,18 +178,22 @@ export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }
           className="px-5 py-2.5 bg-[#00A86B] hover:bg-[#00905a] text-white font-black text-[11px] uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer border-none"
         >
           <Printer className="w-4 h-4" />
-          Imprimer le contrat complet A4
+          {activeSection === 'bia' ? "Imprimer le BIA complet A4" : "Imprimer le contrat complet A4"}
         </button>
       </div>
 
       {viewMode === 'printPreview' ? (
-        <ContractPrintDocument isVierge={false} contract={contract} />
+        activeSection === 'bia' ? (
+          <BiaPrintDocument isVierge={false} data={biaData} />
+        ) : (
+          <ContractPrintDocument isVierge={false} contract={contract} />
+        )
       ) : (
         <div className="space-y-6">
           {/* Selector with Glassmorphism styling */}
-          <div className="flex bg-slate-900/10 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/50 max-w-2xl mx-auto shadow-sm">
+          <div className="flex bg-slate-900/10 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/50 max-w-3xl mx-auto shadow-sm">
             <button
-              onClick={() => setActiveSection('general')}
+              onClick={() => { setActiveSection('general'); setViewMode('interactive'); }}
               className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 outline-none cursor-pointer ${
                 activeSection === 'general' 
                   ? 'bg-slate-900 text-white shadow-md' 
@@ -172,7 +204,7 @@ export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }
               Conditions Générales (Contrat)
             </button>
             <button
-              onClick={() => setActiveSection('particular')}
+              onClick={() => { setActiveSection('particular'); setViewMode('interactive'); }}
               className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 outline-none cursor-pointer ${
                 activeSection === 'particular' 
                   ? 'bg-slate-900 text-white shadow-md' 
@@ -182,9 +214,20 @@ export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }
               <FileCheck className="w-4 h-4" />
               Conditions Particulières (Police)
             </button>
+            <button
+              onClick={() => { setActiveSection('bia'); setViewMode('interactive'); }}
+              className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 outline-none cursor-pointer ${
+                activeSection === 'bia' 
+                  ? 'bg-slate-900 text-white shadow-md' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Bulletin d'Adhésion (BIA)
+            </button>
           </div>
 
-          {activeSection === 'general' ? (
+          {activeSection === 'general' && (
             <motion.div 
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
@@ -538,7 +581,9 @@ export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }
                 </div>
               </div>
             </motion.div>
-          ) : (
+          )}
+
+          {activeSection === 'particular' && (
             <motion.div 
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
@@ -1074,6 +1119,16 @@ export const ContractPDFViewer: React.FC<ContractPDFViewerProps> = ({ contract }
               </div>
             </motion.div>
           )}
+
+          {activeSection === 'bia' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="space-y-6"
+            >
+              <BiaPrintDocument isVierge={false} data={biaData} />
+            </motion.div>
+          )}
         </div>
       )}
     </div>
@@ -1326,31 +1381,21 @@ export const ContractPrintDocument: React.FC<ContractPrintDocumentProps> = ({ is
       </div>
       <div className="page-break" />
 
-      {/* PAGE 5: ARTICLE 5 (CARENCE) & ARTICLE 6 (COTISATIONS) */}
+      {/* PAGE 5: ARTICLE 5 (CARENCE) */}
       <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
         <div className="space-y-6">
           <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
           
           <div className="space-y-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 5 — DÉLAIS DE CARENCE</h3>
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 5 — DÉLAIS DE CARENCE ET LATENCE</h3>
             <p className="text-[11px] leading-relaxed text-justify">
-              Le délai de carence correspond à la période durant laquelle l'Assuré ne bénéficie pas encore des remboursements :
+              Le délai de carence correspond à la période transitoire débutant au jour de la souscription ou d'admission de l'affilié, durant laquelle ce dernier ne peut prétendre aux prestations de remboursement ou de tiers-payant :
             </p>
-            <ul className="space-y-2 text-[11px] list-disc pl-5 text-justify">
-              <li><strong>Maladies ordinaires :</strong> Un délai de trente (30) jours francs est appliqué sur toute nouvelle inscription.</li>
-              <li><strong>Maternité :</strong> Un délai de carence strict de dix (10) mois consécutifs est opposable à compter de l'inscription pour toute prestation de grossesse.</li>
-              <li><strong>Accidents :</strong> Aucun délai de carence ne s'applique en cas d'accident survenu après la prise d'effet du contrat.</li>
+            <ul className="space-y-3.5 text-[11px] list-disc pl-5 text-justify leading-relaxed">
+              <li><strong>Maladies courantes et ordinaires :</strong> Un délai de carence ferme de trente (30) jours francs est appliqué sur toute nouvelle inscription d'un bénéficiaire.</li>
+              <li><strong>Maternité et soins obstétriques :</strong> Un délai de carence de dix (10) mois consécutifs d'assurance active et ininterrompue est opposable à compter du jour d'effet de la police pour toute prestation liée à la grossesse, aux examens prénataux et à l'accouchement.</li>
+              <li><strong>Accidents corporels :</strong> Aucun délai de carence ne s'applique en cas d'accident corporel dument constaté survenu postérieurement à la prise d'effet de la police d'assurance.</li>
             </ul>
-          </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 6 — COTISATIONS ET PAIEMENT</h3>
-            <p className="text-[11px] leading-relaxed text-justify">
-              Le paiement des cotisations d'assurance s'effectue trimestriellement et d'avance, au plus tard le 5 de chaque trimestre échu.
-            </p>
-            <p className="text-[11px] leading-relaxed text-justify">
-              Conformément à l'article 13 du Code CIMA, tout défaut de paiement d'une cotisation dans les trente (30) jours de son échéance autorise l'Assureur à suspendre immédiatement la garantie d'assurance après une mise en demeure formelle infructueuse.
-            </p>
           </div>
         </div>
         
@@ -1361,28 +1406,21 @@ export const ContractPrintDocument: React.FC<ContractPrintDocumentProps> = ({ is
       </div>
       <div className="page-break" />
 
-      {/* PAGE 6: ARTICLE 7 (DURÉE) & ARTICLE 8 (PRISE EN CHARGE) */}
+      {/* PAGE 6: ARTICLE 6 (COTISATIONS) */}
       <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
         <div className="space-y-6">
           <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
           
           <div className="space-y-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 7 — DURÉE ET RÉSILIATION DU CONTRAT</h3>
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 6 — COTISATIONS, PRIMES ET PAIEMENTS</h3>
             <p className="text-[11px] leading-relaxed text-justify">
-              Le Contrat d'assurance est conclu pour une durée d'un (1) an, à compter du 1er janvier au 31 décembre, renouvelable par tacite reconduction d'année en année.
+              Le paiement des cotisations d'assurance santé est de la responsabilité exclusive du Souscripteur. Les cotisations sont payables d'avance, trimestriellement ou selon la périodicité convenue aux Conditions Particulières, au plus tard le 5 de chaque trimestre échu.
             </p>
             <p className="text-[11px] leading-relaxed text-justify">
-              Chaque partie dispose de la faculté de résilier le présent contrat d'assurance à l'échéance annuelle en adressant une lettre recommandée avec accusé de réception au moins deux (2) mois avant la date de fin de validité contractuelle.
-            </p>
-          </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 8 — MODALITÉS DE PRISE EN CHARGE</h3>
-            <p className="text-[11px] leading-relaxed text-justify">
-              Les prestations d'assurance s'effectuent prioritairement sous la forme de tiers-payant direct (Prise en Charge PEC) auprès des établissements de soins du réseau conventionné de l'Assureur.
+              Conformément aux dispositions impératives du Code des Assurances CIMA, à défaut de paiement d'une cotisation ou d'une fraction de cotisation dans les dix (10) jours de son échéance, la garantie ne peut être suspendue que trente (30) jours après la mise en demeure du souscripteur.
             </p>
             <p className="text-[11px] leading-relaxed text-justify">
-              En dehors du réseau de soins, l'Assuré fait l'avance de frais et dépose un dossier de remboursement complet sous quatre-vingt-dix (90) jours maximum sous peine de déchéance.
+              L'Assureur a le droit de résilier le Contrat dix (10) jours après l'expiration du délai de suspension de trente (30) jours si les cotisations dues restent impayées.
             </p>
           </div>
         </div>
@@ -1394,28 +1432,21 @@ export const ContractPrintDocument: React.FC<ContractPrintDocumentProps> = ({ is
       </div>
       <div className="page-break" />
 
-      {/* PAGE 7: ARTICLE 9 (OBLIGATIONS) & ARTICLE 10 (JURIDIQUE) */}
+      {/* PAGE 7: ARTICLE 7 (DURÉE & RÉSILIATION) */}
       <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
         <div className="space-y-6">
           <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
           
           <div className="space-y-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 9 — OBLIGATIONS DES PARTIES</h3>
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 7 — DURÉE, PRISE D'EFFET ET RÉSILIATION</h3>
             <p className="text-[11px] leading-relaxed text-justify">
-              <strong>Le Souscripteur s'engage à :</strong> Déclarer exactement le profil médical et l'état civil de tous les affiliés lors de l'inscription initiale, signaler les sorties d'effectifs sous 30 jours, et payer les primes.
+              Le présent Contrat d'assurance est conclu pour une durée d'un (1) an, à compter du jour de sa prise d'effet mentionnée aux Conditions Particulières jusqu'au 31 décembre de la même année. Il est renouvelable par tacite reconduction d'année en année, sauf dénonciation par l'une ou l'autre des parties.
             </p>
             <p className="text-[11px] leading-relaxed text-justify">
-              <strong>L'Assureur s'engage à :</strong> Délivrer des cartes de mutuelle fonctionnelles, maintenir un réseau de prestataires médicaux de qualité, et traiter les dossiers de sinistres complets sous quinze (15) jours ouvrés.
-            </p>
-          </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 10 — LOI APPLICABLE ET JURIDICITION</h3>
-            <p className="text-[11px] leading-relaxed text-justify">
-              Le présent contrat est exclusivement régi par le Code des Assurances CIMA et la législation de la République Démocratique du Congo.
+              La résiliation annuelle à l'échéance s'effectue en respectant un préavis minimum de deux (2) mois calendaires avant la date d'échéance annuelle, par lettre recommandée avec accusé de réception ou tout autre moyen écrit contre décharge.
             </p>
             <p className="text-[11px] leading-relaxed text-justify">
-              Tout litige lié à la validité, l'interprétation ou l'exécution de ce contrat relève de la compétence exclusive du tribunal de commerce de Kinshasa/Gombe après épuisement d'un protocole d'accord à l'amiable supervisé par l'ARCA.
+              De plus, le contrat peut être résilié de plein droit en cas de retrait d'agrément de la compagnie d'assurance par l'ARCA ou en cas de cessation définitive d'activité de l'entité souscriptrice.
             </p>
           </div>
         </div>
@@ -1427,7 +1458,82 @@ export const ContractPrintDocument: React.FC<ContractPrintDocumentProps> = ({ is
       </div>
       <div className="page-break" />
 
-      {/* PAGE 8: ARTICLE 11 (SIGNATURES) */}
+      {/* PAGE 8: ARTICLE 8 (PRISE EN CHARGE) */}
+      <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
+        <div className="space-y-6">
+          <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
+          
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 8 — MODALITÉS DE PRISE EN CHARGE DIRECTE (PEC)</h3>
+            <p className="text-[11px] leading-relaxed text-justify">
+              Les prestations d'assurance s'effectuent prioritairement sous la forme de tiers-payant direct, également appelé Prise en Charge (PEC), auprès des hôpitaux, cliniques et pharmacies conventionnés du réseau national de l'Assureur.
+            </p>
+            <p className="text-[11px] leading-relaxed text-justify">
+              Pour bénéficier du tiers-payant, chaque Assuré doit obligatoirement présenter sa carte d'assuré numérique biométrique au guichet d'accueil du prestataire de soins agréé avant tout acte médical, hors cas d'urgence vitale manifeste dument constatée.
+            </p>
+            <p className="text-[11px] leading-relaxed text-justify">
+              En cas de recours à des soins hors réseau conventionné ou en l'absence de délivrance d'une Prise en Charge directe, l'Assuré fait l'avance intégrale des frais et soumet une demande de remboursement sur présentation des pièces justificatives originales dans les quatre-vingt-dix (90) jours calendaires suivant les soins, sous peine de déchéance de garantie.
+            </p>
+          </div>
+        </div>
+        
+        <div className="border-t border-slate-200 pt-2 flex justify-between text-[9px] font-mono text-slate-400">
+          <span>RÉF : {isVierge ? "VIERGE" : details.id}</span>
+          <span>Conditions Générales - Page 8 / 11</span>
+        </div>
+      </div>
+      <div className="page-break" />
+
+      {/* PAGE 9: ARTICLE 9 (OBLIGATIONS DES PARTIES) */}
+      <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
+        <div className="space-y-6">
+          <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
+          
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 9 — OBLIGATIONS DES PARTIES</h3>
+            <p className="text-[11px] leading-relaxed text-justify">
+              <strong>Obligations du Souscripteur :</strong> Le Souscripteur s'engage à déclarer en toute bonne foi l'état civil exact et le profil médical complet de tous les affiliés lors de l'adhésion initiale, à signaler par écrit toute modification d'effectif ou de situation familiale des assurés dans un délai de trente (30) jours francs, et à s'acquitter ponctuellement des primes d'assurance dues.
+            </p>
+            <p className="text-[11px] leading-relaxed text-justify">
+              <strong>Obligations de l'Assureur :</strong> L'Assureur s'engage à émettre des cartes d'assurance individuelles biométriques opérationnelles, à maintenir et à auditer de manière permanente la qualité du réseau national de prestataires médicaux agréés, et à instruire et liquider les dossiers de remboursement complets dans un délai maximum de quinze (15) jours ouvrés suivant leur réception.
+            </p>
+          </div>
+        </div>
+        
+        <div className="border-t border-slate-200 pt-2 flex justify-between text-[9px] font-mono text-slate-400">
+          <span>RÉF : {isVierge ? "VIERGE" : details.id}</span>
+          <span>Conditions Générales - Page 9 / 11</span>
+        </div>
+      </div>
+      <div className="page-break" />
+
+      {/* PAGE 10: ARTICLE 10 (LOI ET JURIDICTION) */}
+      <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
+        <div className="space-y-6">
+          <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
+          
+          <div className="space-y-4">
+            <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 10 — LOI APPLICABLE ET JURIDICTION COMPETENTE</h3>
+            <p className="text-[11px] leading-relaxed text-justify">
+              Le présent Contrat d'assurance est régi, interprété et appliqué conformément aux dispositions du Code des Assurances de la Conférence Interafricaine des Marchés d'Assurances (CIMA) ainsi qu'aux lois et règlements applicables en République Démocratique du Congo.
+            </p>
+            <p className="text-[11px] leading-relaxed text-justify">
+              Tout litige ou différend relatif à la validité, l'interprétation, l'exécution ou la résiliation du présent contrat fera obligatoirement l'objet d'une tentative de résolution amiable entre les parties ou d'une médiation sous l'égide de l'Autorité de Régulation et de Contrôle des Assurances (ARCA).
+            </p>
+            <p className="text-[11px] leading-relaxed text-justify">
+              À défaut d'entente ou de conciliation amiable dans les trente (30) jours suivant sa notification par écrit, le litige sera soumis à la compétence exclusive du Tribunal de Commerce de Kinshasa/Gombe.
+            </p>
+          </div>
+        </div>
+        
+        <div className="border-t border-slate-200 pt-2 flex justify-between text-[9px] font-mono text-slate-400">
+          <span>RÉF : {isVierge ? "VIERGE" : details.id}</span>
+          <span>Conditions Générales - Page 10 / 11</span>
+        </div>
+      </div>
+      <div className="page-break" />
+
+      {/* PAGE 11: ARTICLE 11 (SIGNATURES) */}
       <div className="w-[21cm] min-h-[29.7cm] bg-white p-[2cm] shadow-lg border border-slate-200 text-slate-800 text-xs flex flex-col justify-between relative printable-sheet">
         <div className="space-y-6">
           <h2 className="text-xs font-black uppercase text-slate-500 tracking-wider">SANTÉ PLUS ASSURANCES • CONDITIONS GÉNÉRALES</h2>
@@ -1435,13 +1541,13 @@ export const ContractPrintDocument: React.FC<ContractPrintDocumentProps> = ({ is
           <div className="space-y-4">
             <h3 className="text-xs font-black uppercase text-slate-900 border-b border-black pb-1">ARTICLE 11 — VALIDATION ET SIGNATURES DES PARTIES</h3>
             <p className="text-[11px] leading-relaxed text-justify">
-              En foi de quoi, les parties signent et approuvent l'ensemble des clauses des conditions générales ci-dessus rédigées.
+              En foi de quoi, les parties approuvent et ratifient de manière expresse et irrévocable l'ensemble des conditions et clauses figurant aux présentes Conditions Générales.
             </p>
-            <p className="text-[11px] text-slate-650">
-              Fait à Kinshasa, le 02 janvier 2026.
+            <p className="text-[11px] text-slate-650 font-medium">
+              Fait en double exemplaire original à Kinshasa, le 02 janvier 2026.
             </p>
             
-            <div className="grid grid-cols-2 gap-12 pt-8 text-[11px]">
+            <div className="grid grid-cols-2 gap-12 pt-12 text-[11px]">
               <div className="border-t border-black pt-4">
                 <span className="block font-bold uppercase text-slate-500 text-[9px] mb-1">Pour l'Assureur</span>
                 <strong>TSHIBANGU Alain</strong><br />
