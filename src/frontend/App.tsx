@@ -188,9 +188,6 @@ export default function App() {
       case 'users-security':
       case 'users-logs':
       case 'users-digital':
-      case 'users-selfcare':
-      case 'users-card':
-      case 'users-beneficiaries':
         return <UsersView subModule={activeModule} />;
       case 'governance': return <Governance />; // Module 1 | 🔗 Fichier lié: Governance.tsx
       case 'team-permissions': return <TeamPermissions />;

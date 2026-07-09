@@ -23,7 +23,7 @@ interface UsersViewProps {
 }
 
 export const UsersView: React.FC<UsersViewProps> = ({ subModule }) => {
-  const [activeTab, setActiveTab] = useState<'list' | 'roles' | 'security' | 'logs' | 'digital' | 'selfcare' | 'card' | 'family'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'roles' | 'security' | 'logs' | 'digital'>('list');
 
   useEffect(() => {
     if (subModule === 'users-list') setActiveTab('list');
@@ -31,17 +31,11 @@ export const UsersView: React.FC<UsersViewProps> = ({ subModule }) => {
     else if (subModule === 'users-security' || subModule === 'security') setActiveTab('security');
     else if (subModule === 'users-logs') setActiveTab('logs');
     else if (subModule === 'users-digital') setActiveTab('digital');
-    else if (subModule === 'users-selfcare') setActiveTab('selfcare');
-    else if (subModule === 'users-card') setActiveTab('card');
-    else if (subModule === 'users-beneficiaries') setActiveTab('family');
   }, [subModule]);
 
   const tabs = [
     { id: 'list', label: 'Utilisateurs', icon: Users },
     { id: 'digital', label: 'Inscription Digitale', icon: UserPlus },
-    { id: 'selfcare', label: 'Self-Care', icon: TabletSmartphone },
-    { id: 'card', label: 'Carte Virtuelle', icon: CreditCard },
-    { id: 'family', label: 'Ayants-Droit', icon: Heart },
     { id: 'roles', label: 'Rôles & Droits', icon: Shield },
     { id: 'security', label: 'Sécurité', icon: Lock },
     { id: 'logs', label: 'Audit', icon: HistoryIcon },
@@ -54,9 +48,6 @@ export const UsersView: React.FC<UsersViewProps> = ({ subModule }) => {
       case 'security': return <UsersSecurity />;
       case 'logs': return <UsersLogs />;
       case 'digital': return <DigitalEnrollment />;
-      case 'selfcare': return <SelfCarePortal />;
-      case 'card': return <VirtualCard />;
-      case 'family': return <BeneficiariesMgmt />;
       default: return <UsersList />;
     }
   };

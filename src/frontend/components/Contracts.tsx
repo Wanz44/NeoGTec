@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { CimaContractWizard } from './contracts/CimaContractWizard';
+import { ContractPDFViewer } from './contracts/ContractPDFViewer';
 import { useApp } from '../lib/AppContext';
 
 interface ContractItem {
@@ -20,6 +21,7 @@ interface ContractItem {
 }
 
 const INITIAL_CONTRACTS: ContractItem[] = [
+  { id: 'SP-KIN-000482', company: 'MININGCO SARL (MUKENDI)', type: 'Famille', status: 'Actif', monthlyPremium: 270833 },
   { id: 'POL-CIMA-882103', company: 'Rawbank SARL', type: 'Groupe', status: 'Actif', monthlyPremium: 12450 },
   { id: 'POL-CIMA-402120', company: 'Famille Kabange', type: 'Famille', status: 'Devis', monthlyPremium: 1500 },
   { id: 'POL-CIMA-909543', company: 'Bralima SARL', type: 'Groupe', status: 'Actif', monthlyPremium: 8200 },
@@ -28,6 +30,7 @@ const INITIAL_CONTRACTS: ContractItem[] = [
 
 export const Contracts: React.FC<{ subModule?: string }> = ({ subModule }) => {
   const [activeTab, setActiveTab] = useState<'list' | 'offers' | 'detail'>('list');
+  const [detailSubTab, setDetailSubTab] = useState<'official' | 'admin'>('official');
   const [contracts, setContracts] = useState<ContractItem[]>(INITIAL_CONTRACTS);
   const [selectedContract, setSelectedContract] = useState<ContractItem | null>(null);
   const { logAction } = useApp();
@@ -84,6 +87,7 @@ export const Contracts: React.FC<{ subModule?: string }> = ({ subModule }) => {
 
   const handleShowDetail = (contract: ContractItem) => {
     setSelectedContract(contract);
+    setDetailSubTab(contract.id === 'SP-KIN-000482' ? 'official' : 'admin');
     setActiveTab('detail');
   };
 
@@ -545,103 +549,133 @@ export const Contracts: React.FC<{ subModule?: string }> = ({ subModule }) => {
 
             {activeTab === 'detail' && selectedContract && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <button 
-                    onClick={handleBackToList}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl uppercase tracking-wider transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft className="w-4 h-4" /> Retour à la liste
-                  </button>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-3xl border border-slate-150">
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={handleBackToList}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-black rounded-xl uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      <ArrowLeft className="w-4 h-4" /> Retour
+                    </button>
+                    <span className="text-xs font-mono font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">Ref: {selectedContract.id}</span>
+                  </div>
 
-                  <span className="text-xs font-mono font-bold text-slate-400">Ref: {selectedContract.id}</span>
+                  <div className="inline-flex bg-slate-100 p-1 rounded-2xl self-start md:self-auto">
+                    <button
+                      onClick={() => setDetailSubTab('official')}
+                      className={cn(
+                        "px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap",
+                        detailSubTab === 'official'
+                          ? "bg-slate-900 text-white shadow-sm"
+                          : "text-slate-500 hover:text-slate-900"
+                      )}
+                    >
+                      📜 Contrat & Police (Fidélité PDF)
+                    </button>
+                    <button
+                      onClick={() => setDetailSubTab('admin')}
+                      className={cn(
+                        "px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap",
+                        detailSubTab === 'admin'
+                          ? "bg-slate-900 text-white shadow-sm"
+                          : "text-slate-500 hover:text-slate-900"
+                      )}
+                    >
+                      📊 Suivi Administratif
+                    </button>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left part: General information */}
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="p-6 bg-slate-900 text-white rounded-3xl relative overflow-hidden">
-                      <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[#00A86B]/10 blur-[80px] pointer-events-none" />
-                      <span className="px-2.5 py-0.5 bg-[#00A86B] text-white font-black text-[9px] uppercase rounded-full">POLICE ACTIVE</span>
-                      <h3 className="text-xl font-black mt-3 uppercase italic tracking-tighter">{selectedContract.company}</h3>
-                      <p className="text-xs text-slate-400 mt-1 uppercase font-bold tracking-wider">Type de contrat : {selectedContract.type} • ID : {selectedContract.id}</p>
+                {detailSubTab === 'official' ? (
+                  <ContractPDFViewer contract={selectedContract} />
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left part: General information */}
+                    <div className="lg:col-span-2 space-y-6">
+                      <div className="p-6 bg-slate-900 text-white rounded-3xl relative overflow-hidden">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[#00A86B]/10 blur-[80px] pointer-events-none" />
+                        <span className="px-2.5 py-0.5 bg-[#00A86B] text-white font-black text-[9px] uppercase rounded-full">POLICE ACTIVE</span>
+                        <h3 className="text-xl font-black mt-3 uppercase italic tracking-tighter">{selectedContract.company}</h3>
+                        <p className="text-xs text-slate-400 mt-1 uppercase font-bold tracking-wider">Type de contrat : {selectedContract.type} • ID : {selectedContract.id}</p>
+                      </div>
+
+                      {/* File import block (1.9 requirement) */}
+                      <div className="p-6 bg-white border border-slate-150 rounded-3xl space-y-4">
+                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">Importation de documents (.xlsx, .pdf)</h4>
+                        <p className="text-xs text-slate-500">Ajoutez des avenants, listes d'affiliés ou rapports d'évaluation liés à cette police d'assurance.</p>
+                        <div className="p-8 border-2 border-dashed border-slate-200 hover:border-[#00A86B] bg-slate-50 hover:bg-green-50/20 rounded-2xl transition-all text-center group">
+                          <Upload className="w-8 h-8 text-slate-400 group-hover:text-[#00A86B] mx-auto mb-3 transition-colors" />
+                          <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Glissez-déposez un fichier .xlsx ou .pdf</span>
+                          <span className="block text-[10px] text-slate-400 mt-1">Taille maximale : 10 Mo</span>
+                          <input type="file" accept=".xlsx,.pdf" className="hidden" id="detail-file-upload" onChange={() => alert("Fichier importé avec succès dans le portefeuille documentaire du contrat.")} />
+                          <label htmlFor="detail-file-upload" className="mt-4 inline-block px-4 py-2 bg-slate-900 hover:bg-[#00A86B] text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all cursor-pointer">
+                            Parcourir les fichiers
+                          </label>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* File import block (1.9 requirement) */}
-                    <div className="p-6 bg-white border border-slate-150 rounded-3xl space-y-4">
-                      <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">Importation de documents (.xlsx, .pdf)</h4>
-                      <p className="text-xs text-slate-500">Ajoutez des avenants, listes d'affiliés ou rapports d'évaluation liés à cette police d'assurance.</p>
-                      <div className="p-8 border-2 border-dashed border-slate-200 hover:border-[#00A86B] bg-slate-50 hover:bg-green-50/20 rounded-2xl transition-all text-center group">
-                        <Upload className="w-8 h-8 text-slate-400 group-hover:text-[#00A86B] mx-auto mb-3 transition-colors" />
-                        <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Glissez-déposez un fichier .xlsx ou .pdf</span>
-                        <span className="block text-[10px] text-slate-400 mt-1">Taille maximale : 10 Mo</span>
-                        <input type="file" accept=".xlsx,.pdf" className="hidden" id="detail-file-upload" onChange={() => alert("Fichier importé avec succès dans le portefeuille documentaire du contrat.")} />
-                        <label htmlFor="detail-file-upload" className="mt-4 inline-block px-4 py-2 bg-slate-900 hover:bg-[#00A86B] text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all cursor-pointer">
-                          Parcourir les fichiers
-                        </label>
+                    {/* Right part: Consommation tab/section (1.11 requirement) */}
+                    <div className="p-6 bg-white border border-slate-150 rounded-3xl space-y-6">
+                      <div className="border-b border-slate-100 pb-3">
+                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">Onglet Consommation</h4>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Aperçu budgétaire et éligibilité</p>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="p-4 bg-slate-50 border border-slate-150 rounded-2xl flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] font-black text-slate-400 uppercase block">Montant Mensuel</span>
+                            <span className="text-lg font-black text-slate-800">{selectedContract.monthlyPremium.toLocaleString()} $</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-black text-slate-400 uppercase block">Montant Annuel</span>
+                            <span className="text-lg font-black text-slate-800">{(selectedContract.monthlyPremium * 12).toLocaleString()} $</span>
+                          </div>
+                        </div>
+
+                        {/* Filters par entreprise et partenaire */}
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Filtre par entreprise</label>
+                            <select 
+                              value={companyFilter}
+                              onChange={(e) => setCompanyFilter(e.target.value)}
+                              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-750"
+                            >
+                              <option value="Tous">Toutes les filiales</option>
+                              <option value="Rawbank SARL">Rawbank SARL</option>
+                              <option value="Vodacom RDC">Vodacom RDC</option>
+                              <option value="Bralima SARL">Bralima SARL</option>
+                            </select>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Filtre par partenaire de soins</label>
+                            <select 
+                              value={partnerFilter}
+                              onChange={(e) => setPartnerFilter(e.target.value)}
+                              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-750"
+                            >
+                              <option value="Tous">Tous les hôpitaux</option>
+                              <option value="HJ Hospitals">HJ Hospitals Kinshasa</option>
+                              <option value="Clinique Ngaliema">Clinique Ngaliema</option>
+                              <option value="Hôpital Biamba Marie Mutombo">Biamba Marie Mutombo</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Supprimer Eligibilité Button */}
+                        <button 
+                          onClick={handleDeleteEligibility}
+                          className="w-full py-3 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer outline-none"
+                        >
+                          <Trash2 className="w-4 h-4" /> Supprimer Éligibilité
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  {/* Right part: Consommation tab/section (1.11 requirement) */}
-                  <div className="p-6 bg-white border border-slate-150 rounded-3xl space-y-6">
-                    <div className="border-b border-slate-100 pb-3">
-                      <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">Onglet Consommation</h4>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Aperçu budgétaire et éligibilité</p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="p-4 bg-slate-50 border border-slate-150 rounded-2xl flex items-center justify-between">
-                        <div>
-                          <span className="text-[10px] font-black text-slate-400 uppercase block">Montant Mensuel</span>
-                          <span className="text-lg font-black text-slate-800">{selectedContract.monthlyPremium.toLocaleString()} $</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black text-slate-400 uppercase block">Montant Annuel</span>
-                          <span className="text-lg font-black text-slate-800">{(selectedContract.monthlyPremium * 12).toLocaleString()} $</span>
-                        </div>
-                      </div>
-
-                      {/* Filters par entreprise et partenaire */}
-                      <div className="space-y-3">
-                        <div className="space-y-1">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Filtre par entreprise</label>
-                          <select 
-                            value={companyFilter}
-                            onChange={(e) => setCompanyFilter(e.target.value)}
-                            className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-750"
-                          >
-                            <option value="Tous">Toutes les filiales</option>
-                            <option value="Rawbank SARL">Rawbank SARL</option>
-                            <option value="Vodacom RDC">Vodacom RDC</option>
-                            <option value="Bralima SARL">Bralima SARL</option>
-                          </select>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-bold">Filtre par partenaire de soins</label>
-                          <select 
-                            value={partnerFilter}
-                            onChange={(e) => setPartnerFilter(e.target.value)}
-                            className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-750"
-                          >
-                            <option value="Tous">Tous les hôpitaux</option>
-                            <option value="HJ Hospitals">HJ Hospitals Kinshasa</option>
-                            <option value="Clinique Ngaliema">Clinique Ngaliema</option>
-                            <option value="Hôpital Biamba Marie Mutombo">Biamba Marie Mutombo</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Supprimer Eligibilité Button */}
-                      <button 
-                        onClick={handleDeleteEligibility}
-                        className="w-full py-3 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer outline-none"
-                      >
-                        <Trash2 className="w-4 h-4" /> Supprimer Éligibilité
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </motion.div>

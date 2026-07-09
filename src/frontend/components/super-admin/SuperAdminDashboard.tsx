@@ -1161,7 +1161,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
           {activeTab === 'admin' && <Admin />}
 
           {/* 15. Utilisateurs & Rôles */}
-          {['users-mgmt', 'users-list', 'users-security', 'users-logs', 'users-digital', 'users-selfcare', 'users-card', 'users-beneficiaries'].includes(activeTab) && (
+          {['users-mgmt', 'users-list', 'users-security', 'users-logs', 'users-digital'].includes(activeTab) && (
             <UsersView subModule={activeTab} />
           )}
 
