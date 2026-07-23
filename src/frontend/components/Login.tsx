@@ -10,8 +10,67 @@ import { cn } from '../lib/utils';
 import { 
   Lock, Mail, Eye, EyeOff, ShieldAlert, CheckCircle2, 
   Smartphone, KeyRound, AlertTriangle, Fingerprint, RefreshCw, 
-  HelpCircle, Check, ArrowRight, QrCode, FileText, Shield, ArrowLeft, Users
+  HelpCircle, Check, ArrowRight, QrCode, FileText, Shield, ArrowLeft, Users,
+  Building2, UserCheck, Stethoscope, ShieldCheck
 } from 'lucide-react';
+
+export const CONFIG_PORTAILS: Record<string, {
+  title: string;
+  sub: string;
+  icon: React.ElementType;
+  bg: string;
+  checklist: string[];
+  placeholderEmail: string;
+}> = {
+  entreprise: {
+    title: "Espace Entreprise",
+    sub: "RH & Contrats Collectifs",
+    icon: Building2,
+    bg: "#0D2818",
+    checklist: [
+      "Portail RH sécurisé",
+      "Gestion 5000 employés",
+      "Factures centralisées"
+    ],
+    placeholderEmail: "rh@entreprise.cd"
+  },
+  assure: {
+    title: "Espace Assuré",
+    sub: "Ma carte & mes soins",
+    icon: UserCheck,
+    bg: "#C6992E",
+    checklist: [
+      "QR Code dynamique",
+      "Consultation des plafonds",
+      "Suivi des remboursements"
+    ],
+    placeholderEmail: "assure@neogtec.cd"
+  },
+  prestataire: {
+    title: "Espace Prestataire",
+    sub: "Scanner & PEC",
+    icon: Stethoscope,
+    bg: "#1B4A34",
+    checklist: [
+      "Vérification des droits",
+      "Émission instantanée PEC",
+      "Bordereaux de facturation"
+    ],
+    placeholderEmail: "prestataire@clinique.cd"
+  },
+  assureur: {
+    title: "Back-Office Assureur",
+    sub: "Pilotage & Anti-Fraude",
+    icon: ShieldCheck,
+    bg: "#0F172A",
+    checklist: [
+      "KPI de sinistralité",
+      "Dérogations & arbitrages",
+      "Clearing & réassurance"
+    ],
+    placeholderEmail: "backoffice@assureur.cd"
+  }
+};
 
 interface LoginProps {
   onLoginSuccess: (user: { 
@@ -22,6 +81,7 @@ interface LoginProps {
     status: string; 
     mfaEnabled: boolean;
     impersonatedBy?: string;
+    portal?: string;
   }) => void;
 }
 
@@ -80,6 +140,16 @@ const SIMULATOR_USERS = [
 ];
 
 export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+  // Read portal context from URL params
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const rawPortal = searchParams.get('portal');
+  const portal = (rawPortal && CONFIG_PORTAILS[rawPortal]) ? rawPortal : 'assure';
+  const currentConfig = CONFIG_PORTAILS[portal];
+  const PortalIcon = currentConfig.icon;
+
+  const lastPortal = typeof window !== 'undefined' ? localStorage.getItem('neogtec_last_portal') : null;
+  const showSwitchBanner = !!(lastPortal && lastPortal !== portal);
+
   // Credentials Inputs
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -208,6 +278,8 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     addLog("✓ [5/5] Redirection vers le tableau de correspondances applicatif...", 299);
 
     setTimeout(() => {
+      localStorage.setItem('neogtec_last_portal', portal);
+      localStorage.setItem('neogtec_portal', portal);
       if (matchedUser.status === 'Suspendu') {
         setStep('suspended_message');
       } else if (matchedUser.mustChangePassword) {
@@ -222,8 +294,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           role: matchedUser.role,
           tenantId: matchedUser.tenantId,
           status: matchedUser.status,
-          mfaEnabled: true
+          mfaEnabled: true,
+          portal: portal
         });
+        try {
+          window.history.pushState({}, '', `/${portal}/dashboard`);
+        } catch (e) {}
       }
     }, 1800);
   };
@@ -265,14 +341,20 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     }
 
     if (activeMfaUser) {
+      localStorage.setItem('neogtec_last_portal', portal);
+      localStorage.setItem('neogtec_portal', portal);
       onLoginSuccess({
         email: activeMfaUser.email,
         name: activeMfaUser.name,
         role: activeMfaUser.role,
         tenantId: activeMfaUser.tenantId,
         status: activeMfaUser.status,
-        mfaEnabled: true
+        mfaEnabled: true,
+        portal: portal
       });
+      try {
+        window.history.pushState({}, '', `/${portal}/dashboard`);
+      } catch (e) {}
     }
   };
 
@@ -284,14 +366,20 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   const handleFinishOnboarding = () => {
+    localStorage.setItem('neogtec_last_portal', portal);
+    localStorage.setItem('neogtec_portal', portal);
     onLoginSuccess({
       email: 'nouveau@acme.cd',
       name: 'Nouveau Collaborateur',
       role: 'SUPPORT_CLIENT',
       tenantId: 'acme',
       status: 'Actif',
-      mfaEnabled: true
+      mfaEnabled: true,
+      portal: portal
     });
+    try {
+      window.history.pushState({}, '', `/${portal}/dashboard`);
+    } catch (e) {}
   };
 
   return (
@@ -312,40 +400,33 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         <section className="w-full md:w-5/12 p-10 flex flex-col justify-between hidden md:flex bg-gradient-to-b from-[#f1f5f9] to-[#e2e8f0] rounded-l-2xl m-2 border border-slate-200/55">
           <div className="space-y-6">
             <h2 className="text-2xl font-extrabold text-[#1e293b] tracking-tight leading-snug">
-              Authentification NeoGTec
+              Authentification {currentConfig.title}
             </h2>
             <p className="text-[#64748b] text-sm leading-relaxed">
               Bénéficiez d'un processus de connexion sécurisé, rapide et conforme aux normes d'audit ARCA-RDC les plus strictes.
             </p>
             
             <ul className="space-y-4">
-              <li className="flex items-center text-sm font-semibold text-[#1e293b]">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center mr-3 text-emerald-600 shrink-0">
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                </div>
-                <span>Portail d'accès rapide</span>
-              </li>
-              <li className="flex items-center text-sm font-semibold text-[#1e293b]">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center mr-3 text-emerald-600 shrink-0">
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                </div>
-                <span>Double facteur obligatoire</span>
-              </li>
-              <li className="flex items-center text-sm font-semibold text-[#1e293b]">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center mr-3 text-emerald-600 shrink-0">
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                </div>
-                <span>Détection intelligente de fraude</span>
-              </li>
+              {currentConfig.checklist.map((item, idx) => (
+                <li key={idx} className="flex items-center text-sm font-semibold text-[#1e293b]">
+                  <div 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-3 text-white shrink-0"
+                    style={{ backgroundColor: currentConfig.bg }}
+                  >
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  </div>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Phoenix birds SVG layout */}
+          {/* Phoenix birds / House SVG layout with 2 dots of portal color */}
           <div className="mt-12 flex justify-center">
             <svg className="w-full max-w-[200px] h-auto text-slate-400/20" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <path d="M100 20L20 90h20v90h120V90h20L100 20zm-20 140H60v-40h20v40zm60 0h-20v-40h20v40z"></path>
-              <circle cx="70" cy="100" fill="#f97316" opacity="0.8" r="15"></circle>
-              <circle cx="130" cy="130" fill="#058203" style={{ backgroundColor: '#058203' }} opacity="0.8" r="15"></circle>
+              <circle cx="70" cy="100" fill={currentConfig.bg} opacity="0.9" r="15"></circle>
+              <circle cx="130" cy="130" fill={currentConfig.bg} opacity="0.9" r="15"></circle>
             </svg>
           </div>
         </section>
@@ -363,15 +444,54 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 className="space-y-6"
               >
                 {/* Header */}
-                <div className="text-center md:text-left space-y-2">
-                  <div className="flex justify-center md:justify-start mb-4" style={{ paddingLeft: '190px' }}>
-                    {/* Orange Phoenix Globe Logo */}
-                    <svg className="w-16 h-16 text-[#f97316]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ paddingLeft: '10px' }}>
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
-                    </svg>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div 
+                      className="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md"
+                      style={{ backgroundColor: currentConfig.bg }}
+                    >
+                      <PortalIcon className="w-6 h-6" />
+                    </div>
+                    <button
+                      type="button"
+                      data-testid="btn-retour-hub"
+                      onClick={() => {
+                        window.location.href = '/?hub=open';
+                      }}
+                      className="text-xs font-bold text-[#64748b] hover:text-[#0D2818] transition-colors flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg"
+                    >
+                      ← Retour au choix du portail
+                    </button>
                   </div>
-                  <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight" style={{ paddingLeft: '150px' }}>Se connecter</h1>
-                  <p className="text-[#64748b] text-sm">Accédez à votre compte de gestion administrative</p>
+
+                  {showSwitchBanner && (
+                    <div 
+                      data-testid="banner-switch-portal"
+                      className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium flex items-center justify-between"
+                    >
+                      <span>
+                        Vous aviez une session <strong>{lastPortal}</strong>. Continuer vers <strong>{portal}</strong> ?
+                      </span>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          window.location.href = `/login?portal=${lastPortal}`;
+                        }}
+                        className="ml-2 text-amber-950 font-bold underline cursor-pointer hover:text-amber-800"
+                      >
+                        Changer
+                      </button>
+                    </div>
+                  )}
+
+                  <div>
+                    <h1 data-testid="title-login-portal" className="text-2xl font-extrabold text-[#1e293b] tracking-tight">
+                      Se connecter à {currentConfig.title}
+                    </h1>
+                    <p data-testid="subtitle-login-portal" className="text-[#64748b] text-sm mt-0.5">
+                      Accédez à votre {currentConfig.sub}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Google Login Block */}
@@ -424,7 +544,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                         id="email" 
                         name="email" 
                         required
-                        placeholder="nom@exemple.com"
+                        placeholder={currentConfig.placeholderEmail}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="pl-10 block w-full border-[#e2e8f0] rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-[#3b82f6] text-sm py-2.5 bg-white text-[#1e293b]"
@@ -493,16 +613,17 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   <div className="pt-2">
                     <button 
                       type="submit"
+                      data-testid={`btn-login-${portal}`}
                       disabled={isLocked || !email || !password}
-                      style={{ backgroundColor: (email && password && !isLocked) ? '#147d00' : undefined }}
+                      style={{ backgroundColor: (email && password && !isLocked) ? currentConfig.bg : undefined }}
                       className={cn(
-                        "w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white transition-all shadow-sm",
+                        "w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer",
                         (email && password && !isLocked)
-                          ? "bg-[#147d00] hover:bg-[#0f5c00] active:scale-[0.99] cursor-pointer shadow-emerald-500/10"
-                          : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                          ? "hover:opacity-90 active:scale-[0.99] shadow-md"
+                          : "bg-slate-200 text-slate-400 cursor-not-allowed opacity-60"
                       )}
                     >
-                      Se connecter
+                      Se connecter à l'Espace {portal}
                     </button>
                   </div>
                 </form>

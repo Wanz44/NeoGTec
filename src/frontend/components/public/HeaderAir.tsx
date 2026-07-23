@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EspaceUtilisateurHub } from './EspaceUtilisateurHub';
 
 interface HeaderAirProps {
   onNavigateTo: (route: string) => void;
-  onNavigateToLogin: () => void;
+  onNavigateToLogin: (portal?: string) => void;
   currentRoute: string;
 }
 
 export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: HeaderAirProps) {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showHub, setShowHub] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    if (typeof window !== 'undefined' && window.location.search.includes('hub=open')) {
+      setShowHub(true);
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -83,7 +90,8 @@ export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
             </span>
             
             <button 
-              onClick={onNavigateToLogin}
+              data-testid="btn-espace-utilisateur"
+              onClick={() => setShowHub(true)}
               className="bg-[#006c4a] text-white font-sans text-[14px] font-semibold px-8 py-3.5 rounded-full hover:shadow-lg hover:shadow-[#006c4a]/20 hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
             >
               Espace Utilisateur
@@ -117,7 +125,7 @@ export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
             <motion.div 
               initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 300, opacity: 0 }}
+              exit={{ x: 0, opacity: 1 }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
               className="relative w-80 max-w-full h-full bg-[#f8f9ff] flex flex-col justify-between p-6 shadow-2xl z-10 border-l border-slate-200"
             >
@@ -161,9 +169,10 @@ export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
               {/* Action */}
               <div className="border-t pt-6">
                 <button
+                  data-testid="btn-espace-utilisateur"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    onNavigateToLogin();
+                    setShowHub(true);
                   }}
                   className="w-full py-4 bg-[#006c4a] text-white rounded-xl font-sans text-sm font-semibold shadow-md cursor-pointer"
                 >
@@ -174,6 +183,14 @@ export function HeaderAir({ onNavigateTo, onNavigateToLogin, currentRoute }: Hea
           </div>
         )}
       </AnimatePresence>
+
+      {/* 4-Portal Hub Modal */}
+      <EspaceUtilisateurHub 
+        isOpen={showHub}
+        onClose={() => setShowHub(false)}
+        onNavigateToLogin={onNavigateToLogin}
+        onNavigateTo={onNavigateTo}
+      />
     </>
   );
 }
