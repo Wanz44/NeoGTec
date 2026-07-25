@@ -274,12 +274,12 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
       <div className="flex-1 ml-60 flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
         
         {/* HEADER TOOLBAR */}
-        <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 shrink-0 relative z-30 shadow-sm">
+        <header className="h-16 border-b border-[#010A00] bg-[#010A00] flex items-center justify-between px-6 shrink-0 relative z-30 shadow-md text-white">
           
           {/* Breadcrumb path */}
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-            <span>Tableau de bord</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+            <span className="text-slate-300">Tableau de bord</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
             <span className="text-[#00A86B] font-extrabold capitalize">
               {activeTab === 'dashboard' ? 'Général' : activeTab}
             </span>
@@ -291,20 +291,20 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
             {/* Search Input box */}
             <div 
               onClick={() => setOpenSearchModal(true)}
-              className="relative w-64 bg-slate-50 border border-slate-200 hover:border-[#00A86B]/50 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs text-slate-400 cursor-pointer transition-all duration-200"
+              className="relative w-64 bg-white/10 border border-white/15 hover:border-[#00A86B]/70 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs text-slate-300 cursor-pointer transition-all duration-200"
               title="Cliquez ou appuyez sur cmd+k pour démarrer une recherche"
             >
               <div className="flex items-center gap-2.5">
-                <Search className="w-4 h-4 text-slate-400" />
-                <span className="font-semibold">Rechercher...</span>
+                <Search className="w-4 h-4 text-slate-300" />
+                <span className="font-semibold text-slate-300">Rechercher...</span>
               </div>
-              <span className="text-[9px] font-mono font-bold bg-white border border-slate-200 px-1.5 py-0.2 rounded text-slate-500 shadow-sm">
+              <span className="text-[9px] font-mono font-bold bg-white/10 border border-white/20 px-1.5 py-0.2 rounded text-slate-200 shadow-sm">
                 ⌘K
               </span>
             </div>
 
             {/* DatePicker range mimicking screen widget par défaut */}
-            <button className="flex items-center gap-2 px-3.5 py-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 transition-colors cursor-pointer shadow-sm">
+            <button className="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/15 hover:bg-white/20 rounded-lg text-xs font-bold text-slate-200 transition-colors cursor-pointer shadow-sm">
               <Calendar className="w-4 h-4 text-[#00A86B]" />
               <span>13 Jun, 26 - 20 Jun, 26</span>
             </button>
@@ -312,23 +312,23 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
             {/* Notification trigger with Badge */}
             <button 
               onClick={() => setIsNotifOpen(true)}
-              className="relative p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-[#00A86B] rounded-lg transition-all cursor-pointer shadow-sm active:scale-95"
+              className="relative p-2 bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 hover:text-[#00A86B] rounded-lg transition-all cursor-pointer shadow-sm active:scale-95"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 text-white font-black text-[9px] rounded-full flex items-center justify-center border-2 border-white">
+              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 text-white font-black text-[9px] rounded-full flex items-center justify-center border-2 border-[#010A00]">
                 3
               </span>
             </button>
 
             {/* Force theme indicator (Moon badge) */}
-            <button className="p-2 border border-slate-200 bg-slate-50 text-[#00A86B] rounded-lg shadow-sm">
-              <Moon className="w-4 h-4 fill-[#00A86B]/10" />
+            <button className="p-2 border border-white/15 bg-white/10 text-[#00A86B] rounded-lg shadow-sm">
+              <Moon className="w-4 h-4 fill-[#00A86B]/20" />
             </button>
 
             {/* Refresh live metrics */}
             <button 
               onClick={fetchDashboardData}
-              className="p-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-lg transition-colors cursor-pointer shadow-sm"
+              className="p-2 border border-white/15 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white rounded-lg transition-colors cursor-pointer shadow-sm"
               title="Rafraîchir les statistiques live"
             >
               <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
