@@ -87,7 +87,7 @@ interface AppContextProps {
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
-// Initial mock registered users (displayed in user-list and digital module)
+// Initial registered users - ONLY the Super Admin interface is preserved per requirements
 const INITIAL_USERS: UserProfile[] = [
   {
     id: 'USR-001',
@@ -104,62 +104,10 @@ const INITIAL_USERS: UserProfile[] = [
     deviceTrusted: true,
     contractName: 'AfreakCare Platinum Plus',
     creationDate: '12/01/2024',
-  },
-  {
-    id: 'USR-002',
-    name: 'Dr. Kabasele Kabongo',
-    email: 'dr.kabasele@neogtec.com',
-    phone: '+243 897 122 344',
-    address: 'Clinique HJ, Kinshasa Limete',
-    role: 'GESTIONNAIRE_SINISTRES', // Médecin Conseil
-    status: 'Actif',
-    biometricsEnabled: true,
-    biometricsLinked: true,
-    cardCode: 'POL-MC-90812-MED',
-    mfaEnabled: true,
-    deviceTrusted: true,
-    contractName: 'Convention Prestataire Clinique HJ',
-    creationDate: '02/03/2024',
-  },
-  {
-    id: 'USR-003',
-    name: 'Marie Luvuezo',
-    email: 'm.luvuezo@compta.com',
-    phone: '+243 812 345 678',
-    address: 'Gombe, Av. de la Banque',
-    role: 'GESTIONNAIRE_FINANCE', // Comptable
-    status: 'Actif',
-    biometricsEnabled: false,
-    biometricsLinked: false,
-    cardCode: 'POL-FI-78255-FIN',
-    mfaEnabled: true,
-    deviceTrusted: false,
-    contractName: 'Mandat Finance Corp RDC',
-    creationDate: '15/04/2024',
-  },
-  {
-    id: 'USR-004',
-    name: 'Sarah Bernard',
-    email: 'sarah.b@audit-kpmg.com',
-    phone: '+33 6 1234 5678',
-    address: 'KPMG Paris HQ, France',
-    role: 'AUDITEUR_EXTERNE', // Commissaire aux comptes
-    status: 'Actif',
-    biometricsEnabled: false,
-    biometricsLinked: false,
-    cardCode: 'POL-AUD-00923-KPMG',
-    mfaEnabled: true,
-    deviceTrusted: true,
-    contractName: 'Mandat Audit Annuel Externe 2026',
-    creationDate: '20/05/2026',
   }
 ];
 
-const INITIAL_BENEFICIARIES: Beneficiary[] = [
-  { id: 'BEN-WAN-01', name: 'Sabrina Wanzambi', relation: 'Conjoint', age: 28, status: 'Actif', cardCode: 'ADNA-CRD-890214' },
-  { id: 'BEN-WAN-02', name: 'Isaac Wanzambi', relation: 'Enfant', age: 6, status: 'Actif', cardCode: 'ADNA-CRD-890215' },
-  { id: 'BEN-WAN-03', name: 'Léa Wanzambi', relation: 'Enfant', age: 3, status: 'En attente', cardCode: 'ADNA-CRD-890216' },
-];
+const INITIAL_BENEFICIARIES: Beneficiary[] = [];
 
 const INITIAL_LOGS: AuditLog[] = [
   {

@@ -15,8 +15,9 @@ import {
 import { 
   Search, Calendar, Bell, Moon, Sparkles, ArrowRight,
   FolderOpen, Folder, ChevronRight, Check, CheckSquare, Square,
-  Info, ChevronDown, CheckCircle, RefreshCw, X, FolderCheck, TrendingUp, AlertTriangle, Play,
-  Shield, Lock, Network, Cpu, Sliders, Server, Database, Eye, Trash2
+  Info, ChevronDown, CheckCircle, CheckCircle2, RefreshCw, X, FolderCheck, TrendingUp, AlertTriangle, Play,
+  Shield, ShieldCheck, Lock, Network, Cpu, Sliders, Server, Database, Eye, Trash2,
+  Building2, Stethoscope, AlertCircle, Clock, Siren, QrCode, Plus, Users, XCircle, FileText, MapPin
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Governance } from '../Governance';
@@ -38,6 +39,9 @@ import { Settings } from '../Settings';
 import { SystemConfig } from '../SystemConfig';
 import { Dashboard } from '../Dashboard';
 import { NotificationCenter } from '../NotificationCenter';
+import NeoGTecHealthCare_Entreprise from './NeoGTecHealthCare_Entreprise';
+import NeoGTecHealthCare_Prestataire from './NeoGTecHealthCare_Prestataire';
+import NeoGTecHealthCare_Assureur from './NeoGTecHealthCare_Assureur';
 import { 
   getActiveAssuresCount, getSinistraliteGlobale, getPecTraiteesCount,
   getTenantsList, TenantDetails 
@@ -157,7 +161,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
     }
   };
 
-  const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN' || (currentUser?.role as any) === 'ADMINISTRATEUR';
+  const isSuperAdmin = true;
 
   const toggleNode = (id: string) => {
     setExpandedNodes(prev => ({ ...prev, [id]: !prev[id] }));
@@ -271,426 +275,392 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
       />
 
       {/* 2. DYNAMIC CONTENT WORKSPACE */}
-      <div className="flex-1 ml-60 flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
+      <div className="flex-1 ml-60 flex flex-col h-screen overflow-hidden bg-[#F2EFE8]">
         
-        {/* HEADER TOOLBAR */}
-        <header className="h-16 border-b border-[#010A00] bg-[#010A00] flex items-center justify-between px-6 shrink-0 relative z-30 shadow-md text-white">
+        {/* HEADER TOOLBAR MATCHING SCREENSHOT */}
+        <header className="h-16 border-b border-stone-200/80 bg-[#F2EFE8] flex items-center justify-between px-8 shrink-0 relative z-30">
           
-          {/* Breadcrumb path */}
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-            <span className="text-slate-300">Tableau de bord</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-[#00A86B] font-extrabold capitalize">
-              {activeTab === 'dashboard' ? 'Général' : activeTab}
-            </span>
+          {/* Status Pill Badge */}
+          <div className="bg-[#E2EFE7] text-[#117043] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2 border border-[#C2E0CE]">
+            <span className="w-2 h-2 rounded-full bg-[#117043] animate-pulse" />
+            <span>Réseau connecté</span>
           </div>
 
-          {/* Right Header Toolbar controls */}
-          <div className="flex items-center gap-3">
-            
-            {/* Search Input box */}
-            <div 
-              onClick={() => setOpenSearchModal(true)}
-              className="relative w-64 bg-white/10 border border-white/15 hover:border-[#00A86B]/70 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs text-slate-300 cursor-pointer transition-all duration-200"
-              title="Cliquez ou appuyez sur cmd+k pour démarrer une recherche"
-            >
-              <div className="flex items-center gap-2.5">
-                <Search className="w-4 h-4 text-slate-300" />
-                <span className="font-semibold text-slate-300">Rechercher...</span>
-              </div>
-              <span className="text-[9px] font-mono font-bold bg-white/10 border border-white/20 px-1.5 py-0.2 rounded text-slate-200 shadow-sm">
-                ⌘K
-              </span>
-            </div>
-
-            {/* DatePicker range mimicking screen widget par défaut */}
-            <button className="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/15 hover:bg-white/20 rounded-lg text-xs font-bold text-slate-200 transition-colors cursor-pointer shadow-sm">
-              <Calendar className="w-4 h-4 text-[#00A86B]" />
-              <span>13 Jun, 26 - 20 Jun, 26</span>
-            </button>
-
-            {/* Notification trigger with Badge */}
+          {/* Right Header Controls */}
+          <div className="flex items-center gap-4">
+            {/* Notification Bell */}
             <button 
               onClick={() => setIsNotifOpen(true)}
-              className="relative p-2 bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 hover:text-[#00A86B] rounded-lg transition-all cursor-pointer shadow-sm active:scale-95"
+              className="relative w-9 h-9 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full flex items-center justify-center transition-all cursor-pointer"
             >
-              <Bell className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 text-white font-black text-[9px] rounded-full flex items-center justify-center border-2 border-[#010A00]">
-                3
-              </span>
+              <Bell className="w-4 h-4 text-stone-700" />
             </button>
 
-            {/* Force theme indicator (Moon badge) */}
-            <button className="p-2 border border-white/15 bg-white/10 text-[#00A86B] rounded-lg shadow-sm">
-              <Moon className="w-4 h-4 fill-[#00A86B]/20" />
-            </button>
-
-            {/* Refresh live metrics */}
+            {/* QR/Scanner Icon */}
             <button 
-              onClick={fetchDashboardData}
-              className="p-2 border border-white/15 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white rounded-lg transition-colors cursor-pointer shadow-sm"
-              title="Rafraîchir les statistiques live"
+              className="w-9 h-9 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full flex items-center justify-center transition-all cursor-pointer"
             >
-              <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
+              <QrCode className="w-4 h-4 text-stone-700" />
             </button>
+
+            {/* User Profile */}
+            <div className="flex items-center gap-2.5 pl-2">
+              <div className="text-right">
+                <p className="text-xs font-bold text-[#0D2217] leading-none">M. Kalenga</p>
+                <p className="text-[10.5px] text-stone-500 font-medium leading-none mt-1">Superviseur Admin</p>
+              </div>
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-stone-300 shrink-0">
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
+                  alt="M. Kalenga" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
           </div>
         </header>
 
         {/* PRIMARY SCROLLABLE FRAMEWORK */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar relative p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto custom-scrollbar relative p-8 space-y-6 bg-[#F2EFE8]">
           
           {activeTab === 'dashboard' && (
-            <>
+            <div className="space-y-6">
 
-              {/* BENTO GRID: 6 KPI CARDS (LEFT BLOCK) VS TALL GRAPH BAR (RIGHT BLOCK) */}
-              <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+              {/* TITLE SECTION */}
+              <div>
+                <h1 className="font-serif text-3xl font-bold text-[#0D2217]">Vue d'ensemble du réseau</h1>
+                <p className="text-xs text-stone-600 font-medium mt-1">Analyse en temps réel de l'activité assurée et des performances prestataires.</p>
+              </div>
+
+              {/* ROW 1: 4 TOP KPI CARDS */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                {/* 6 KPI COLUMNS (LEFT LAYOUT BLOCK SPANNED 8 OUT OF 12) */}
-                <div className="xl:col-span-8 space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    
-                    {/* CARD 1: ASSURÉS ACTIFS */}
-                    <Card className="hover:border-[#00A86B]/50 transition-all duration-300">
-                      <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">Assurés Actifs</Text>
-                      <Metric>{(activeAssures / 1000).toFixed(0)}k</Metric>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="increase" className="bg-emerald-50 text-[#00A86B]">+2.5%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">Connexions quotidiennes moyennes</Text>
-                      </div>
-                      <AreaChart 
-                        data={assuresData} 
-                        categories={["total"]} 
-                        colors={["emerald"]} 
-                        showYAxis={false} 
-                        className="h-16 mt-4 opacity-90"
-                      />
-                    </Card>
-
-                    {/* CARD 2: NOUVELLES PEC */}
-                    <Card className="hover:border-[#00A86B]/50 transition-all duration-300">
-                      <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">Nouvelles PEC</Text>
-                      <Metric>{pecTraitees.toLocaleString('fr-FR')}</Metric>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="increase" className="bg-emerald-50 text-[#00A86B]">+15%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">Comptes ouverts ce mois-ci</Text>
-                      </div>
-                      <AreaChart 
-                        data={pecData} 
-                        categories={["total"]} 
-                        colors={["teal"]} 
-                        showYAxis={false} 
-                        className="h-16 mt-4 opacity-90"
-                      />
-                    </Card>
-
-                    {/* CARD 3: SINISTRALITÉ / TAUX DE RENOUVELLEMENT */}
-                    <Card className="hover:border-[#00A86B]/50 transition-all duration-300">
-                      <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">Sinistralité</Text>
-                      <Metric>{sinistralite}%</Metric>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="decrease" className="bg-red-50 text-red-600">-2%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">Comptes Premium rattachés</Text>
-                      </div>
-                      <AreaChart 
-                        data={siniData} 
-                        categories={["total"]} 
-                        colors={["red"]} 
-                        showYAxis={false} 
-                        className="h-16 mt-4 opacity-90"
-                      />
-                    </Card>
-
-                    {/* CARD 4: INVENTAIRE */}
-                    <Card className="hover:border-[#00A86B]/50 transition-all duration-300">
-                      <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">Inventaire hospitalier</Text>
-                      <Metric>13 200</Metric>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="increase" className="bg-emerald-50 text-[#00A86B]">+35%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">Unités médicales en stock</Text>
-                      </div>
-                      <AreaChart 
-                        data={[
-                          { date: "1", total: 10000 },
-                          { date: "2", total: 11200 },
-                          { date: "3", total: 12500 },
-                          { date: "4", total: 13200 }
-                        ]} 
-                        categories={["total"]} 
-                        colors={["emerald"]} 
-                        showYAxis={false} 
-                        className="h-16 mt-4"
-                      />
-                    </Card>
-
-                    {/* CARD 5: LIVRÉ PEC */}
-                    <Card className="hover:border-[#00A86B]/50 transition-all duration-300">
-                      <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">PEC payées &amp; livrées</Text>
-                      <Metric>1 920</Metric>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="decrease" className="bg-red-50 text-red-600">-8%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">Produits unitaires validés</Text>
-                      </div>
-                      <AreaChart 
-                        data={[
-                          { date: "1", total: 2400 },
-                          { date: "2", total: 2100 },
-                          { date: "3", total: 2000 },
-                          { date: "4", total: 1920 }
-                        ]} 
-                        categories={["total"]} 
-                        colors={["slate"]} 
-                        showYAxis={false} 
-                        className="h-16 mt-4"
-                      />
-                    </Card>
-
-                    {/* CARD 6: ASSURÉS ACTIFS */}
-                    <Card 
-                      onClick={() => setIsActiveInsuredsModalOpen(true)}
-                      className="hover:border-[#00A86B]/50 hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between"
-                    >
-                      <div>
-                        <Text className="font-bold uppercase tracking-wider text-[10px] text-slate-450">Fiches Assurés Actifs</Text>
-                        <Metric className="text-[#00A86B] font-extrabold">201 450</Metric>
-                      </div>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <BadgeDelta deltaType="moderateIncrease" className="bg-[#00A86B]/10 text-[#00A86B] font-bold">+14.2%</BadgeDelta>
-                        <Text className="text-[10px] text-slate-400 font-bold uppercase">fiches actives sur le réseau</Text>
-                      </div>
-                      <div className="text-[10.5px] text-[#00A86B] font-bold mt-4 flex items-center gap-1">
-                        <span>Voir la liste complète</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </div>
-                    </Card>
-
+                {/* Card 1: Entreprises */}
+                <div className="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-stone-100 text-stone-700 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-stone-700" />
+                    </div>
+                    <span className="text-xs font-bold text-[#117043]">+0%</span>
+                  </div>
+                  <div>
+                    <div className="text-xs text-stone-600 font-medium">Entreprises</div>
+                    <div className="font-serif text-3xl font-bold text-[#0D2217] mt-1">1</div>
                   </div>
                 </div>
 
-                {/* REVENUS GÉNÉRÉS / RECETTES COLLATÉRALES (RIGHT BLOCK SPANNED 4 OUT OF 12) */}
-                <div className="xl:col-span-4 flex flex-col">
-                  <Card className="flex-1 flex flex-col justify-between p-5">
-                    <div className="flex items-start justify-between border-b border-slate-100 pb-3 mb-2">
-                      <div>
-                        <Title>Revenus &amp; Recettes</Title>
-                        <Subtitle className="mt-0.5">Montant des recettes de ce mois-ci</Subtitle>
-                      </div>
-                      <span className="text-[9px] font-mono text-[#00A86B] bg-[#00A86B]/15 px-2 py-0.5 rounded-full font-bold uppercase">Live</span>
+                {/* Card 2: Prestataires */}
+                <div className="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-[#EFF7F2] text-[#117043] flex items-center justify-center">
+                      <Plus className="w-5 h-5" />
                     </div>
+                    <span className="text-xs font-bold text-[#117043]">+12%</span>
+                  </div>
+                  <div>
+                    <div className="text-xs text-stone-600 font-medium">Prestataires</div>
+                    <div className="font-serif text-3xl font-bold text-[#0D2217] mt-1">44</div>
+                  </div>
+                </div>
 
-                    {/* Grouped Bar Chart of health receipts */}
-                    <BarChart 
-                      data={pecTypeData} 
-                      categories={["Hôpital", "Pharmacie", "Labo"]} 
-                      colors={["emerald", "teal", "slate"]} 
-                      stack={true}
-                      className="h-44 mt-4"
-                    />
-
-                    {/* Custom legends displaying specific billing ratios */}
-                    <div className="flex items-center justify-around text-[10px] font-bold text-slate-500 pt-3 border-t border-slate-100 mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#00A86B]" />
-                        <span>Hôpital (25e)</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]" />
-                        <span>Pharmacie (50e)</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#64748B]" />
-                        <span>Labo (75e)</span>
-                      </div>
+                {/* Card 3: Assurés */}
+                <div className="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-[#EFF7F2] text-[#117043] flex items-center justify-center">
+                      <Users className="w-5 h-5" />
                     </div>
-                  </Card>
+                    <span className="text-xs font-bold text-[#117043]">+2 active</span>
+                  </div>
+                  <div>
+                    <div className="text-xs text-stone-600 font-medium">Assurés</div>
+                    <div className="font-serif text-3xl font-bold text-[#0D2217] mt-1">7</div>
+                  </div>
+                </div>
+
+                {/* Card 4: Dérogations en attente */}
+                <div className="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-stone-100 text-stone-500 flex items-center justify-center">
+                      <AlertTriangle className="w-5 h-5 text-stone-500" />
+                    </div>
+                    <span className="text-xs font-bold text-stone-400">--</span>
+                  </div>
+                  <div>
+                    <div className="text-xs text-stone-600 font-medium">Dérogations en attente</div>
+                    <div className="font-serif text-3xl font-bold text-[#0D2217] mt-1">0</div>
+                  </div>
                 </div>
 
               </div>
 
-              {/* SECTION TIERS (3 COLUMNS SECONDARY ROW) */}
-              <Grid numItemsLg={3} className="gap-5">
+              {/* ROW 2: CHART & DARK ALERTS ROW */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                 
-                {/* 1. COMMENTAIRES CLIENTS / NPS SATISFACTION */}
-                <Card className="flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <Title>Commentaires des clients</Title>
-                        <Subtitle className="mt-0.5">Nombre de clients ayant répondu</Subtitle>
-                      </div>
-                      <span className="text-[8px] font-mono text-slate-400 uppercase tracking-widest font-black">NPS Index</span>
-                    </div>
-                    {/* Recharts Custom NPS Representation showing trend lines */}
-                    <div className="h-40 mt-4">
-                      <BarList data={npsData} color="emerald" />
-                    </div>
-                  </div>
-                  <div className="pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-450 font-bold uppercase">
-                    <span>91,4% NPS Positif</span>
-                    <span>2 545 Avis cumulés</span>
-                  </div>
-                </Card>
-
-                {/* 2. SOURCES DE PROSPECTS / SOURCES PEC (Donut centered `'2 847'`) */}
-                <Card className="flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between border-b border-slate-100 pb-2 mb-2">
-                      <div>
-                        <Title>Sources PEC</Title>
-                        <Subtitle className="mt-0.5">Ratio de prospects générés</Subtitle>
-                      </div>
-                      <span className="text-[8px] font-mono text-[#00A86B] bg-[#00A86B]/10 py-0.5 px-2 rounded-full uppercase font-black">2026</span>
-                    </div>
-
-                    <DonutChart 
-                      data={sourcesData.map(item => ({ name: item.name, value: item.total }))} 
-                      category="value" 
-                      index="name" 
-                      colors={["emerald", "teal", "slate", "red"]} 
-                      label="2 847" // Hardcoded display value from specification
-                    />
-                  </div>
-
-                  {/* Legends for sources */}
-                  <div className="grid grid-cols-2 gap-2 text-[10px] mt-4 pt-3 border-t border-slate-100 font-bold text-slate-500">
-                    {sourcesData.map((item, idx) => {
-                      const colorsOption = ["bg-[#00A86B]", "bg-[#14B8A6]", "bg-[#64748B]", "bg-[#EF4444]"];
-                      return (
-                        <div key={item.name} className="flex items-center gap-1.5">
-                          <span className={cn("w-2 h-2 rounded-full", colorsOption[idx])} />
-                          <span className="truncate">{item.name} ({Math.round(item.total / 28.47)}%)</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
-
-                {/* 3. ENTONNOIR DE VENTALISATION / SOINS EN COURS */}
-                <Card className="flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <Title>Entonnoir de Soins</Title>
-                        <Subtitle className="mt-0.5">Crée et arbitré en un mois</Subtitle>
-                      </div>
-                      <span className="text-[8px] font-mono text-slate-400 uppercase">Conversion</span>
-                    </div>
-
-                    {/* Horizontal Visual metrics */}
-                    <div className="space-y-2.5 mt-4">
-                      {funnelData.map((stage) => {
-                        const styleWidth = `${stage.value}%`;
-                        return (
-                          <div key={stage.name} className="space-y-1">
-                            <div className="flex justify-between text-[10px] font-bold text-slate-650">
-                              <span>{stage.name}</span>
-                              <span>{stage.value}%</span>
-                            </div>
-                            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-gradient-to-r from-[#00A86B] to-[#14B8A6] rounded-full" 
-                                style={{ width: styleWidth }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Table detail segment for Funnel from image specification */}
-                  <div className="mt-4 pt-4 border-t border-slate-100">
-                    <table className="w-full text-[9.5px] text-slate-550 font-bold border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-100 text-slate-400 uppercase tracking-wider text-left">
-                          <th className="pb-1">Étape (Scene)</th>
-                          <th className="pb-1 text-center">Taux Perte</th>
-                          <th className="pb-1 text-right">Ce mois-co</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-50">
-                        <tr>
-                          <td className="py-1.5 font-bold text-slate-700">QR Scanné</td>
-                          <td className="py-1.5 text-center font-mono">0,0%</td>
-                          <td className="py-1.5 text-right font-mono text-[#00A86B]">+6,01%</td>
-                        </tr>
-                        <tr>
-                          <td className="py-1.5 font-bold text-slate-700">PEC Créée</td>
-                          <td className="py-1.5 text-center font-mono">20,2%</td>
-                          <td className="py-1.5 text-right font-mono text-[#00A86B]">+4,12%</td>
-                        </tr>
-                        <tr>
-                          <td className="py-1.5 font-bold text-slate-700">Validée</td>
-                          <td className="py-1.5 text-center font-mono">15,1%</td>
-                          <td className="py-1.5 text-right font-mono text-red-500">-3,91%</td>
-                        </tr>
-                        <tr>
-                          <td className="py-1.5 font-bold text-slate-700">Payée J+1</td>
-                          <td className="py-1.5 text-center font-mono">17,2%</td>
-                          <td className="py-1.5 text-right font-mono text-red-550">-0,01%</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-
-              </Grid>
-
-              {/* SECTION DOUBLE CHARTS: COÛT MOYEN PEC + ATTRIBUÉ/RÉEL (ROW 3) */}
-              <Card>
-                <div className="flex items-start justify-between border-b border-slate-100 pb-3 mb-2">
-                  <div>
-                    <Title>Évolution du Coût Moyen des PEC</Title>
-                    <Subtitle className="mt-0.5">CAC présent par rapport à la semaine dernière (Attribué vs Consommé Réel)</Subtitle>
-                  </div>
-                  <div className="flex items-center gap-4 text-[10px] font-bold text-slate-500">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3 h-1.5 bg-[#00A86B] rounded" />
-                      <span>Attribué ($)</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3 h-1.5 bg-[#14B8A6] rounded" />
-                      <span>Réel Consommé ($)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <LineChart 
-                  data={coutPecData} 
-                  categories={["Attribué", "Réel"]} 
-                  colors={["emerald", "teal"]} 
-                  index="jour"
-                  className="h-56 mt-4"
-                />
-              </Card>
-
-              {/* COMBINED ROW 4: MONTHLY PATIENTS FLUX */}
-              <div className="w-full">
-                {/* MONTHLY PATIENT ACTIVE FLUX */}
-                <Card className="w-full flex flex-col justify-between">
-                  <div className="flex items-start justify-between border-b border-slate-100 pb-3 mb-2">
+                {/* Consommation réseau (8 Cols) */}
+                <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-stone-200/80 shadow-2xs flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div>
-                      <Title>Utilisateurs Actifs Mensuels</Title>
-                      <Subtitle className="mt-0.5">Catégories de produits et connexions</Subtitle>
+                      <h3 className="font-serif text-lg font-bold text-[#0D2217]">Consommation réseau</h3>
+                      <p className="text-xs text-stone-500 font-medium mt-0.5">Suivi des flux financiers sur les 13 derniers mois</p>
                     </div>
-                    <span className="text-[8px] font-mono text-slate-400 font-bold uppercase">Live index</span>
+                    <div className="flex items-center bg-stone-100 p-1 rounded-xl gap-1">
+                      <button className="px-3 py-1 text-xs font-bold text-stone-600 rounded-lg">Annuel</button>
+                      <button className="px-3 py-1 text-xs font-bold text-[#0D2217] bg-[#E5D298] rounded-lg shadow-2xs">Mensuel</button>
+                    </div>
+                  </div>
+                  
+                  <AreaChart 
+                    data={[
+                      { date: "JAN 23", total: 1200000 },
+                      { date: "MAR 23", total: 1800000 },
+                      { date: "MAI 23", total: 1600000 },
+                      { date: "JUIL 23", total: 3200000 },
+                      { date: "SEPT 23", total: 1500000 },
+                      { date: "NOV 23", total: 2800000 },
+                      { date: "JAN 24", total: 3400000 },
+                    ]} 
+                    categories={["total"]} 
+                    colors={["amber"]} 
+                    index="date"
+                    className="h-60"
+                  />
+                </div>
+
+                {/* Alertes réseau (4 Cols - Dark Green Container) */}
+                <div className="lg:col-span-4 bg-[#0A2216] rounded-2xl p-5 border border-[#143B28] shadow-2xs text-white flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Bell className="w-4 h-4 text-[#E5D298]" />
+                      <h3 className="font-serif text-base font-bold text-white">Alertes réseau</h3>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {/* Alert 1 */}
+                      <div className="bg-[#102B1E] border border-white/10 rounded-xl p-3.5 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-red-950/80 text-red-400 flex items-center justify-center shrink-0">
+                            <XCircle className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-white">Entreprise Suspendue</p>
+                            <p className="text-[10.5px] text-stone-400 font-medium">Non-paiement des primes (Échéance J-15)</p>
+                          </div>
+                        </div>
+                        <button className="mt-1 px-3 py-1 bg-red-700 hover:bg-red-800 text-white rounded-md text-[11px] font-bold transition-all cursor-pointer">
+                          Contacter
+                        </button>
+                      </div>
+
+                      {/* Alert 2 */}
+                      <div className="bg-[#102B1E] border border-white/10 rounded-xl p-3.5 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[#E5D298]/10 text-[#E5D298] flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-white">4 CRM Follow-ups</p>
+                          <p className="text-[10.5px] text-stone-400 font-medium">Relances en retard pour renouvellement prestataires.</p>
+                        </div>
+                      </div>
+
+                      {/* Alert 3 */}
+                      <div className="bg-[#102B1E] border border-white/10 rounded-xl p-3.5 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-900/40 text-emerald-400 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-white">Nouveau Tarif Négocié</p>
+                          <p className="text-[10.5px] text-stone-400 font-medium">1 prestataire a accepté la grille tarifaire 2024.</p>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* ROW 3: 3 COLUMNS */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                {/* Col 1: Réseau de prestataires */}
+                <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-serif text-sm font-bold text-[#0D2217]">Réseau de prestataires</h3>
+                    <button className="text-xs font-bold text-stone-500 hover:text-stone-800">Voir tout</button>
                   </div>
 
-                  {/* Custom bar list metrics display */}
-                  <BarChart 
-                    data={assuresMensuel} 
-                    categories={["RDC"]} 
-                    colors={["teal"]} 
-                    index="date" 
-                    className="h-52 mt-4"
-                  />
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="text-[10px] uppercase font-bold text-stone-400 border-b border-stone-100">
+                        <th className="pb-2">NOM</th>
+                        <th className="pb-2">TYPE</th>
+                        <th className="pb-2 text-right">STATUT</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100 text-xs font-medium text-stone-800">
+                      <tr>
+                        <td className="py-2.5 font-bold text-[#0D2217]">CMK Lubumbashi</td>
+                        <td className="py-2.5 text-stone-500">Hôpital</td>
+                        <td className="py-2.5 text-right"><span className="bg-[#E2EFE7] text-[#117043] px-2 py-0.5 rounded-full font-bold text-[10px]">ACTIF</span></td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold text-[#0D2217]">Pharmacie Soleil</td>
+                        <td className="py-2.5 text-stone-500">Pharmacie</td>
+                        <td className="py-2.5 text-right"><span className="bg-[#E2EFE7] text-[#117043] px-2 py-0.5 rounded-full font-bold text-[10px]">ACTIF</span></td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold text-[#0D2217]">Dentiste Kin</td>
+                        <td className="py-2.5 text-stone-500">Cabinet</td>
+                        <td className="py-2.5 text-right"><span className="bg-[#FEF3D6] text-[#B8860B] px-2 py-0.5 rounded-full font-bold text-[10px]">VERIF</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-                  <span className="text-[9.5px] font-bold text-slate-450 uppercase text-center mt-3 block">
-                    Reflète les 15 derniers jalons d'analyse
-                  </span>
-                </Card>
+                {/* Col 2: Entreprises */}
+                <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-serif text-sm font-bold text-[#0D2217]">Entreprises</h3>
+                    <button className="text-xs font-bold text-stone-500 hover:text-stone-800">Gérer</button>
+                  </div>
+
+                  <div className="bg-stone-50/80 p-4 rounded-xl border border-stone-200/60 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#0D2217] text-white font-bold text-sm flex items-center justify-center font-serif">
+                        M
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="font-bold text-xs text-[#0D2217]">MININGCO SARL</h4>
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#117043]" />
+                        </div>
+                        <p className="text-[11px] text-stone-500 font-medium">7 Assurés actifs</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <button className="flex-1 py-1.5 bg-white border border-stone-250 text-stone-700 text-xs font-bold rounded-lg hover:bg-stone-100 transition-all cursor-pointer">
+                        Détails
+                      </button>
+                      <button className="flex-1 py-1.5 bg-white border border-stone-250 text-stone-700 text-xs font-bold rounded-lg hover:bg-stone-100 transition-all cursor-pointer">
+                        Factures
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 3: Couverture Géo */}
+                <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-serif text-sm font-bold text-[#0D2217]">Couverture Géo</h3>
+                    <MapPin className="w-4 h-4 text-stone-400" />
+                  </div>
+
+                  <div className="h-32 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden relative flex items-center justify-center">
+                    <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#0D2217_1px,transparent_1px)] [background-size:12px_12px]" />
+                    <div className="relative z-10 text-center">
+                      <div className="w-3 h-3 rounded-full bg-[#0D2217] border-2 border-white mx-auto animate-ping mb-1" />
+                      <span className="text-[10px] font-bold text-[#0D2217] bg-white/90 px-2.5 py-1 rounded-md shadow-2xs border border-stone-200">
+                        DRC • HUB LUBUMBASHI
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-            </>
+
+              {/* ROW 4: BOTTOM METRICS (3 CARDS) + ACTIONS RAPIDES (RIGHT SIDE) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                {/* Taux recouvrement */}
+                <div className="lg:col-span-3 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs flex flex-col justify-between">
+                  <h3 className="font-serif text-xs font-bold uppercase text-stone-500 tracking-wider">Taux recouvrement</h3>
+                  
+                  <div className="my-4 text-center">
+                    <div className="relative inline-flex items-center justify-center">
+                      <div className="w-24 h-24 rounded-full border-8 border-stone-100 border-t-[#8B0000] border-r-[#8B0000] transform -rotate-45" />
+                      <div className="absolute text-center">
+                        <span className="font-bold text-2xl text-[#0D2217]">33%</span>
+                        <span className="block text-[9px] text-stone-400 font-bold uppercase">Primes</span>
+                      </div>
+                    </div>
+                    <p className="text-xs font-bold text-amber-700 mt-2">Niveau Critique</p>
+                  </div>
+                </div>
+
+                {/* Sinistralité */}
+                <div className="lg:col-span-3 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs flex flex-col justify-between">
+                  <h3 className="font-serif text-xs font-bold uppercase text-stone-500 tracking-wider">Sinistralité</h3>
+                  
+                  <div className="space-y-3 my-2 text-xs font-medium">
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-stone-600 font-bold">Approuvés</span>
+                        <span className="font-bold text-[#117043]">72%</span>
+                      </div>
+                      <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-[#117043] rounded-full" style={{ width: '72%' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-stone-600 font-bold">En attente</span>
+                        <span className="font-bold text-amber-600">18%</span>
+                      </div>
+                      <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-500 rounded-full" style={{ width: '18%' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-stone-600 font-bold">Rejetés</span>
+                        <span className="font-bold text-red-600">10%</span>
+                      </div>
+                      <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-red-500 rounded-full" style={{ width: '10%' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Score anti-fraude */}
+                <div className="lg:col-span-3 bg-white rounded-2xl p-5 border border-stone-200/80 shadow-2xs flex flex-col justify-between">
+                  <h3 className="font-serif text-xs font-bold uppercase text-stone-500 tracking-wider">Score Anti-fraude</h3>
+                  
+                  <div className="my-3 text-center space-y-2">
+                    <div className="w-12 h-12 rounded-full bg-[#0D2217] text-[#E5D298] flex items-center justify-center mx-auto shadow-2xs">
+                      <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base text-[#0D2217]">Excellent</h4>
+                      <p className="text-[11px] text-stone-500 font-medium leading-tight mt-1">
+                        Aucune anomalie détectée sur les flux récents
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions Column */}
+                <div className="lg:col-span-3 space-y-3 flex flex-col justify-end">
+                  <span className="text-[11px] font-bold uppercase text-stone-500 tracking-wider block">Actions Rapides</span>
+                  
+                  <button className="w-full py-3 px-4 bg-[#7A6123] hover:bg-[#634E1B] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs">
+                    <Plus className="w-4 h-4" />
+                    <span>Enrôler un prestataire</span>
+                  </button>
+
+                  <button className="w-full py-3 px-4 bg-[#0D2217] hover:bg-[#143B28] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs">
+                    <FileText className="w-4 h-4" />
+                    <span>Générer Rapport PEC</span>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
           )}
 
           {/* ACTIVE FOURTH TAB CRON TASKS */}
@@ -1103,7 +1073,29 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onLogo
             </div>
           )}
 
-          {/* 1. Tableau de bord */}
+          {/* Espace Entreprise */}
+          {activeTab === 'entreprise' && <NeoGTecHealthCare_Entreprise />}
+
+          {/* Espace Prestataire */}
+          {activeTab === 'prestataire' && <NeoGTecHealthCare_Prestataire />}
+
+          {/* Espace Assuré */}
+          {activeTab === 'assure' && <NeoGTecHealthCare_Assureur />}
+
+          {/* Comptes réseau */}
+          {activeTab === 'comptes-reseau' && <Partners subModule="partners-directory" />}
+
+          {/* PEC - Prises en charge */}
+          {activeTab === 'pec' && <Claims subModule="claims-preauth" />}
+
+          {/* Dérogations */}
+          {activeTab === 'derogations' && <Claims subModule="claims-workflow" />}
+
+          {/* Référentiel médical */}
+          {activeTab === 'referentiel' && <Partners subModule="partners-tariffs" />}
+
+          {/* Messagerie & Contrôle */}
+          {['messagerie', 'controle'].includes(activeTab) && <Alerts />}
 
           {/* 2. Gestion Polices & Contrats */}
           {['contracts', 'contracts-config', 'contracts-offers', 'contracts-list', 'consumption-list', 'managers-list'].includes(activeTab) && (

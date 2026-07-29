@@ -6,9 +6,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { 
-  Home, BarChart3, Users, FileCheck, Settings, Info, LogOut, HelpCircle, AlertCircle, Shield, Lock, Network,
-  LayoutDashboard, FileText, CreditCard, UserCheck, Stethoscope, ShieldCheck, Building2, ShieldAlert, Cpu, Heart, CheckCircle2,
-  ArrowLeft
+  LayoutGrid, Users, FileText, ClipboardCheck, Database, AlertCircle,
+  Wallet, FileCheck, Video, CircleDot, MessageSquare, Radio, UserCheck,
+  Shield, ShieldCheck, Settings, LogOut, Network, Building2, Stethoscope,
+  TrendingUp, Cpu, Clock, Sliders, Mail, Lock, AlertTriangle
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useApp } from '../../lib/AppContext';
@@ -43,106 +44,92 @@ export const SidebarSuperAdmin: React.FC<SidebarSuperAdminProps> = ({
     }
   };
 
-  const categories = [
+  const menuSections = [
     {
-      title: 'Modules Métier (Core)',
+      title: "PILOTAGE & ESPACES",
       items: [
-        { id: 'dashboard', label: 'Tableau de Bord', icon: LayoutDashboard },
-        { id: 'contracts', label: 'Gestion Polices & Sinistres', icon: FileText },
-        { id: 'reclamation', label: 'Module Réclamation', icon: AlertCircle },
-        { id: 'payment', label: 'Gestion Financière', icon: CreditCard },
-        { id: 'crm', label: 'CRM & Commercial', icon: UserCheck },
-        { id: 'telemedicine', label: 'Téléconsultation', icon: Stethoscope },
-        { id: 'claims', label: 'Sinistres & Contentieux', icon: ShieldCheck },
-        { id: 'partners', label: 'Partenaires de Soins', icon: Building2 },
+        { id: 'dashboard', label: 'Tableau de bord', icon: LayoutGrid },
+        { id: 'comptes-reseau', label: 'Comptes réseau', icon: Network },
+        { id: 'entreprise', label: 'Espace Entreprise', icon: Building2 },
+        { id: 'prestataire', label: 'Espace Prestataire', icon: Stethoscope },
+        { id: 'assure', label: 'Espace Assuré', icon: UserCheck },
       ]
     },
     {
-      title: 'Modules Système (System)',
+      title: "GESTION MÉTIER",
       items: [
-        { id: 'integrations', label: 'Interopérabilité APIs', icon: Network },
-        { id: 'bi', label: 'Business Intelligence & BI', icon: BarChart3 },
-        { id: 'system-config', label: 'Paramètres Système', icon: Cpu },
-        { id: 'governance', label: 'Gouvernance Multi-Entités', icon: Shield },
-        { id: 'alerts', label: 'Alertes Critiques', icon: ShieldAlert },
-        { id: 'admin', label: 'Administration Système', icon: Lock },
-        { id: 'users-list', label: 'Utilisateurs & Rôles', icon: Users },
+        { id: 'contracts', label: 'Contrats & Polices', icon: FileText },
+        { id: 'claims', label: 'Sinistres', icon: ClipboardCheck },
+        { id: 'pec', label: 'Prises en charge (PEC)', icon: FileCheck },
+        { id: 'derogations', label: 'Dérogations', icon: AlertCircle },
+        { id: 'reclamation', label: 'Réclamations', icon: MessageSquare },
+        { id: 'referentiel', label: 'Référentiel médical', icon: Database },
       ]
     },
     {
-      title: 'Contrôles Système',
+      title: "FINANCE & PARTENAIRES",
       items: [
-        { id: 'taches', label: 'Tâches ARCA & Cron', icon: FileCheck },
-        { id: 'securite', label: 'Sécurité & Bypass RLS', icon: Lock },
+        { id: 'payment', label: 'Finance & Cotisations', icon: Wallet },
+        { id: 'partners', label: 'Partenaires de soins', icon: Users },
+        { id: 'crm', label: 'CRM & Commercial', icon: CircleDot },
+        { id: 'telemedicine', label: 'Téléconsultations', icon: Video },
+      ]
+    },
+    {
+      title: "COMMUNICATION & INTEL",
+      items: [
+        { id: 'messagerie', label: 'Messagerie', icon: Mail },
+        { id: 'controle', label: 'Contrôle & Comms', icon: Radio },
+        { id: 'bi', label: 'Business Intelligence', icon: TrendingUp },
+        { id: 'integrations', label: 'Interopérabilité APIs', icon: Cpu },
+      ]
+    },
+    {
+      title: "SÉCURITÉ & CONFIG",
+      items: [
+        { id: 'governance', label: 'Gouvernance', icon: Shield },
+        { id: 'securite', label: 'Sécurité & Audit', icon: Lock },
+        { id: 'alerts', label: 'Surveillance & Alertes', icon: AlertTriangle },
+        { id: 'taches', label: 'Tâches planifiées', icon: Clock },
+        { id: 'system-config', label: 'Paramètres système', icon: Sliders },
+        { id: 'users-mgmt', label: 'Utilisateurs & Rôles', icon: ShieldCheck },
       ]
     }
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-60 bg-[#010A00] border-r border-white/10 flex flex-col z-40 select-none text-white">
-      {/* Brand logo */}
-      <div className="p-5 border-b border-white/10 flex items-center gap-3 bg-[#010A00] text-white">
-        <div className="w-8 h-8 rounded-lg bg-[#00A86B] flex items-center justify-center text-white font-black text-sm shadow-sm shadow-[#00A86B]/30 animate-pulse">
-          NG
-        </div>
-        <div>
-          <h3 className="text-xs font-black text-white uppercase tracking-wider leading-none">NeoGTec</h3>
-          <span className="text-[9px] font-mono text-[#00A86B] font-bold uppercase tracking-widest mt-1 block">Super Admin</span>
-        </div>
+    <aside className="fixed left-0 top-0 h-screen w-60 bg-[#061A10] flex flex-col z-40 select-none text-white border-r border-[#0E2E1D]">
+      {/* Brand logo header exact as screenshot */}
+      <div className="p-5 border-b border-[#0E2E1D] bg-[#061A10]">
+        <h3 className="text-sm font-serif font-bold text-[#E5D298] tracking-tight">NeoGTec Assureur</h3>
+        <span className="text-[11px] text-[#7A9887] font-medium block mt-0.5">Back-office Portale</span>
       </div>
 
-      {godModeActive && (
-        <div className="m-3 p-2 bg-rose-950/60 border border-rose-800/60 rounded-lg text-rose-300 flex items-center gap-2 animate-pulse">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-          <span className="text-[9.5px] font-bold uppercase font-mono">BYPASS RLS ACTIF</span>
-        </div>
-      )}
-
       {/* Main Nav items */}
-      <nav className="p-3 space-y-6 flex-1 bg-[#010A00] overflow-y-auto custom-scrollbar">
-        {categories.map((category, catIdx) => (
-          <div key={category.title} className="space-y-2">
-            <span className="text-[9px] font-mono font-black uppercase text-slate-400 tracking-widest block px-3 py-1 mb-2">
-              {category.title}
-            </span>
-            {category.items.map((item, itemIdx) => {
+      <nav className="p-2.5 space-y-4 flex-1 bg-[#061A10] overflow-y-auto custom-scrollbar">
+        {menuSections.map((section, idx) => (
+          <div key={idx} className="space-y-1">
+            <div className="px-3 text-[10px] uppercase font-bold tracking-wider text-[#7A9887] mb-1">
+              {section.title}
+            </div>
+            {section.items.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
-              const globalIndex = catIdx * 10 + itemIdx;
               return (
                 <motion.button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 25, delay: globalIndex * 0.012 }}
-                  whileHover={{ x: 4 }}
+                  whileHover={{ x: 2 }}
                   whileTap={{ scale: 0.98 }}
                   className={cn(
-                    "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left outline-none cursor-pointer relative",
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[12px] font-semibold transition-all text-left outline-none cursor-pointer relative",
                     isActive 
-                      ? "text-[#00A86B] font-bold" 
-                      : "text-slate-300 hover:text-white hover:bg-white/10"
+                      ? "bg-[#1B3626] text-[#E5D298] font-bold shadow-2xs" 
+                      : "text-[#B0C4B8] hover:text-white hover:bg-white/5"
                   )}
                 >
-                  {/* Sliding active highlight background */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-bg-super"
-                      className="absolute inset-0 bg-[#00A86B]/20 rounded-xl -z-10 border border-[#00A86B]/30"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    />
-                  )}
-                  {/* Left green active indicator pin */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-indicator-pin"
-                      className="absolute left-1.5 top-3.5 bottom-3.5 w-[3px] bg-[#00A86B] rounded-full shadow-[0_0_8px_#00A86B]"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    />
-                  )}
-                  <Icon className={cn("w-4 h-4 shrink-0 transition-colors z-10", isActive ? "stroke-[#00A86B]" : "text-slate-400")} />
-                  <span className="z-10">{item.label}</span>
+                  <Icon className={cn("w-4 h-4 shrink-0 transition-colors z-10", isActive ? "text-[#E5D298]" : "text-[#7A9887]")} />
+                  <span className="z-10 truncate">{item.label}</span>
                 </motion.button>
               );
             })}
@@ -150,86 +137,18 @@ export const SidebarSuperAdmin: React.FC<SidebarSuperAdminProps> = ({
         ))}
       </nav>
 
-      {/* Bottom Sticky parameters */}
-      <div className="mt-auto p-3.5 border-t border-white/10 space-y-2 bg-[#010A00]">
-        <motion.button
-          onClick={() => handleNavClick('settings')}
-          whileHover={{ x: 4 }}
-          whileTap={{ scale: 0.98 }}
-          className={cn(
-            "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left outline-none cursor-pointer relative",
-            activeTab === 'settings' 
-              ? "text-[#00A86B] font-bold" 
-              : "text-slate-300 hover:text-white hover:bg-white/10"
-          )}
-        >
-          {activeTab === 'settings' && (
-            <motion.div
-              layoutId="active-bg-super"
-              className="absolute inset-0 bg-[#00A86B]/20 rounded-xl -z-10 border border-[#00A86B]/30"
-              transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            />
-          )}
-          {activeTab === 'settings' && (
-            <motion.div
-              layoutId="active-indicator-pin"
-              className="absolute left-1.5 top-3.5 bottom-3.5 w-[3px] bg-[#00A86B] rounded-full shadow-[0_0_8px_#00A86B]"
-              transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            />
-          )}
-          <Settings className={cn("w-4 h-4 z-10", activeTab === 'settings' ? "stroke-[#00A86B]" : "text-slate-400")} />
-          <span className="z-10">Paramètres</span>
-        </motion.button>
-
-        <motion.button
-          onClick={handleLogoutClick}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold text-rose-400 border border-rose-900/60 bg-rose-950/40 hover:bg-rose-900/60 hover:text-rose-200 transition-all text-left outline-none cursor-pointer mt-1"
-        >
-          <LogOut className="w-4 h-4 text-rose-400" />
-          <span>Déconnexion</span>
-        </motion.button>
-
-        {/* User profile avatar info & switcher */}
-        <div className="mt-2 pt-3 border-t border-white/10 px-2 flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#00A86B]/20 border border-[#00A86B]/40 flex items-center justify-center font-bold text-xs text-[#00A86B] shrink-0 uppercase">
-              {currentUser?.name ? currentUser.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2) : 'AN'}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold text-white truncate leading-none mb-0.5">
-                {currentUser?.name || 'Admin NeoGTec'}
-              </p>
-              <p className="text-[9px] font-mono text-slate-400 truncate leading-none lowercase">
-                {currentUser?.email || 'admin@neogtec.cd'}
-              </p>
-            </div>
-          </div>
-          
-          <div className="mt-1">
-            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Passer au rôle :</span>
-            <select
-              value={currentUser?.role || ''}
-              onChange={(e) => {
-                if (quickSwitchRole) {
-                  quickSwitchRole(e.target.value as any);
-                }
-              }}
-              className="w-full text-[10px] font-bold text-slate-200 bg-white/10 border border-white/15 rounded p-1.5 outline-none focus:border-[#00A86B]/70 transition-colors cursor-pointer select-none"
-            >
-              <option value="SUPER_ADMIN" className="bg-[#010A00] text-white">👑 Paul (Super Admin)</option>
-              <option value="RH_ENTREPRISE" className="bg-[#010A00] text-white">🏢 Marie (RH Acme)</option>
-              <option value="SUPPORT_CLIENT" className="bg-[#010A00] text-white">📞 Jean (Support)</option>
-              <option value="MEDECIN" className="bg-[#010A00] text-white">🩺 Dr. Sarah (Médecin)</option>
-              <option value="ADMIN_PRESTATAIRE" className="bg-[#010A00] text-white">🏥 Admin Hôpital Ngaliema</option>
-              <option value="PHARMACIEN" className="bg-[#010A00] text-white">💊 Pharmacien KinPharma</option>
-              <option value="FINANCE_MANAGER" className="bg-[#010A00] text-white">💰 Fin. Sunu (Finance)</option>
-              <option value="AUDITEUR_EXTERNE" className="bg-[#010A00] text-white">🔎 Auditeur CNAM (Audit)</option>
-              <option value="ASSURE" className="bg-[#010A00] text-white">📱 Jean PATIENT (Assuré)</option>
-              <option value="SUPPORT_NEOGTEC" className="bg-[#010A00] text-white">🛠️ Support NeoGTec N1</option>
-            </select>
-          </div>
+      {/* Bottom User profile avatar info exact as screenshot */}
+      <div className="p-4 border-t border-[#0E2E1D] bg-[#061A10] flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-[#D4C385] text-[#061A10] font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs font-serif">
+          A
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-white truncate leading-tight">
+            Admin User
+          </p>
+          <p className="text-[10.5px] text-[#7A9887] truncate leading-tight font-medium mt-0.5">
+            Administrator
+          </p>
         </div>
       </div>
     </aside>

@@ -12,11 +12,12 @@ import {
   Percent, Calendar, Landmark, Smartphone, Briefcase, ShieldAlert, ThumbsUp, ThumbsDown,
   MessageSquare, ChevronDown, X, Send, RefreshCw, Filter, CircleDollarSign, Stethoscope,
   ScanFace, LogOut, Check, PieChart, FileWarning, HeartPulse, MessageCircle, Upload, Paperclip,
+  Eye, Monitor, Smartphone as PhoneIcon
 } from "lucide-react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 /* ---------------------------------------------------------------
-   TOKENS — cohérents avec l'app Assuré NeoGTec HealthCare
+   TOKENS — polychromes luxe & santé
 ------------------------------------------------------------------ */
 const C = {
   navy: "#0D2818", navy2: "#1B4A34", gold: "#C6992E", goldSoft: "#EFDFB8",
@@ -50,7 +51,7 @@ const GRADES_DEFAUT: GradeItem[] = [
 const gradeInfo = (id: string) => GRADES_DEFAUT.find((g) => g.id === id) || GRADES_DEFAUT[2];
 
 /* =================================================================
-   SYNCHRONISATION INTER-APPS — stockage partagé (window.storage)
+   SYNCHRONISATION INTER-APPS
 ================================================================= */
 const CLE_DEROGATIONS_PARTAGEES = "neogtec_eco_derogations_v1";
 
@@ -66,6 +67,7 @@ async function chargerDerogationsPartagees() {
     return [];
   }
 }
+
 async function sauvegarderDerogationsPartagees(liste: any) {
   try {
     if (typeof window !== 'undefined' && (window as any).storage) {
@@ -96,6 +98,7 @@ async function chargerCanalPartage(cle: string) {
     return [];
   }
 }
+
 async function sauvegarderCanalPartage(cle: string, valeur: any) {
   try {
     if (typeof window !== 'undefined' && (window as any).storage) {
@@ -104,14 +107,17 @@ async function sauvegarderCanalPartage(cle: string, valeur: any) {
     localStorage.setItem(cle, JSON.stringify(valeur));
   } catch (e) {}
 }
+
 function whatsappChatUrl(numero: string, texte?: string) {
   const num = (numero || "").replace(/[^0-9]/g, "");
   return `https://wa.me/${num}${texte ? `?text=${encodeURIComponent(texte)}` : ""}`;
 }
+
 function whatsappCallUrl(numero: string) {
   const num = (numero || "").replace(/[^0-9]/g, "");
   return `whatsapp://call?phone=${num}`;
 }
+
 const CONDITIONS_SANTE = [
   { id: "diabete", label: "Diabète (type 1 ou 2)" },
   { id: "hta", label: "Hypertension artérielle" },
@@ -224,6 +230,8 @@ function buildFactures() {
     { id: 11, mois: "Mai 2026", montant: 14250, dateEcheance: "31/05/2026", statut: "En retard" },
     { id: 10, mois: "Avril 2026", montant: 14250, dateEcheance: "30/04/2026", statut: "Payée", datePaiement: "29/04/2026" },
     { id: 9, mois: "Mars 2026", montant: 14250, dateEcheance: "31/03/2026", statut: "Payée", datePaiement: "31/03/2026" },
+    { id: 8, mois: "Février 2026", montant: 14250, dateEcheance: "28/02/2026", statut: "En retard" },
+    { id: 7, mois: "Janvier 2026", montant: 14250, dateEcheance: "31/01/2026", statut: "Payée", datePaiement: "30/01/2026" },
   ];
 }
 
@@ -288,7 +296,7 @@ function Accordion({ title, right, children, defaultOpen = false }: { title: str
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Card className="overflow-hidden mb-3">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3.5">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3.5 cursor-pointer">
         <span style={{ fontFamily: sans, fontSize: 14, fontWeight: 700, color: C.navy }}>{title}</span>
         <div className="flex items-center gap-2">{right}<ChevronDown size={16} color={C.sub} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" }} /></div>
       </button>
@@ -298,7 +306,7 @@ function Accordion({ title, right, children, defaultOpen = false }: { title: str
 }
 
 /* =================================================================
-   SUB-VUES DASHBOARD
+   SUB-VUES
 ================================================================= */
 function GradeAccordionItem({ g, nb, onSave }: { g: GradeItem; nb: number; onSave: (id: string, draft: any) => void }) {
   const [draft, setDraft] = useState({ taux: g.taux, plafondMensuel: g.plafondMensuel, plafondAnnuel: g.plafondAnnuel });
@@ -310,7 +318,7 @@ function GradeAccordionItem({ g, nb, onSave }: { g: GradeItem; nb: number; onSav
         <Field label="Taux de prise en charge (%)"><input style={inputStyle} value={draft.taux} onChange={(e) => change("taux", e.target.value)} /></Field>
         <Field label="Plafond mensuel ($)"><input style={inputStyle} value={draft.plafondMensuel} onChange={(e) => change("plafondMensuel", e.target.value)} /></Field>
         <Field label="Plafond annuel ($)"><input style={inputStyle} value={draft.plafondAnnuel} onChange={(e) => change("plafondAnnuel", e.target.value)} /></Field>
-        <button onClick={() => { onSave(g.id, draft); setDirty(false); }} disabled={!dirty} className="w-full rounded-lg py-2 mt-1 flex items-center justify-center gap-1.5" style={{ background: dirty ? C.navy : "#C9CDD6", color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><Check size={13} /> Enregistrer</button>
+        <button onClick={() => { onSave(g.id, draft); setDirty(false); }} disabled={!dirty} className="w-full rounded-lg py-2 mt-1 flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: dirty ? C.navy : "#C9CDD6", color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><Check size={13} /> Enregistrer</button>
       </div>
     </Accordion>
   );
@@ -365,7 +373,7 @@ function ReglesDuContrat({ session, setSession, notify }: any) {
               <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 26, height: 26, background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 800 }}>{c.ordre}</div>
               <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{c.payeur}</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{c.role}</div></div>
               <span style={{ fontFamily: mono, fontSize: 11, color: C.gold, fontWeight: 700, marginRight: 4 }}>{c.taux}</span>
-              {i > 0 && <button onClick={() => monter(i)} style={{ fontFamily: sans, fontSize: 9, color: C.navy2, fontWeight: 700 }}>▲</button>}
+              {i > 0 && <button onClick={() => monter(i)} className="cursor-pointer" style={{ fontFamily: sans, fontSize: 9, color: C.navy2, fontWeight: 700 }}>▲</button>}
             </Card>
           ))}
         </div>
@@ -375,7 +383,7 @@ function ReglesDuContrat({ session, setSession, notify }: any) {
       <div className="px-5">
         <Card className="p-4">
           <Field label="Période de validité"><input style={inputStyle} value={validite} onChange={(e) => setValidite(e.target.value)} placeholder="01/01/2026 — 31/12/2026" /></Field>
-          <button onClick={() => { setSession({ ...session, entreprise: { ...session.entreprise, validite } }); notify("Validité du contrat mise à jour"); }} className="w-full rounded-lg py-2 mt-3" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}>Enregistrer</button>
+          <button onClick={() => { setSession({ ...session, entreprise: { ...session.entreprise, validite } }); notify("Validité du contrat mise à jour"); }} className="w-full rounded-lg py-2 mt-3 cursor-pointer" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}>Enregistrer</button>
         </Card>
       </div>
     </>
@@ -384,7 +392,6 @@ function ReglesDuContrat({ session, setSession, notify }: any) {
 
 function PlusScreen({ session, setSession, notify, onLogout, go }: any) {
   const [tab, setTab] = useState("grades");
-  const [alerteDetail, setAlerteDetail] = useState<any>(null);
   return (
     <div className="pb-6">
       <div className="px-5 pt-4 pb-2">
@@ -426,63 +433,11 @@ function PlusScreen({ session, setSession, notify, onLogout, go }: any) {
   );
 }
 
-function ContratConsommation({ session, setSession, notify, go }: any) {
-  const [query, setQuery] = useState("");
-  const rows: any[] = [];
-  const derogationsApprouvees = (session.derogations || []).filter((d: any) => d.statut === "Approuvée");
-  
-  session.employes.forEach((e: any) => {
-    const g = gradeInfo(e.grade);
-    const derogE = derogationsApprouvees.filter((d: any) => d.employeId === e.id);
-    rows.push({ key: `e${e.id}`, type: "employe", employeId: e.id, nom: e.nom, gradeOrRelation: g.nom, gradeId: e.grade, couleur: g.couleur, rattacheA: "—", consomme: e.consomme, plafond: e.plafondMensuel, statut: e.statut, photo: e.photo, derogations: derogE });
-    (e.famille || []).forEach((f: any, i: number) => {
-      rows.push({ key: `e${e.id}-f${i}`, type: "ayant_droit", employeId: e.id, nom: f.nom, gradeOrRelation: f.lien, couleur: C.sub, rattacheA: e.nom, consomme: f.consomme || 0, plafond: f.plafond || 0, statut: e.statut, photo: null, derogations: [] });
-    });
-  });
-
-  const filtered = rows.filter((r) => r.nom.toLowerCase().includes(query.toLowerCase()) || r.rattacheA.toLowerCase().includes(query.toLowerCase()));
-
-  return (
-    <div className="pb-6">
-      <div className="px-5 pt-4 pb-2 flex items-center gap-3">
-        <button onClick={() => go("dashboard")} className="flex items-center justify-center rounded-full flex-shrink-0 cursor-pointer" style={{ width: 32, height: 32, border: `1px solid ${C.line}` }}><ArrowLeft size={14} color={C.ink} /></button>
-        <div><div style={{ fontFamily: serif, fontSize: 19, color: C.navy, fontWeight: 700 }}>Consommation police</div><div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{rows.length} lignes — employés et ayants droit</div></div>
-      </div>
-      <div className="px-5">
-        <div className="relative mb-3">
-          <Search size={14} color={C.sub} style={{ position: "absolute", left: 10, top: 12 }} />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher un nom…" style={{ ...inputStyle, paddingLeft: 30 }} />
-        </div>
-
-        {filtered.map((r) => {
-          const pct = r.plafond ? Math.round((r.consomme / r.plafond) * 100) : 0;
-          return (
-            <Card key={r.key} className="p-3 mb-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink }}>{r.nom}</div>
-                  <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>{r.gradeOrRelation} · Rattaché à : {r.rattacheA}</div>
-                </div>
-                <div className="text-right">
-                  <div style={{ fontFamily: mono, fontSize: 12, fontWeight: 800, color: pct >= 90 ? C.red : C.navy }}>{pct}%</div>
-                  <div style={{ fontFamily: sans, fontSize: 9.5, color: C.sub }}>{fmt(r.consomme)} / {fmt(r.plafond)}</div>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function Finance({ session, setSession, notify, go, initialAction }: any) {
-  const [sub, setSub] = useState(initialAction || "cotisations");
   const [payStatus, setPayStatus] = useState("idle");
   const [methode, setMethode] = useState<string | null>(null);
 
   const factureEnRetard = session.factures.find((f: any) => f.statut === "En retard");
-  const surplusAPayer = (session.surplus || []).filter((s: any) => s.statut === "À payer");
 
   const payerFacture = () => {
     if (!factureEnRetard || !methode) return;
@@ -490,7 +445,7 @@ function Finance({ session, setSession, notify, go, initialAction }: any) {
     setTimeout(() => {
       setSession({
         ...session,
-        factures: session.factures.map((f: any) => (f.id === factureEnRetard.id ? { ...f, statut: "Payée", datePaiement: "07/07/2026" } : f)),
+        factures: session.factures.map((f: any) => (f.id === factureEnRetard.id ? { ...f, statut: "Payée", datePaiement: "25/07/2026" } : f)),
         employes: session.employes.map((e: any) => (e.motifSuspension === "Facture impayée" ? { ...e, statut: "Actif", motifSuspension: undefined } : e)),
       });
       setPayStatus("done");
@@ -543,8 +498,6 @@ function Finance({ session, setSession, notify, go, initialAction }: any) {
 }
 
 function Derogations({ session, setSession, notify, go, initialAction }: any) {
-  const [detail, setDetail] = useState<any>(initialAction || null);
-
   const traiter = (id: number, statut: string) => {
     const d = session.derogations.find((x: any) => x.id === id);
     setSession({
@@ -552,7 +505,6 @@ function Derogations({ session, setSession, notify, go, initialAction }: any) {
       derogations: session.derogations.map((x: any) => (x.id === id ? { ...x, statut, traitePar: session.entreprise.contactRH } : x)),
     });
     notify(`Dérogation ${statut.toLowerCase()} pour ${d?.employeNom}`);
-    setDetail(null);
   };
 
   return (
@@ -667,8 +619,6 @@ function Employes({ session, setSession, notify, go, initialAction }: any) {
 
 function DashboardMain({ session, setSession, notify, go }: any) {
   const { employes, derogations, factures, entreprise } = session;
-  const actifs = employes.filter((e: any) => e.statut === "Actif").length;
-  const suspendus = employes.filter((e: any) => e.statut === "Suspendu").length;
   const totalFamille = employes.reduce((s: number, e: any) => s + (e.famille?.length || 0), 0);
   const consoTotal = employes.reduce((s: number, e: any) => s + e.consomme, 0);
   const plafondTotal = employes.reduce((s: number, e: any) => s + (e.plafondReel ?? e.plafondMensuel), 0);
@@ -742,17 +692,17 @@ function DashboardMain({ session, setSession, notify, go }: any) {
 
       <SectionLabel>Actions de pilotage RH</SectionLabel>
       <div className="px-5 grid grid-cols-2 gap-3">
-        <button onClick={() => go("employes", "add")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#EAF2EC", border: "none" }}><UserPlus size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Affilier collaborateur</div></Card></button>
-        <button onClick={() => go("derogations")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#FBEAE8", border: "none" }}><FileText size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Voir dérogations</div></Card></button>
-        <button onClick={() => go("finance")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#EEF1F8", border: "none" }}><Wallet size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Cotisations & Paie</div></Card></button>
-        <button onClick={() => go("plus")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#F2EDF6", border: "none" }}><Award size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Grades & Plafonds</div></Card></button>
+        <button onClick={() => go("employes", "add")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#EAF2EC", border: "none" }}><UserPlus size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Ajouter employé</div></Card></button>
+        <button onClick={() => go("derogations")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#FBEAE8", border: "none" }}><FileText size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Dérogations RH</div></Card></button>
+        <button onClick={() => go("finance")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#EEF1F8", border: "none" }}><Wallet size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Cotisations</div></Card></button>
+        <button onClick={() => go("plus")} className="text-left cursor-pointer"><Card className="p-4" style={{ background: "#F2EDF6", border: "none" }}><Award size={18} color={C.navy2} /><div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink, marginTop: 6 }}>Grades & Couvertures</div></Card></button>
       </div>
     </div>
   );
 }
 
 /* =================================================================
-   COMPOSANT PRINCIPAL EXPORTÉ
+   COMPOSANT PRINCIPAL DE L'ESPACE ENTREPRISE
 ================================================================= */
 export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string) => void }> = ({ onNavigateToModule }) => {
   const [session, setSession] = useState<any>({
@@ -764,17 +714,19 @@ export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string)
     factures: buildFactures(),
     surplus: buildSurplus(),
     alertes: [
-      { id: 1, type: "paiement", titre: "Facture de Mai impayée", detail: "Régularisation recommandée", gravite: "critique" },
-      { id: 2, type: "plafond", titre: "NGALULA Grâce à 98% du plafond", detail: "118$ / 120$", gravite: "warning" },
+      { id: 1, type: "paiement", titre: "Facture de Mai impayée", detail: "Les QR codes seront suspendus si non régularisée", gravite: "critique", actionGo: "finance" },
+      { id: 2, type: "plafond", titre: "NGALULA Grâce à 98% de son plafond mensuel", detail: "118$ consommés sur 120$", gravite: "warning", actionGo: "employes" },
+      { id: 3, type: "derogation", titre: "1 dérogation en attente de validation", detail: "NGALULA Grâce — soin de 85$", gravite: "info", actionGo: "derogations" }
     ]
   });
 
   const [tab, setTab] = useState("dashboard");
-  const [tabAction, setTabAction] = useState<string | null>(null);
+  const [tabAction, setTabAction] = useState<any>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const notify = (m: string) => setToast(m);
+  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('mobile');
 
-  const go = (target: string, action?: string) => { setTab(target); setTabAction(action || null); };
+  const notify = (m: string) => setToast(m);
+  const go = (target: string, action?: any) => { setTab(target); setTabAction(action || null); };
 
   const tabs = [
     { id: "dashboard", label: "Accueil", icon: LayoutDashboard },
@@ -784,69 +736,83 @@ export const EnterpriseRHDashboard: React.FC<{ onNavigateToModule?: (id: string)
     { id: "plus", label: "Plus", icon: Settings },
   ];
 
-  const derogEnAttente = session.derogations.filter((d: any) => d.statut === "En attente").length;
+  const derogEnAttente = session?.derogations?.filter((d: any) => d.statut === "En attente").length || 0;
 
   return (
-    <div className="w-full min-h-screen bg-[#F6F3EC] flex flex-col items-center justify-start py-4 px-2 sm:px-4" style={{ fontFamily: sans }}>
-      <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }`}</style>
-      
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-[#E7E2D6] overflow-hidden min-h-[750px] flex flex-col justify-between">
-        {/* Top Header */}
-        <div className="bg-[#0D2818] text-white px-6 py-4 flex items-center justify-between border-b border-[#1B4A34]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C6992E] text-[#0D2818] flex items-center justify-center font-bold">
-              <Building2 size={20} />
-            </div>
-            <div>
-              <h1 className="font-serif font-bold text-lg text-white leading-tight">
-                {session.entreprise.nom}
-              </h1>
-              <p className="font-sans text-xs text-[#EFDFB8]">
-                Portail RH & Gestionnaire de Santé Salariés
-              </p>
-            </div>
+    <div className="w-full min-h-screen bg-slate-900/90 py-6 px-4 flex flex-col items-center justify-center">
+      {/* Dynamic Top Bar inside Portal View */}
+      <div className="w-full max-w-4xl flex items-center justify-between mb-4 bg-[#010A00] p-4 rounded-2xl border border-white/10 text-white shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#00A86B] flex items-center justify-center font-black text-white text-lg shadow-md shadow-[#00A86B]/30">
+            MC
           </div>
+          <div>
+            <h2 className="text-sm font-black text-white uppercase tracking-wider leading-none">
+              Espace Entreprise — MiningCo SARL
+            </h2>
+            <p className="text-[11px] text-slate-300 font-medium mt-1">
+              Portail RH, Gestion des effectifs, Couvertures & Dérogations
+            </p>
+          </div>
+        </div>
 
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => go("plus")}
-              className="relative p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer text-white"
-              title="Alertes & Notifications"
-            >
-              <Bell size={18} />
-              {derogEnAttente > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center">
-                  {derogEnAttente}
-                </span>
-              )}
+        {/* View mode switcher */}
+        <div className="flex items-center gap-2 bg-white/10 p-1 rounded-xl border border-white/15">
+          <button
+            onClick={() => setViewMode('mobile')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${viewMode === 'mobile' ? 'bg-[#00A86B] text-white' : 'text-slate-300 hover:text-white'}`}
+          >
+            <PhoneIcon className="w-3.5 h-3.5" /> Mobile
+          </button>
+          <button
+            onClick={() => setViewMode('desktop')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${viewMode === 'desktop' ? 'bg-[#00A86B] text-white' : 'text-slate-300 hover:text-white'}`}
+          >
+            <Monitor className="w-3.5 h-3.5" /> Bureau
+          </button>
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div
+        className={`relative overflow-hidden transition-all duration-300 bg-[#F6F3EC] shadow-2xl border border-slate-700 ${
+          viewMode === 'mobile'
+            ? 'w-[390px] h-[844px] rounded-[44px] border-[10px] border-[#0B0F17]'
+            : 'w-full max-w-4xl rounded-2xl min-h-[750px] p-2'
+        }`}
+      >
+        {/* Header Bar */}
+        <div className="flex items-center justify-between px-6 pt-3 pb-2 relative z-10 text-slate-900 font-sans text-xs border-b border-[#E7E2D6] bg-white">
+          <span className="font-bold flex items-center gap-1.5">
+            <Building2 className="w-4 h-4 text-[#0D2818]" />
+            NEOGTEC ENTREPRISE
+          </span>
+          <div className="flex items-center gap-3">
+            <button onClick={() => go("plus")} className="relative cursor-pointer">
+              <Bell size={16} color={C.navy} />
+              {derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: -3, right: -3, width: 7, height: 7, background: C.red }} />}
             </button>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto">
+        {/* Dynamic Scroll View */}
+        <div className="overflow-y-auto" style={{ height: viewMode === 'mobile' ? 844 - 60 - 78 : 'calc(100% - 130px)' }}>
           {tab === "dashboard" && <DashboardMain session={session} setSession={setSession} notify={notify} go={go} />}
           {tab === "employes" && <Employes session={session} setSession={setSession} notify={notify} go={go} initialAction={tabAction} />}
           {tab === "derogations" && <Derogations session={session} setSession={setSession} notify={notify} go={go} initialAction={tabAction} />}
           {tab === "finance" && <Finance session={session} setSession={setSession} notify={notify} go={go} initialAction={tabAction} />}
-          {tab === "contrat" && <ContratConsommation session={session} setSession={setSession} notify={notify} go={go} />}
-          {tab === "plus" && <PlusScreen session={session} setSession={setSession} notify={notify} onLogout={() => {}} go={go} />}
+          {tab === "plus" && <PlusScreen session={session} setSession={setSession} notify={notify} onLogout={() => alert("Déconnexion Espace Entreprise")} go={go} />}
         </div>
 
         {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
-        {/* Bottom Tab Bar */}
-        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-[#E7E2D6] px-4 py-3 flex items-center justify-around z-20 shadow-md">
+        {/* Navigation bar at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-around bg-white border-t border-[#E7E2D6] py-3.5 px-2 z-20">
           {tabs.map((t) => (
-            <button 
-              key={t.id} 
-              onClick={() => go(t.id)} 
-              className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${tab === t.id ? "text-[#0D2818]" : "text-[#6B6F76]"}`}
-            >
-              <t.icon size={20} strokeWidth={tab === t.id ? 2.5 : 2} />
-              <span className={`text-[10px] ${tab === t.id ? "font-bold text-[#0D2818]" : "font-medium"}`}>
-                {t.label}
-              </span>
+            <button key={t.id} onClick={() => go(t.id)} className="flex flex-col items-center gap-1 relative cursor-pointer">
+              <t.icon size={19} color={tab === t.id ? C.navy : C.sub} strokeWidth={tab === t.id ? 2.4 : 2} />
+              {t.id === "derogations" && derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: -2, right: 6, width: 7, height: 7, background: C.red }} />}
+              <span style={{ fontFamily: sans, fontSize: 9.5, fontWeight: tab === t.id ? 700 : 500, color: tab === t.id ? C.navy : C.sub }}>{t.label}</span>
             </button>
           ))}
         </div>

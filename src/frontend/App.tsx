@@ -275,7 +275,7 @@ export default function App() {
     }
   };
 
-  if (isLoggedIn && currentUser?.role === 'SUPER_ADMIN') {
+  if (isLoggedIn) {
     return <SuperAdminDashboard onLogout={handlePlatformLogout} />;
   }
 

@@ -85,57 +85,17 @@ interface LoginProps {
   }) => void;
 }
 
-// Preset simulator users for dynamic routing tests
+// Preset admin simulator user - non-admin accounts removed per requirements
 const SIMULATOR_USERS = [
   { 
-    email: 'paul@neogtec.com', 
-    password: 'Paul_#20269988@', 
-    name: 'Paul NEOGTEC', 
+    email: 'adonailutonadio70@gmail.com', 
+    password: 'Admin_#20269988@', 
+    name: 'Adonaï Lutonadio (Super Admin)', 
     role: 'SUPER_ADMIN', 
     tenantId: null, 
     status: 'Actif',
     mustChangePassword: false,
-    lastLogin: '2026-05-28'
-  },
-  { 
-    email: 'm.kapend@acme.cd', 
-    password: 'Marie_#20261111@', 
-    name: 'Marie KAPEND', 
-    role: 'RH_ENTREPRISE', 
-    tenantId: 'acme', 
-    status: 'Actif',
-    mustChangePassword: false,
-    lastLogin: '2026-05-28'
-  },
-  { 
-    email: 'jean.m@acme.cd', 
-    password: 'Jean_#20262222@', 
-    name: 'Jean MUKENDI', 
-    role: 'SUPPORT_CLIENT', 
-    tenantId: 'acme', 
-    status: 'Actif',
-    mustChangePassword: false,
-    lastLogin: '2026-05-28'
-  },
-  { 
-    email: 'nouveau@acme.cd', 
-    password: 'MarieKa!1234', 
-    name: 'Nouveau Collaborateur', 
-    role: 'SUPPORT_CLIENT', 
-    tenantId: 'acme', 
-    status: 'En attente',
-    mustChangePassword: true,
-    lastLogin: null
-  },
-  { 
-    email: 'suspendu@acme.cd', 
-    password: 'Suspendu_#20260000@', 
-    name: 'Collaborateur Bloqué', 
-    role: 'SUPPORT_CLIENT', 
-    tenantId: 'acme', 
-    status: 'Suspendu',
-    mustChangePassword: false,
-    lastLogin: '2026-05-28'
+    lastLogin: '2026-07-25'
   }
 ];
 
@@ -267,12 +227,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     };
 
     addLog("✓ [1/5] Identifiants d'accès certifiés (Cryptographie BCrypt hashs match)", 50);
-    addLog(
-      rememberDevice 
-        ? "✓ [2/5] Jeton MFA ignoré : Appareil de confiance enregistré 30 jours." 
-        : "✓ [2/5] Vérification MFA requise pour cette adresse administrative.",
-      120
-    );
+    addLog("✓ [2/5] Authentification directe validée (2FA Désactivé).", 120);
     addLog(`✓ [3/5] État du compte : ${matchedUser.status} de l'Établissement.`, 180);
     addLog("✓ [4/5] SQL: SELECT tenant_id, role, permissions, is_new_user FROM users WHERE email = ?", 240);
     addLog("✓ [5/5] Redirection vers le tableau de correspondances applicatif...", 299);
@@ -284,9 +239,6 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         setStep('suspended_message');
       } else if (matchedUser.mustChangePassword) {
         setStep('onboarding_welcome');
-      } else if (!rememberDevice) {
-        setActiveMfaUser(matchedUser);
-        setStep('mfa');
       } else {
         onLoginSuccess({
           email: matchedUser.email,
@@ -294,7 +246,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           role: matchedUser.role,
           tenantId: matchedUser.tenantId,
           status: matchedUser.status,
-          mfaEnabled: true,
+          mfaEnabled: false,
           portal: portal
         });
         try {
