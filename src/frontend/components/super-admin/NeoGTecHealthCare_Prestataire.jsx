@@ -3067,20 +3067,29 @@ export default function App() {
   const derogEnAttente = session?.derogations?.filter((d) => d.statut === "En attente").length || 0;
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{ background: "#EAE6DA", fontFamily: sans }}>
+    <div className="w-full flex-1 flex flex-col min-h-screen" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
-      <div className="relative overflow-hidden" style={{ width: 390, height: 844, background: C.ivory, borderRadius: 44, boxShadow: "0 30px 60px rgba(20,38,68,0.25)", border: "10px solid #0B0F17" }}>
-        <div className="flex items-center justify-between px-6 pt-3 pb-1 relative z-10" style={{ color: (view === "welcome" || view === "signup" || view === "signin") ? "white" : C.ink, fontFamily: sans, fontSize: 12 }}>
-          <span style={{ fontWeight: 600 }}>06:07</span>
-          {view === "app" && <span style={{ letterSpacing: 1, fontWeight: 600, color: C.navy }}>NEOGTEC PRESTATAIRE</span>}
-          {view === "app" ? (
+      <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-10" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
+          <div className="flex items-center gap-3">
+            <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC PRESTATAIRE</span>
+            {view === "app" && session?.etablissement?.nom && (
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#142644]/10 text-[#142644]">
+                {session.etablissement.nom}
+              </span>
+            )}
+          </div>
+          {view === "app" && (
             <div className="flex items-center gap-3">
-              <button onClick={() => go("plus")} className="relative"><Bell size={16} color={C.navy} />{derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: -3, right: -3, width: 7, height: 7, background: C.red }} />}</button>
+              <button onClick={() => go("plus")} className="relative p-1.5 rounded-lg hover:bg-stone-200 transition-all cursor-pointer">
+                <Bell size={18} color={C.navy} />
+                {derogEnAttente > 0 ? <span className="absolute rounded-full" style={{ top: 2, right: 2, width: 8, height: 8, background: C.red }}></span> : null}
+              </button>
             </div>
-          ) : <span style={{ fontWeight: 600 }}>●●●●</span>}
+          )}
         </div>
 
-        <div className="overflow-y-auto" style={{ height: view === "app" ? 844 - 40 - 78 : 844 - 40 }}>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24">
           {view === "signup" && <SignUp onDone={(data) => { setSignupData(data); setView("signin"); }} onGoSignIn={() => setView("signin")} />}
           {view === "signin" && <SignIn prefill={signupData} onDone={(sessionReelle) => (sessionReelle ? startApp(sessionReelle) : setView(session ? "app" : "welcome"))} onGoSignUp={() => setView("signup")} />}
           {view === "welcome" && <Welcome onCreer={() => setView("onboarding")} onDemo={startDemo} onAccederExistant={() => { setView("app"); setTab("dashboard"); }} hasSession={!!session} />}
@@ -3099,12 +3108,12 @@ export default function App() {
         {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
         {view === "app" && (
-          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-around" style={{ height: 78, background: "white", borderTop: `1px solid ${C.line}`, paddingBottom: 14 }}>
+          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-around z-20 shadow-md" style={{ height: 64, background: "white", borderTop: `1px solid ${C.line}` }}>
             {tabs.map((t) => (
-              <button key={t.id} onClick={() => go(t.id)} className="flex flex-col items-center gap-1 relative">
-                <t.icon size={19} color={tab === t.id ? C.navy : C.sub} strokeWidth={tab === t.id ? 2.4 : 2} />
-                {t.id === "derogations" && derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: -2, right: 6, width: 7, height: 7, background: C.red }} />}
-                <span style={{ fontFamily: sans, fontSize: 9, fontWeight: tab === t.id ? 700 : 500, color: tab === t.id ? C.navy : C.sub }}>{t.label}</span>
+              <button key={t.id} onClick={() => go(t.id)} className="flex items-center md:flex-row flex-col gap-1.5 px-3 py-1.5 rounded-xl hover:bg-stone-100 transition-all cursor-pointer relative">
+                <t.icon size={20} color={tab === t.id ? C.navy : C.sub} strokeWidth={tab === t.id ? 2.4 : 2} />
+                {t.id === "derogations" && derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: 2, right: 2, width: 8, height: 8, background: C.red }} />}
+                <span style={{ fontFamily: sans, fontSize: 12, fontWeight: tab === t.id ? 700 : 500, color: tab === t.id ? C.navy : C.sub }}>{t.label}</span>
               </button>
             ))}
           </div>
