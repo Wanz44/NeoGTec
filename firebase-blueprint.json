@@ -1,0 +1,116 @@
+{
+  "entities": {
+    "polices": {
+      "title": "Polices d'Assurance",
+      "description": "Polices d'assurance santé souscrites par les entreprises ou indépendants",
+      "properties": {
+        "id": { "type": "string" },
+        "numeroPolice": { "type": "string" },
+        "entrepriseId": { "type": "string" },
+        "entrepriseNom": { "type": "string" },
+        "formule": { "type": "string" },
+        "primeMensuelle": { "type": "number" },
+        "statut": { "type": "string" },
+        "nbAssures": { "type": "number" },
+        "dateDebut": { "type": "string" },
+        "dateFin": { "type": "string" }
+      },
+      "required": ["numeroPolice", "entrepriseNom", "formule", "statut"]
+    },
+    "entreprises": {
+      "title": "Entreprises Souscripteuses",
+      "description": "Comptes entreprises gérant leur flotte d'employés",
+      "properties": {
+        "id": { "type": "string" },
+        "nom": { "type": "string" },
+        "rccm": { "type": "string" },
+        "email": { "type": "string" },
+        "telephone": { "type": "string" },
+        "secteur": { "type": "string" },
+        "nbEmployes": { "type": "number font" }
+      },
+      "required": ["nom", "email"]
+    },
+    "assures": {
+      "title": "Assurés et Ayants Droit",
+      "description": "Assurés principaux et leurs ayants droit affiliés",
+      "properties": {
+        "id": { "type": "string" },
+        "matricule": { "type": "string" },
+        "nom": { "type": "string" },
+        "email": { "type": "string" },
+        "numeroCarte": { "type": "string" },
+        "entrepriseId": { "type": "string" },
+        "entrepriseNom": { "type": "string" },
+        "formule": { "type": "string" },
+        "statut": { "type": "string" },
+        "soldePlafond": { "type": "number" },
+        "ayantsDroit": { "type": "array" }
+      },
+      "required": ["nom", "matricule", "numeroCarte"]
+    },
+    "prestataires": {
+      "title": "Prestataires de Santé",
+      "description": "Centres de santé, hôpitaux, cliniques, pharmacies conventionnées",
+      "properties": {
+        "id": { "type": "string" },
+        "nom": { "type": "string" },
+        "codePrestataire": { "type": "string" },
+        "type": { "type": "string" },
+        "ville": { "type": "string" },
+        "telephone": { "type": "string" },
+        "statutConvention": { "type": "string" }
+      },
+      "required": ["nom", "codePrestataire", "type"]
+    },
+    "soins": {
+      "title": "Soins et Prises en Charge",
+      "description": "Feuilles de soins, consultations et prises en charge médicale",
+      "properties": {
+        "id": { "type": "string" },
+        "codePriseEnCharge": { "type": "string" },
+        "assureMatricule": { "type": "string" },
+        "assureNom": { "type": "string" },
+        "prestataireNom": { "type": "string" },
+        "acte": { "type": "string" },
+        "montantTotal": { "type": "number" },
+        "partAssureur": { "type": "number" },
+        "partPatient": { "type": "number" },
+        "statut": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["codePriseEnCharge", "assureNom", "montantTotal", "statut"]
+    },
+    "derogations": {
+      "title": "Dérogations",
+      "description": "Demandes de dérogation de plafonds ou d'actes hors convention",
+      "properties": {
+        "id": { "type": "string" },
+        "codeDerogation": { "type": "string" },
+        "demandeurType": { "type": "string" },
+        "demandeurNom": { "type": "string" },
+        "patientNom": { "type": "string" },
+        "montant": { "type": "number" },
+        "motif": { "type": "string" },
+        "statut": { "type": "string" },
+        "validePar": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["demandeurNom", "montant", "motif", "statut"]
+    },
+    "factures": {
+      "title": "Factures et Règlements",
+      "description": "Comptabilité globale, bordereaux de remboursement et règlements",
+      "properties": {
+        "id": { "type": "string" },
+        "reference": { "type": "string" },
+        "entite": { "type": "string" },
+        "type": { "type": "string" },
+        "montant": { "type": "number" },
+        "statutPaiement": { "type": "string" },
+        "dateEcheance": { "type": "string" }
+      },
+      "required": ["reference", "montant", "statutPaiement"]
+    }
+  }
+}
