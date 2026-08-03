@@ -3986,10 +3986,61 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const notify = (m) => setToast(m);
 
-  const startApp = (s) => { setSession(s); setView("app"); setTab("accueil"); setDevisPrefill(null); notify("Bienvenue dans votre espace assuré"); };
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("neogtec_active_session_assure");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed) {
+          setSession(parsed);
+          setView("app");
+        }
+      }
+    } catch (e) {
+      console.warn("Restore Assure session error", e);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (session && view === "app") {
+      try {
+        localStorage.setItem("neogtec_active_session_assure", JSON.stringify(session));
+      } catch (e) {
+        console.warn("Save Assure session error", e);
+      }
+    }
+  }, [session, view]);
+
+  const startApp = (s) => { 
+    setSession(s); 
+    setView("app"); 
+    setTab("accueil"); 
+    setDevisPrefill(null); 
+    try {
+      localStorage.setItem("neogtec_active_session_assure", JSON.stringify(s));
+    } catch (e) {}
+    notify("Bienvenue dans votre espace assuré"); 
+  };
   const passerALaSouscription = (data) => { setDevisPrefill(data); setOnboardingMode("compte"); setView("onboarding"); };
-  const logout = () => { setSession(null); setSubScreen(null); setTab("accueil"); setView("signin"); };
-  const restartFromScratch = () => { setSession(null); setSubScreen(null); setTab("accueil"); setSignupData(null); setView("signup"); };
+  const logout = () => { 
+    try {
+      localStorage.removeItem("neogtec_active_session_assure");
+    } catch (e) {}
+    setSession(null); 
+    setSubScreen(null); 
+    setTab("accueil"); 
+    setView("signin"); 
+  };
+  const restartFromScratch = () => { 
+    try {
+      localStorage.removeItem("neogtec_active_session_assure");
+    } catch (e) {}
+    setSession(null); 
+    setSubScreen(null); 
+    setTab("accueil"); 
+    setSignupData(null); 
+    setView("signup"); 
+  };
 
   const ajouterContrat = (nouveau) => {
     const ancienResume = { police: session.police, contrat: session.contrat, formule: session.formule, validite: session.validite, prime: session.prime, statut: "Actif", beneficiaires: session.beneficiaires, garanties: session.garanties, paiements: session.paiements, histo: session.histo, rdv: session.rdv };

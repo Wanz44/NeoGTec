@@ -4825,12 +4825,12 @@ function GestionPolices({ session, setSession, notify }) {
 
         {edition && (
           <div className="grid grid-cols-2 gap-4 mb-3">
-            <Field label="Bénéficiaires"><input style={inputStyle} value={draft.beneficiaires} onChange={(e) => setDraft({ ...draft, beneficiaires: Number(e.target.value.replace(/\D/g, "")) })} /></Field>
-            <Field label="Statut de signature"><select style={inputStyle} value={draft.statutSignature} onChange={(e) => setDraft({ ...draft, statutSignature: e.target.value })}><option>Brouillon</option><option>Signé</option></select></Field>
-            <Field label="Profil de cascade"><select style={inputStyle} value={draft.cascadeProfil} onChange={(e) => setDraft({ ...draft, cascadeProfil: e.target.value })}><option value="Complet">CSU + Assurance + Mutuelle</option><option value="Direct">Assureur seul</option></select></Field>
+            <Field label="Bénéficiaires"><input style={inputStyle} value={draft.beneficiaires ?? ""} onChange={(e) => setDraft({ ...draft, beneficiaires: Number(e.target.value.replace(/\D/g, "")) })} /></Field>
+            <Field label="Statut de signature"><select style={inputStyle} value={draft.statutSignature || "Brouillon"} onChange={(e) => setDraft({ ...draft, statutSignature: e.target.value })}><option>Brouillon</option><option>Signé</option></select></Field>
+            <Field label="Profil de cascade"><select style={inputStyle} value={draft.cascadeProfil || "Complet"} onChange={(e) => setDraft({ ...draft, cascadeProfil: e.target.value })}><option value="Complet">CSU + Assurance + Mutuelle</option><option value="Direct">Assureur seul</option></select></Field>
             <Field label="Réseau de soins"><select style={inputStyle} value={draft.police?.reseauSoins || "Ouvert"} onChange={(e) => setDraft({ ...draft, police: { ...draft.police, reseauSoins: e.target.value } })}><option>Ouvert</option><option>Fermé</option></select></Field>
             <Field label="Renouvellement"><select style={inputStyle} value={draft.police?.renouvellementTacite ? "oui" : "non"} onChange={(e) => setDraft({ ...draft, police: { ...draft.police, renouvellementTacite: e.target.value === "oui" } })}><option value="oui">Tacite reconduction</option><option value="non">Non reconductible</option></select></Field>
-            <div className="col-span-2"><Field label="Exclusions"><textarea style={{ ...inputStyle, minHeight: 60, resize: "none" }} value={draft.exclusions} onChange={(e) => setDraft({ ...draft, exclusions: e.target.value })} /></Field></div>
+            <div className="col-span-2"><Field label="Exclusions"><textarea style={{ ...inputStyle, minHeight: 60, resize: "none" }} value={draft.exclusions || ""} onChange={(e) => setDraft({ ...draft, exclusions: e.target.value })} /></Field></div>
             <div className="col-span-2"><Field label="Note de modification (journalisée)"><input style={inputStyle} value={noteVersion} onChange={(e) => setNoteVersion(e.target.value)} placeholder="Motif de la modification" /></Field></div>
           </div>
         )}

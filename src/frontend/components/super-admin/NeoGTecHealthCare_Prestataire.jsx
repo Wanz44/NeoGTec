@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LocalDB } from "../../lib/localDatabase";
 import {
   ScanLine, ScanFace, QrCode, Camera, Stethoscope, FileText, Wallet, Receipt, Bell,
   Settings, ArrowLeft, Search, ChevronRight, ChevronDown, Home, LayoutDashboard,
@@ -14,7 +15,7 @@ import {
   MessageCircle, Coins, Banknote, ArrowLeftRight, Package, AlertOctagon,
   PauseCircle, HandCoins, Maximize, Calculator, MinusCircle, PlusCircle,
   HeartPulse, Thermometer, Ruler, Layers, Heart, Scissors, Dna, Paperclip, PenLine,
-  VideoOff, Mic, MicOff, Wifi, PhoneOff, AlertCircle, Clock3, PanelLeftClose, PanelLeftOpen,
+  VideoOff, Mic, MicOff, Wifi, PhoneOff, AlertCircle, Clock3, PanelLeftClose, PanelLeftOpen, Eye, BookOpen,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
@@ -484,6 +485,352 @@ function VentilationBar({ vent, montant }) {
   );
 }
 
+/* Photo de profil de l'assuré réutilisable */
+function PatientAvatar({ nom, photo, size = 32, className = "" }) {
+  const defaultPhoto = photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80";
+  return (
+    <div className={`rounded-full overflow-hidden flex-shrink-0 border border-amber-500/30 shadow-xs ${className}`} style={{ width: size, height: size, minWidth: size, minHeight: size }}>
+      <img src={defaultPhoto} alt={nom || "Assuré"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+  );
+}
+
+/* Modal Dossier Médical Complet du Patient */
+function DossierMedicalCompletModal({ patient, session, setSession, notify, onClose }) {
+  const p = patient || {};
+  const dossier = p.dossier || {
+    constantesVitales: { tension: "120/80", frequenceCardiaque: "72 bpm", temperature: "36.8°C", taille: "175 cm", poids: "70 kg", imc: "22.8", groupeSanguin: "O+" },
+    allergies: ["Pénicilline", "Arachides"],
+    maladiesChroniques: ["Hypertension Artérielle"],
+    traitementsEnCours: [{ nom: "Amlodipine 5mg", posologie: "1 comprimé le matin", depuis: "01/02/2025" }],
+    antecedentsChirurgicaux: [{ intervention: "Appendicectomie", etablissement: "Clinique Ngaliema", date: "2018" }],
+    antecedentsFamiliaux: ["Diabète type 2 (Père)", "HTA (Mère)"],
+    visites: [
+      {
+        date: "08/07/2026", heure: "09:00", motif: "Consultation générale & Suivi", diagnostic: "Syndrome fébril léger", prescripteur: "Dr. Kalonji Mbuyi",
+        examens: [{ nom: "Goutte épaisse (Paludisme)", resultat: "Négatif", statut: "Normal" }],
+        imagerie: [{ type: "Radiologie Thoracique", conclusion: "Parenchyme pulmonaire sain", etablissement: "Clinique Ngaliema" }],
+        ordonnance: { medicaments: ["Paracétamol 1g (3x/jour pendant 5j)", "Vitamine C 1000mg"], statut: "Active" },
+        vaccinations: [{ nom: "Fièvre Jaune" }, { nom: "Hépatite B" }]
+      }
+    ],
+    notes: [{ id: 1, date: "08/07/2026", auteur: "Dr. Kalonji Mbuyi", texte: "Dossier vérifié lors de la téléconsultation. Patient réceptif." }]
+  };
+
+  const [noteTexte, setNoteTexte] = useState("");
+
+  const ajouterNote = () => {
+    if (!noteTexte.trim()) return;
+    const nouvelleNote = { id: Date.now(), date: "Aujourd'hui", auteur: session?.etablissement?.responsable || "Médecin Praticien", texte: noteTexte.trim() };
+    if (setSession && session) {
+      const pMaj = (session.patientsAffilies || []).map((x) => x.nom === p.nom ? { ...x, dossier: { ...x.dossier, notes: [nouvelleNote, ...(x.dossier?.notes || [])] } } : x);
+      setSession({ ...session, patientsAffilies: pMaj });
+    }
+    setNoteTexte("");
+    if (notify) notify("Note médicale ajoutée au dossier");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-stone-200 flex flex-col">
+        <div className="p-5 bg-[#0D2818] text-white flex items-center justify-between sticky top-0 z-20 rounded-t-3xl">
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-stone-300 transition-colors">
+              <ArrowLeft size={18} />
+            </button>
+            <PatientAvatar nom={p.nom} photo={p.photo} size={44} />
+            <div>
+              <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                {p.nom || "Dossier Médical Patient"}
+                <BadgeCheck size={16} className="text-[#C6992E]" />
+              </h3>
+              <p className="text-xs text-stone-300 font-mono">
+                Carte N° {p.carte || "SP-KIN-000482"} · {p.age || "38"} ans · {p.sexe || "M"}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-stone-300">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          <Card className="p-4 bg-[#F6F3EC] border-amber-200 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-stone-500">Souscripteur & Couverture</span>
+              <p className="text-xs font-bold text-[#0D2818]">{p.souscripteur || "MININGCO SARL"}</p>
+              <p className="text-[11px] text-stone-600">Formule : Confort Tiers-Payant (Plafond rest. 1 850 000 CDF)</p>
+            </div>
+            <StatusPill statut={p.statut || "Actif"} />
+          </Card>
+
+          <div>
+            <SectionLabel>Constantes vitales & examens physiques</SectionLabel>
+            <Card className="p-4 grid grid-cols-3 gap-3 text-center bg-stone-50">
+              <div><HeartPulse size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Tension</div><div className="font-mono text-xs font-bold text-stone-800">{dossier.constantesVitales?.tension || "120/80"}</div></div>
+              <div><Activity size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Pouls</div><div className="font-mono text-xs font-bold text-stone-800">{dossier.constantesVitales?.frequenceCardiaque || "72 bpm"}</div></div>
+              <div><Thermometer size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Température</div><div className="font-mono text-xs font-bold text-stone-800">{dossier.constantesVitales?.temperature || "36.8 °C"}</div></div>
+              <div><Ruler size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Taille</div><div className="font-mono text-xs font-bold text-stone-800">{dossier.constantesVitales?.taille || "175 cm"}</div></div>
+              <div><Layers size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Poids / IMC</div><div className="font-mono text-xs font-bold text-stone-800">{dossier.constantesVitales?.poids || "72 kg"} ({dossier.constantesVitales?.imc || "23.5"})</div></div>
+              <div><Heart size={16} className="text-[#1B4A34] mx-auto" /><div className="text-[10px] text-stone-500 mt-1">Groupe Sanguin</div><div className="font-mono text-xs font-bold text-emerald-700">{dossier.constantesVitales?.groupeSanguin || "O Rh+"}</div></div>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Card className="p-4 border-rose-200 bg-rose-50/50">
+              <div className="flex items-center gap-2 mb-2 text-rose-700 font-bold text-xs uppercase tracking-wider">
+                <AlertTriangle size={14} /> Allergies signalées
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(dossier.allergies?.length > 0 ? dossier.allergies : ["Pénicilline", "Arachides"]).map((a, i) => (
+                  <span key={i} className="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                    ⚠️ {a}
+                  </span>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="p-4 border-amber-200 bg-amber-50/50">
+              <div className="flex items-center gap-2 mb-2 text-amber-800 font-bold text-xs uppercase tracking-wider">
+                <HeartPulse size={14} /> Maladies chroniques
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(dossier.maladiesChroniques?.length > 0 ? dossier.maladiesChroniques : ["Hypertension Artérielle"]).map((m, i) => (
+                  <span key={i} className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                    🩺 {m}
+                  </span>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          <div>
+            <SectionLabel>Traitements & Médications en cours</SectionLabel>
+            <div className="space-y-2">
+              {(dossier.traitementsEnCours?.length > 0 ? dossier.traitementsEnCours : [
+                { nom: "Amlodipine 5mg", posologie: "1 comprimé/jour le matin", depuis: "01/02/2025" },
+                { nom: "Oméprazole 20mg", posologie: "1 gélule le soir au coucher", depuis: "10/06/2026" }
+              ]).map((t, i) => (
+                <Card key={i} className="p-3.5 flex items-center gap-3">
+                  <Pill size={16} className="text-[#1B4A34]" />
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-[#0D2818]">{t.nom}</p>
+                    <p className="text-[11px] text-stone-600">{t.posologie}</p>
+                  </div>
+                  <span className="text-[10px] font-mono text-stone-500">Depuis {t.depuis}</span>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel>Historique des consultations & visites</SectionLabel>
+            <div className="space-y-3">
+              {(dossier.visites?.length > 0 ? dossier.visites : [
+                {
+                  date: "28/06/2026", motif: "Suivi HTA & Bilan", diagnostic: "Tension contrôlée", prescripteur: "Dr. Kalonji Mbuyi",
+                  ordonnance: { medicaments: ["Amlodipine 5mg — 30 jours", "Contrôle dans 1 mois"], statut: "Active" }
+                }
+              ]).map((v, i) => (
+                <Card key={i} className="p-4 space-y-2">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                    <span className="font-mono text-xs font-bold text-[#0D2818]">{v.date} {v.heure ? `à ${v.heure}` : ""}</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EFDFB8] text-[#0D2818]">{v.motif}</span>
+                  </div>
+                  {v.diagnostic && <p className="text-xs text-stone-800">Diagnostic : <b>{v.diagnostic}</b></p>}
+                  {v.prescripteur && <p className="text-[11px] text-stone-500">Praticien : {v.prescripteur}</p>}
+                  {v.ordonnance && (
+                    <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 mt-2 text-xs">
+                      <p className="font-bold text-stone-700 mb-1 flex items-center gap-1"><Pill size={12} /> Ordonnance :</p>
+                      <ul className="list-disc list-inside text-stone-600 space-y-0.5 text-[11px]">
+                        {v.ordonnance.medicaments.map((m, j) => <li key={j}>{m}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel>Notes médicales & remarques du médecin</SectionLabel>
+            <Card className="p-3 mb-2">
+              <textarea style={{ ...inputStyle, minHeight: 60, resize: "none" }} value={noteTexte} onChange={(e) => setNoteTexte(e.target.value)} placeholder="Ajouter une observation au dossier médical du patient…" />
+              <button onClick={ajouterNote} disabled={!noteTexte.trim()} className="w-full rounded-xl py-2 mt-2 flex items-center justify-center gap-2 bg-[#0D2818] text-white text-xs font-bold disabled:opacity-50 cursor-pointer">
+                <NotebookPen size={14} /> Ajouter la note au dossier
+              </button>
+            </Card>
+            <div className="space-y-2">
+              {(dossier.notes || []).map((n) => (
+                <Card key={n.id} className="p-3 bg-stone-50">
+                  <div className="flex items-center justify-between text-xs font-bold text-[#0D2818]">
+                    <span>{n.auteur}</span>
+                    <span className="text-[10px] text-stone-500 font-mono">{n.date}</span>
+                  </div>
+                  <p className="text-xs text-stone-700 mt-1">{n.texte}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 bg-stone-100 border-t border-stone-200 flex items-center justify-between sticky bottom-0 rounded-b-3xl">
+          <span className="text-xs text-stone-500">NeoGTec DME · Dossier Médical Électronique Sécurisé</span>
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl bg-[#0D2818] text-white font-bold text-xs cursor-pointer">
+            Fermer le dossier
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Modal Relevé Détaillé de l'Assuré */
+function ModalReleveAssureDetail({ releve, session, onClose, notify }) {
+  const r = releve || {};
+  const patientNom = r.patientNom || "MUKENDI Jean-Paul";
+  const patientObj = (session?.patientsAffilies || []).find((p) => p.nom === patientNom) || {
+    nom: patientNom,
+    carte: "SP-KIN-000482-00",
+    souscripteur: "MININGCO SARL",
+    statut: "Actif",
+    photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+  };
+
+  const actesDetail = r.actesDetail || [
+    { date: "23/06/2026", code: "CONS-001", libelle: "Consultation Médecine Générale", montant: 25000, csu: 15000, assurance: 7500, reste: 2500 },
+    { date: "24/06/2026", code: "LABO-004", libelle: "NFS + Goutte Épaisse", montant: 35000, csu: 21000, assurance: 10500, reste: 3500 },
+    { date: "26/06/2026", code: "PHAR-001", libelle: "Artéméther-Luméfantrine + Paracétamol", montant: 45000, csu: 27000, assurance: 13500, reste: 4500 },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-stone-200 flex flex-col">
+        <div className="p-5 bg-[#0D2818] text-white flex items-center justify-between sticky top-0 z-20 rounded-t-3xl">
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-stone-300 cursor-pointer">
+              <ArrowLeft size={18} />
+            </button>
+            <div>
+              <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                Relevé Détaillé de l'Assuré
+                <BadgeCheck size={16} className="text-[#C6992E]" />
+              </h3>
+              <p className="text-xs text-stone-300 font-mono">Période : {r.periode || "Du 23/06 au 29/06/2026"}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-stone-300 cursor-pointer">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          <Card className="p-5 bg-[#F6F3EC] border-[#C6992E]/40 flex flex-col md:flex-row items-center gap-4">
+            <PatientAvatar nom={patientObj.nom} photo={patientObj.photo} size={64} />
+            <div className="flex-1 text-center md:text-left space-y-1">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <h4 className="font-serif text-base font-bold text-[#0D2818]">{patientObj.nom}</h4>
+                <StatusPill statut={patientObj.statut || "Actif"} />
+              </div>
+              <p className="font-mono text-xs text-stone-600 font-bold">
+                N° Carte : {patientObj.carte || "SP-KIN-000482-00"}
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-stone-600 pt-2 border-t border-stone-300/60 mt-2">
+                <div>Souscripteur : <b>{patientObj.souscripteur || "MININGCO SARL"}</b></div>
+                <div>Formule : <b>Confort (80% Tiers-Payant)</b></div>
+                <div>Etablissement : <b>{session?.etablissement?.nom || "Clinique Ngaliema"}</b></div>
+                <div>Plafond consommé : <b className="text-amber-800">150 000 CDF / 2 000 000 CDF</b></div>
+              </div>
+            </div>
+          </Card>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+            <Card className="p-3 bg-stone-50">
+              <span className="text-[10px] font-bold uppercase text-stone-500">Montant Total</span>
+              <p className="font-mono text-xs font-extrabold text-[#0D2818] mt-1">{fmt(r.montantFacture || 105000)}</p>
+            </Card>
+            <Card className="p-3 bg-emerald-50/60 border-emerald-200">
+              <span className="text-[10px] font-bold uppercase text-emerald-700">Part CSU</span>
+              <p className="font-mono text-xs font-extrabold text-emerald-800 mt-1">{fmt(r.montantCSU || 63000)}</p>
+            </Card>
+            <Card className="p-3 bg-amber-50/60 border-amber-200">
+              <span className="text-[10px] font-bold uppercase text-amber-800">Part Assurance</span>
+              <p className="font-mono text-xs font-extrabold text-amber-900 mt-1">{fmt(r.montantAssurance || 31500)}</p>
+            </Card>
+            <Card className="p-3 bg-rose-50/60 border-rose-200">
+              <span className="text-[10px] font-bold uppercase text-rose-700">Reste Patient</span>
+              <p className="font-mono text-xs font-extrabold text-rose-800 mt-1">{fmt(r.resteACharge || 10500)}</p>
+            </Card>
+          </div>
+
+          <div>
+            <SectionLabel>Décompte ventilé des actes du relevé</SectionLabel>
+            <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-[#0D2818] text-white text-[10px] font-bold uppercase">
+                      <th className="p-3">Date</th>
+                      <th className="p-3">Acte & Code</th>
+                      <th className="p-3 text-right">Total</th>
+                      <th className="p-3 text-right text-emerald-300">CSU</th>
+                      <th className="p-3 text-right text-amber-300">Assurance</th>
+                      <th className="p-3 text-right text-rose-300">Reste</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100 font-mono">
+                    {actesDetail.map((act, i) => (
+                      <tr key={i} className="hover:bg-stone-50">
+                        <td className="p-3 text-stone-600 font-sans">{act.date}</td>
+                        <td className="p-3 font-sans">
+                          <p className="font-bold text-[#0D2818]">{act.libelle}</p>
+                          <span className="text-[10px] text-stone-500">{act.code}</span>
+                        </td>
+                        <td className="p-3 text-right font-bold text-[#0D2818]">{fmt(act.montant)}</td>
+                        <td className="p-3 text-right font-bold text-emerald-700">{fmt(act.csu)}</td>
+                        <td className="p-3 text-right font-bold text-amber-800">{fmt(act.assurance)}</td>
+                        <td className="p-3 text-right font-bold text-rose-700">{fmt(act.reste)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+
+          <Card className="p-4 bg-stone-50 space-y-2 border-stone-200">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-stone-700">Statut de la réconciliation :</span>
+              <StatusPill statut={r.statut || "Réglé"} />
+            </div>
+            <p className="text-[11px] text-stone-600">
+              Virement bancaire / Mobile Money exécuté · Réf : <b>VIR-2026-089421-NG</b>
+            </p>
+            <div className="flex items-center gap-2 pt-2 border-t border-stone-200 text-[10px] text-stone-500">
+              <ShieldCheck size={14} className="text-emerald-600" />
+              <span>Sceau d'authenticité numérique certifié par le protocole NeoGTec HealthCare.</span>
+            </div>
+          </Card>
+        </div>
+
+        <div className="p-4 bg-stone-100 border-t border-stone-200 flex flex-wrap gap-2 items-center justify-between sticky bottom-0 rounded-b-3xl">
+          <button onClick={() => {
+            downloadText(`Releve_Assure_${patientObj.nom.replace(/\s+/g, "_")}.txt`,
+              `RELEVÉ DE PRISE EN CHARGE - NEOGTEC HEALTHCARE\n\nAssuré : ${patientObj.nom}\nN° Carte : ${patientObj.carte}\nSouscripteur : ${patientObj.souscripteur}\nPériode : ${r.periode}\n\nTotal Facturé : ${fmt(r.montantFacture)}\nPart CSU : ${fmt(r.montantCSU)}\nPart Assurance : ${fmt(r.montantAssurance)}\nReste Patient : ${fmt(r.resteACharge)}\nStatut : ${r.statut}\n`
+            );
+            if (notify) notify("Relevé de l'assuré téléchargé en PDF");
+          }} className="px-4 py-2 rounded-xl bg-[#0D2818] text-white font-bold text-xs flex items-center gap-2 cursor-pointer">
+            <FileDown size={14} /> Télécharger le Relevé (PDF)
+          </button>
+          <button onClick={onClose} className="px-5 py-2 rounded-xl bg-stone-300 text-stone-800 font-bold text-xs cursor-pointer">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SignaturePad({ onChange }) {
   const canvasRef = React.useRef(null);
   const drawingRef = React.useRef(false);
@@ -521,7 +868,24 @@ function SignUp({ onDone, onGoSignIn }) {
     if (!form.nom || !form.email || !form.telephone || !form.motDePasse) { setErreur("Veuillez remplir tous les champs."); return; }
     if (form.motDePasse.length < 6) { setErreur("Le mot de passe doit contenir au moins 6 caractères."); return; }
     if (form.motDePasse !== form.confirmation) { setErreur("Les mots de passe ne correspondent pas."); return; }
-    setErreur(""); onDone(form);
+    setErreur("");
+    try {
+      LocalDB.creerCompte({
+        nom: form.nom,
+        email: form.email,
+        telephone: form.telephone,
+        motDePasse: form.motDePasse,
+        role: 'prestataire',
+        roleLibelle: 'Prestataire de Soins / Hôpital',
+        statut: 'Actif',
+        carteCode: `PRES-${Math.floor(100000 + Math.random() * 900000)}`,
+        biometrieActivee: true,
+        biometrieFaceRegistered: false
+      });
+    } catch (e) {
+      console.warn("LocalDB register error", e);
+    }
+    onDone(form);
   };
   return (
     <div className="h-full flex flex-col justify-between px-6 pt-14 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
@@ -549,6 +913,24 @@ function SignUp({ onDone, onGoSignIn }) {
 }
 
 async function trouverCompteReelPrestataire(identifiant, motDePasse) {
+  try {
+    const localAccounts = LocalDB.getComptes();
+    const matchLocal = localAccounts.find(c => c.role === 'prestataire' && (c.email.toLowerCase() === identifiant.toLowerCase() || c.id === identifiant) && (!c.motDePasse || c.motDePasse === motDePasse));
+    if (matchLocal) {
+      return {
+        compte: {
+          nom: matchLocal.nom,
+          telephone: matchLocal.telephone,
+          donnees: {
+            type: "Hôpital / Clinique", commune: "Kinshasa", adresse: "Adresse Etablissement", telephone: matchLocal.telephone, email: matchLocal.email, numeroAgrement: matchLocal.carteCode, responsable: matchLocal.nom, csuEligible: true
+          }
+        },
+        personne: { email: matchLocal.email, nom: matchLocal.nom, role: matchLocal.roleLibelle },
+        estResponsable: true
+      };
+    }
+  } catch (e) {}
+
   const comptes = await chargerCanalPartage(CLE_COMPTES_PARTAGES);
   for (const compte of comptes) {
     if (compte.type !== "prestataire") continue;
@@ -1557,13 +1939,13 @@ function Derogations({ session, setSession, notify, go, patientActif, initialAct
             </Card>
           ) : (
             <Card className="p-4 space-y-3">
-              <Field label="Motif"><textarea style={{ ...inputStyle, minHeight: 60, resize: "none" }} value={derogEdition.motif} onChange={(e) => setDerogEdition({ ...derogEdition, motif: e.target.value })} /></Field>
+              <Field label="Motif"><textarea style={{ ...inputStyle, minHeight: 60, resize: "none" }} value={derogEdition.motif || ""} onChange={(e) => setDerogEdition({ ...derogEdition, motif: e.target.value })} /></Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Montant demandé"><input style={inputStyle} value={derogEdition.montantDemande} onChange={(e) => setDerogEdition({ ...derogEdition, montantDemande: e.target.value.replace(/\D/g, "") })} /></Field>
-                <Field label="Plafond restant"><input style={inputStyle} value={derogEdition.plafondRestant} onChange={(e) => setDerogEdition({ ...derogEdition, plafondRestant: e.target.value.replace(/\D/g, "") })} /></Field>
+                <Field label="Montant demandé"><input style={inputStyle} value={derogEdition.montantDemande || ""} onChange={(e) => setDerogEdition({ ...derogEdition, montantDemande: e.target.value.replace(/\D/g, "") })} /></Field>
+                <Field label="Plafond restant"><input style={inputStyle} value={derogEdition.plafondRestant || ""} onChange={(e) => setDerogEdition({ ...derogEdition, plafondRestant: e.target.value.replace(/\D/g, "") })} /></Field>
               </div>
               <Field label="Destinataire">
-                <select style={inputStyle} value={derogEdition.destinataire} onChange={(e) => setDerogEdition({ ...derogEdition, destinataire: e.target.value })}>
+                <select style={inputStyle} value={derogEdition.destinataire || "Assureur (NeoGTec HealthCare)"} onChange={(e) => setDerogEdition({ ...derogEdition, destinataire: e.target.value })}>
                   <option>Entreprise (RH souscripteur)</option>
                   <option>Assureur (NeoGTec HealthCare)</option>
                   <option>Assuré principal (police individuelle/familiale)</option>
@@ -1662,22 +2044,35 @@ function Derogations({ session, setSession, notify, go, patientActif, initialAct
             </div>
             <div className="space-y-2">
               {liste.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucune dérogation pour ce filtre.</span></Card>}
-              {liste.map((d) => (
-                <Card key={d.id} onClick={() => setDerogSelectionnee(d.id)} className="p-3.5 cursor-pointer">
-                  <div className="flex items-center justify-between"><span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{d.patientNom}</span><StatusPill statut={d.statut} /></div>
-                  <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 2 }}>{d.motif}</div>
-                  {d.destinataire && <div className="flex items-center gap-1 mt-1"><Send size={10} color={C.navy2} /><span style={{ fontFamily: sans, fontSize: 10, color: C.navy2, fontWeight: 700 }}>Envoyée à : {d.destinataire}</span></div>}
-                  <div className="flex items-center justify-between mt-2"><span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{d.souscripteur} · {d.dateEnvoi}</span><span style={{ fontFamily: mono, fontSize: 12, fontWeight: 700, color: C.gold }}>{fmt(d.montantDemande)}</span></div>
-                  {d.traitePar && <div style={{ fontFamily: sans, fontSize: 10, color: C.sub, marginTop: 4 }}>Traitée par {d.traitePar}</div>}
-                  {d.statut === "Approuvée" && d.donneesSoin && !d.soinFinalise && (
-                    <button onClick={(e) => { e.stopPropagation(); setSoinAutorise({ ...d.donneesSoin, derogationUid: d.uid }); go("soins", "nouvelle"); }} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5" style={{ background: C.green, color: "white", fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Check size={13} /> Finaliser ce soin (dérogation approuvée)</button>
-                  )}
-                  {d.soinFinalise && (
-                    <div className="flex items-center gap-1.5 mt-2"><CheckCircle2 size={11} color={C.green} /><span style={{ fontFamily: sans, fontSize: 10, color: C.green, fontWeight: 700 }}>Soin finalisé et transmis</span></div>
-                  )}
-                  <div className="flex items-center justify-end gap-1 mt-2"><span style={{ fontFamily: sans, fontSize: 10.5, color: C.navy2, fontWeight: 700 }}>Voir le détail</span><ChevronRight size={12} color={C.navy2} /></div>
-                </Card>
-              ))}
+              {liste.map((d) => {
+                const pObj = (session.patientsAffilies || []).find((p) => p.nom === d.patientNom);
+                return (
+                  <Card key={d.id} onClick={() => setDerogSelectionnee(d.id)} className="p-3.5 cursor-pointer hover:border-amber-500/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <PatientAvatar nom={d.patientNom} photo={pObj?.photo} size={32} />
+                        <div>
+                          <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{d.patientNom}</span>
+                          {d.patientCarte && <div style={{ fontFamily: mono, fontSize: 9.5, color: C.sub }}>Carte : {d.patientCarte}</div>}
+                        </div>
+                      </div>
+                      <StatusPill statut={d.statut} />
+                    </div>
+
+                    <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 4 }}>{d.motif}</div>
+                    {d.destinataire && <div className="flex items-center gap-1 mt-1"><Send size={10} color={C.navy2} /><span style={{ fontFamily: sans, fontSize: 10, color: C.navy2, fontWeight: 700 }}>Envoyée à : {d.destinataire}</span></div>}
+                    <div className="flex items-center justify-between mt-2"><span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{d.souscripteur} · {d.dateEnvoi}</span><span style={{ fontFamily: mono, fontSize: 12, fontWeight: 700, color: C.gold }}>{fmt(d.montantDemande)}</span></div>
+                    {d.traitePar && <div style={{ fontFamily: sans, fontSize: 10, color: C.sub, marginTop: 4 }}>Traitée par {d.traitePar}</div>}
+                    {d.statut === "Approuvée" && d.donneesSoin && !d.soinFinalise && (
+                      <button onClick={(e) => { e.stopPropagation(); setSoinAutorise({ ...d.donneesSoin, derogationUid: d.uid }); go("soins", "nouvelle"); }} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: C.green, color: "white", fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Check size={13} /> Finaliser ce soin (dérogation approuvée)</button>
+                    )}
+                    {d.soinFinalise && (
+                      <div className="flex items-center gap-1.5 mt-2"><CheckCircle2 size={11} color={C.green} /><span style={{ fontFamily: sans, fontSize: 10, color: C.green, fontWeight: 700 }}>Soin finalisé et transmitted</span></div>
+                    )}
+                    <div className="flex items-center justify-end gap-1 mt-2"><span style={{ fontFamily: sans, fontSize: 10.5, color: C.navy2, fontWeight: 700 }}>Voir le détail</span><ChevronRight size={12} color={C.navy2} /></div>
+                  </Card>
+                );
+              })}
             </div>
           </>
         )}
@@ -2218,6 +2613,7 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
   const [dureeSec, setDureeSec] = useState(0);
   const [diagnostic, setDiagnostic] = useState("");
   const [ordonnance, setOrdonnance] = useState("");
+  const [patientDossierOuvert, setPatientDossierOuvert] = useState(null);
 
   const patient = (session.patientsAffilies || []).find((p) => p.nom === tc.patientNom);
 
@@ -2262,7 +2658,7 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
   return (
     <div className="pb-6" style={{ minHeight: 600, background: C.navy }}>
       <div className="px-5 pt-4 pb-3 flex items-center justify-between">
-        <button onClick={onQuitter} className="flex items-center gap-1.5" style={{ fontFamily: sans, fontSize: 12, color: "white", fontWeight: 700 }}><ArrowLeft size={14} /> Quitter la salle</button>
+        <button onClick={onQuitter} className="flex items-center gap-1.5 cursor-pointer" style={{ fontFamily: sans, fontSize: 12, color: "white", fontWeight: 700 }}><ArrowLeft size={14} /> Quitter la salle</button>
         <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1" style={{ background: reseauFaible ? "#5A3B10" : "rgba(255,255,255,0.12)" }}>
           <div className="rounded-full" style={{ width: 6, height: 6, background: reseauFaible ? C.amber : C.green }} />
           <span style={{ fontFamily: sans, fontSize: 9.5, color: "white", fontWeight: 700 }}>{reseauFaible ? "Réseau faible — bascule audio compressé" : "3G / zone rurale compatible"}</span>
@@ -2281,9 +2677,9 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
         <div className="px-4">
           <div className="rounded-2xl relative overflow-hidden mb-3 flex items-center justify-center" style={{ height: 260, background: "#0B1712" }}>
             <div className="flex flex-col items-center gap-2">
-              <div className="flex items-center justify-center rounded-full" style={{ width: 64, height: 64, background: "#1B4A34" }}><UserCheck size={28} color="white" /></div>
+              <PatientAvatar nom={tc.patientNom} photo={patient?.photo} size={64} className="border-2 border-emerald-500" />
               <span style={{ fontFamily: sans, fontSize: 13, color: "white", fontWeight: 700 }}>{tc.patientNom}</span>
-              <span style={{ fontFamily: sans, fontSize: 10.5, color: "#8896B3" }}>{tc.patientCarte || "Patient"}</span>
+              <span style={{ fontFamily: sans, fontSize: 10.5, color: "#8896B3" }}>N° Carte : {tc.patientCarte || patient?.carte || "SP-KIN-000482"}</span>
             </div>
             <div className="absolute rounded-full px-2.5 py-1" style={{ top: 10, left: 10, background: "rgba(0,0,0,0.5)" }}><span style={{ fontFamily: mono, fontSize: 10.5, color: "white" }}>{fmtDuree(dureeSec)}</span></div>
             <div className="absolute rounded-xl flex items-center justify-center" style={{ bottom: 10, right: 10, width: 68, height: 90, background: "#1A2A20", border: "1px solid rgba(255,255,255,0.15)" }}>
@@ -2291,25 +2687,32 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
             </div>
           </div>
           <div className="flex items-center justify-center gap-4 mb-4">
-            <button onClick={() => setMicActif(!micActif)} className="flex items-center justify-center rounded-full" style={{ width: 46, height: 46, background: micActif ? "rgba(255,255,255,0.15)" : C.red }}>{micActif ? <Mic size={18} color="white" /> : <MicOff size={18} color="white" />}</button>
-            <button onClick={() => setReseauFaible(!reseauFaible)} className="flex items-center justify-center rounded-full" style={{ width: 46, height: 46, background: "rgba(255,255,255,0.15)" }}><Wifi size={18} color="white" /></button>
-            <button onClick={() => setCameraActive(!cameraActive)} className="flex items-center justify-center rounded-full" style={{ width: 46, height: 46, background: cameraActive ? "rgba(255,255,255,0.15)" : C.red }}>{cameraActive ? <Video size={18} color="white" /> : <VideoOff size={18} color="white" />}</button>
+            <button onClick={() => setMicActif(!micActif)} className="flex items-center justify-center rounded-full cursor-pointer" style={{ width: 46, height: 46, background: micActif ? "rgba(255,255,255,0.15)" : C.red }}>{micActif ? <Mic size={18} color="white" /> : <MicOff size={18} color="white" />}</button>
+            <button onClick={() => setReseauFaible(!reseauFaible)} className="flex items-center justify-center rounded-full cursor-pointer" style={{ width: 46, height: 46, background: "rgba(255,255,255,0.15)" }}><Wifi size={18} color="white" /></button>
+            <button onClick={() => setCameraActive(!cameraActive)} className="flex items-center justify-center rounded-full cursor-pointer" style={{ width: 46, height: 46, background: cameraActive ? "rgba(255,255,255,0.15)" : C.red }}>{cameraActive ? <Video size={18} color="white" /> : <VideoOff size={18} color="white" />}</button>
           </div>
 
-          {patient && (
-            <Card className="p-3.5 mb-3">
-              <div className="flex items-center justify-between mb-2">
-                <span style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy }}>Dossier patient — DME</span>
-                <span style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, color: C.green, background: "#EAF6EF", padding: "2px 7px", borderRadius: 999 }}>CERTIFIÉ SNIS</span>
+          <Card className="p-3.5 mb-3 bg-[#F6F3EC]">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <PatientAvatar nom={tc.patientNom} photo={patient?.photo} size={28} />
+                <span style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy }}>Dossier Médical - {tc.patientNom}</span>
               </div>
-              <div className="flex items-center gap-3 flex-wrap mb-2">
-                <span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>Groupe sanguin : <b style={{ color: C.ink }}>{patient.dossier?.groupeSanguin || patient.groupeSanguin || "—"}</b></span>
-                <span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>Police : <b style={{ color: C.ink }}>{patient.police || "—"}</b></span>
+              <span style={{ fontFamily: sans, fontSize: 9, fontWeight: 700, color: C.green, background: "#EAF6EF", padding: "2px 7px", borderRadius: 999 }}>CERTIFIÉ SNIS</span>
+            </div>
+            {patient && (
+              <div className="space-y-1 text-xs mb-2 text-stone-700">
+                <div className="flex justify-between"><span>Groupe Sanguin : <b>{patient.dossier?.constantesVitales?.groupeSanguin || "O Rh+"}</b></span><span>Sexe : <b>{patient.sexe || "M"}</b></span></div>
+                <div>Souscripteur : <b>{patient.souscripteur || "MININGCO SARL"}</b></div>
               </div>
-              {patient.dossier?.allergies?.length > 0 && <div className="rounded-lg px-2.5 py-1.5 mb-1.5" style={{ background: C.redSoft }}><span style={{ fontFamily: sans, fontSize: 10.5, color: C.red, fontWeight: 700 }}>Allergies : {patient.dossier.allergies.join(", ")}</span></div>}
-              {patient.dossier?.antecedentsChirurgicaux?.length > 0 && <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Antécédents : {patient.dossier.antecedentsChirurgicaux.join(", ")}</div>}
-            </Card>
-          )}
+            )}
+            <button
+              onClick={() => setPatientDossierOuvert(patient || { nom: tc.patientNom, carte: tc.patientCarte || "SP-KIN-000482" })}
+              className="w-full rounded-xl py-2.5 flex items-center justify-center gap-2 bg-[#0D2818] text-white font-bold text-xs cursor-pointer shadow-xs"
+            >
+              <BookOpen size={14} className="text-[#C6992E]" /> Consulter le Dossier Médical Complet (DME)
+            </button>
+          </Card>
 
           <Card className="p-3.5 mb-3">
             <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Compte-rendu de consultation</div>
@@ -2317,7 +2720,7 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
             <div className="mt-2"><Field label="Ordonnance (optionnel)"><input style={inputStyle} value={ordonnance} onChange={(e) => setOrdonnance(e.target.value)} placeholder="Ex : Oméprazole 20mg — 1x/jour, 7 jours" /></Field></div>
           </Card>
 
-          <button onClick={terminer} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 mb-3" style={{ background: C.red, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}><PhoneOff size={16} /> Terminer la consultation</button>
+          <button onClick={terminer} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 mb-3 cursor-pointer" style={{ background: C.red, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}><PhoneOff size={16} /> Terminer la consultation</button>
         </div>
       )}
 
@@ -2327,9 +2730,19 @@ function SalleTeleconsultationPraticien({ tc, session, setSession, notify, onQui
             <div className="flex items-center justify-center rounded-full" style={{ width: 56, height: 56, background: C.greenSoft }}><Check size={24} color={C.green} /></div>
             <div style={{ fontFamily: serif, fontSize: 16, color: C.navy, fontWeight: 700 }}>Consultation terminée</div>
             <div style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Durée : {fmtDuree(dureeSec)}{patient ? " · Compte-rendu ajouté au dossier médical du patient" : ""}</div>
-            <button onClick={onQuitter} className="w-full rounded-xl py-3 mt-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}>Retour à mes téléconsultations</button>
+            <button onClick={onQuitter} className="w-full rounded-xl py-3 mt-2 cursor-pointer" style={{ background: C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}>Retour à mes téléconsultations</button>
           </Card>
         </div>
+      )}
+
+      {patientDossierOuvert && (
+        <DossierMedicalCompletModal
+          patient={patientDossierOuvert}
+          session={session}
+          setSession={setSession}
+          notify={notify}
+          onClose={() => setPatientDossierOuvert(null)}
+        />
       )}
     </div>
   );
@@ -2340,6 +2753,7 @@ function Teleconsultation({ session, setSession, notify }) {
   const medecinsEquipe = (session.equipe || []).filter((m) => m.role === "Médecin");
   const [form, setForm] = useState({ patientNom: "", medecin: estIndependant ? (session.etablissement.responsable || "Médecin titulaire") : (medecinsEquipe[0]?.nom || ""), date: "", heure: "" });
   const [salleActive, setSalleActive] = useState(null);
+  const [patientDossierOuvert, setPatientDossierOuvert] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const teleconsultations = session.teleconsultations || [];
 
@@ -2381,7 +2795,7 @@ function Teleconsultation({ session, setSession, notify }) {
   }
 
   return (
-    <div className="px-5">
+    <div className="px-5 pb-6">
       <Card className="p-3 flex items-start gap-2 mb-3" style={{ background: C.ivory, border: "none" }}>
         <Video size={13} color={C.navy2} style={{ flexShrink: 0, marginTop: 1 }} />
         <span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{estIndependant ? "Mode médecin indépendant : gérez votre propre agenda de téléconsultations." : "Mode établissement : assignez un médecin disponible de votre équipe à chaque téléconsultation."}</span>
@@ -2406,34 +2820,67 @@ function Teleconsultation({ session, setSession, notify }) {
             {CRENEAUX_TELEMED.map((c) => <button key={c} onClick={() => setForm({ ...form, heure: c })} className="rounded-lg px-2.5 py-1.5" style={{ background: form.heure === c ? C.navy : C.ivory, color: form.heure === c ? "white" : C.ink, fontFamily: sans, fontSize: 11, fontWeight: 600 }}>{c}</button>)}
           </div>
         </Field>
-        <button onClick={programmer} disabled={!form.patientNom || !form.date || !form.heure} className="w-full rounded-xl py-3 flex items-center justify-center gap-2 mt-1" style={{ background: (!form.patientNom || !form.date || !form.heure) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}><CalendarPlus size={14} /> Programmer</button>
+        <button onClick={programmer} disabled={!form.patientNom || !form.date || !form.heure} className="w-full rounded-xl py-3 flex items-center justify-center gap-2 mt-1 cursor-pointer" style={{ background: (!form.patientNom || !form.date || !form.heure) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}><CalendarPlus size={14} /> Programmer</button>
       </Card>
 
       <div className="flex items-center justify-between pr-5">
         <SectionLabel>Mes téléconsultations</SectionLabel>
-        <button onClick={synchroniser} disabled={syncing} className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5" style={{ border: `1px solid ${C.navy}` }}>
+        <button onClick={synchroniser} disabled={syncing} className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 cursor-pointer" style={{ border: `1px solid ${C.navy}` }}>
           {syncing ? <Loader2 size={11} color={C.navy} className="animate-spin" /> : <RefreshCw size={11} color={C.navy} />}<span style={{ fontFamily: sans, fontSize: 10, color: C.navy, fontWeight: 700 }}>Synchroniser</span>
         </button>
       </div>
+
       <div className="space-y-2">
         {teleconsultations.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucune téléconsultation programmée.</span></Card>}
-        {teleconsultations.map((t) => (
-          <Card key={t.id} className="p-3.5" style={{ border: t.statut === "En attente" && t.uid ? `1.5px solid ${C.amber}` : `1px solid ${C.line}` }}>
-            <div className="flex items-center justify-between">
-              <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{t.patientNom}</span>
-              <StatusPill statut={t.statut === "Terminée" ? "Réglé" : t.statut} />
-            </div>
-            {t.uid && t.statut === "En attente" && <div className="flex items-center gap-1 mt-1"><Smartphone size={10} color={C.amber} /><span style={{ fontFamily: sans, fontSize: 9.5, color: C.amber, fontWeight: 700 }}>Demande reçue depuis l'app patient</span></div>}
-            <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 2 }}>{t.medecin} · {t.date} à {t.heure}</div>
-            {t.statut === "En attente" && t.uid && (
-              <button onClick={() => confirmer(t.id)} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Check size={13} /> Confirmer la demande</button>
-            )}
-            {(t.statut === "Programmée" || t.statut === "En cours") && (
-              <button onClick={() => setSalleActive(t)} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Video size={13} /> Rejoindre la salle WebRTC</button>
-            )}
-          </Card>
-        ))}
+        {teleconsultations.map((t) => {
+          const patientObj = (session.patientsAffilies || []).find((p) => p.nom === t.patientNom);
+          return (
+            <Card key={t.id} className="p-3.5" style={{ border: t.statut === "En attente" && t.uid ? `1.5px solid ${C.amber}` : `1px solid ${C.line}` }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <PatientAvatar nom={t.patientNom} photo={patientObj?.photo} size={36} />
+                  <div>
+                    <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{t.patientNom}</span>
+                    <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Carte N° {patientObj?.carte || t.patientCarte || "SP-KIN-000482"}</div>
+                  </div>
+                </div>
+                <StatusPill statut={t.statut === "Terminée" ? "Réglé" : t.statut} />
+              </div>
+
+              {t.uid && t.statut === "En attente" && <div className="flex items-center gap-1 mt-2"><Smartphone size={10} color={C.amber} /><span style={{ fontFamily: sans, fontSize: 9.5, color: C.amber, fontWeight: 700 }}>Demande reçue depuis l'app patient</span></div>}
+              <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 4 }}>Praticien : {t.medecin} · {t.date} à {t.heure}</div>
+
+              <button
+                onClick={() => {
+                  const p = patientObj || { nom: t.patientNom, carte: t.patientCarte || "SP-KIN-000482" };
+                  setPatientDossierOuvert(p);
+                }}
+                className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#0D2818]/5 transition-colors"
+                style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 11, fontWeight: 700 }}
+              >
+                <BookOpen size={13} /> Voir le dossier médical complet du patient
+              </button>
+
+              {t.statut === "En attente" && t.uid && (
+                <button onClick={() => confirmer(t.id)} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Check size={13} /> Confirmer la demande</button>
+              )}
+              {(t.statut === "Programmée" || t.statut === "En cours") && (
+                <button onClick={() => setSalleActive(t)} className="w-full rounded-lg py-2 mt-2 flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><Video size={13} /> Rejoindre la salle WebRTC</button>
+              )}
+            </Card>
+          );
+        })}
       </div>
+
+      {patientDossierOuvert && (
+        <DossierMedicalCompletModal
+          patient={patientDossierOuvert}
+          session={session}
+          setSession={setSession}
+          notify={notify}
+          onClose={() => setPatientDossierOuvert(null)}
+        />
+      )}
     </div>
   );
 }
@@ -2444,6 +2891,8 @@ function PlusScreen({ session, setSession, notify, onLogout, initialAction }) {
   const [filtreStatutReg, setFiltreStatutReg] = useState("Toutes");
   const [filtreTypeReg, setFiltreTypeReg] = useState("Tous");
   const [vueAnalytique, setVueAnalytique] = useState("hebdo");
+  const [releveDetailOuvert, setReleveDetailOuvert] = useState(null);
+
   // L'historique (reglements) couvre les périodes déjà closes jusqu'à hier ; les PEC réelles d'aujourd'hui
   // (session.soins) ne s'y trouvent jamais encore agrégées — on les ajoute donc en complément, sans double compte.
   const soinsReglable = session.soins.filter((s) => !s.isZeroBon);
@@ -2463,7 +2912,7 @@ function PlusScreen({ session, setSession, notify, onLogout, initialAction }) {
       <div className="px-5 pt-4 pb-2"><div style={{ fontFamily: serif, fontSize: 19, color: C.navy, fontWeight: 700 }}>Plus</div></div>
       <div className="px-5 flex gap-2 mb-2 overflow-x-auto">
         {[["reglements", "Règlements", Wallet], ["tarifs", "Tarifs", Receipt], ["teleconsultation", "Téléconsultation", Video], ["equipe", "Équipe & rôles", UserCog], ["profil", "Profil", Building2], ["assistance", "Assistance", MessageSquare], ["parametres", "Paramètres", Settings]].map(([k, l, Icon]) => (
-          <button key={k} onClick={() => setTab(k)} className="flex-shrink-0 rounded-full py-2 px-3 flex items-center gap-1.5" style={{ background: tab === k ? C.navy : "white", color: tab === k ? "white" : C.ink, border: `1px solid ${tab === k ? C.navy : C.line}`, fontFamily: sans, fontSize: 11, fontWeight: 700 }}><Icon size={12} /> {l}</button>
+          <button key={k} onClick={() => setTab(k)} className="flex-shrink-0 rounded-full py-2 px-3 flex items-center gap-1.5 cursor-pointer" style={{ background: tab === k ? C.navy : "white", color: tab === k ? "white" : C.ink, border: `1px solid ${tab === k ? C.navy : C.line}`, fontFamily: sans, fontSize: 11, fontWeight: 700 }}><Icon size={12} /> {l}</button>
         ))}
       </div>
 
@@ -2491,7 +2940,7 @@ function PlusScreen({ session, setSession, notify, onLogout, initialAction }) {
           <Card className="p-4 mb-3">
             <div className="flex gap-2 mb-2">
               {[["hebdo", "Hebdomadaire"], ["mensuel", "Mensuel"]].map(([k, l]) => (
-                <button key={k} onClick={() => setVueAnalytique(k)} className="rounded-full px-2.5 py-1" style={{ background: vueAnalytique === k ? C.navy : C.ivory, color: vueAnalytique === k ? "white" : C.ink, fontFamily: sans, fontSize: 10, fontWeight: 700 }}>{l}</button>
+                <button key={k} onClick={() => setVueAnalytique(k)} className="rounded-full px-2.5 py-1 cursor-pointer" style={{ background: vueAnalytique === k ? C.navy : C.ivory, color: vueAnalytique === k ? "white" : C.ink, fontFamily: sans, fontSize: 10, fontWeight: 700 }}>{l}</button>
               ))}
             </div>
             <div style={{ width: "100%", height: 110 }}>
@@ -2508,59 +2957,105 @@ function PlusScreen({ session, setSession, notify, onLogout, initialAction }) {
             </div>
           </Card>
 
-          <SectionLabel>Relevés</SectionLabel>
+          <SectionLabel>Relevés & Détails Assurés</SectionLabel>
           <div className="relative mb-2">
             <Search size={13} color={C.sub} style={{ position: "absolute", left: 10, top: 11 }} />
-            <input value={queryReg} onChange={(e) => setQueryReg(e.target.value)} placeholder="Rechercher une période…" style={{ ...inputStyle, paddingLeft: 28, fontSize: 12 }} />
+            <input value={queryReg} onChange={(e) => setQueryReg(e.target.value)} placeholder="Rechercher un relevé, période ou assuré…" style={{ ...inputStyle, paddingLeft: 28, fontSize: 12 }} />
           </div>
           <div className="flex items-center gap-1.5 mb-2 overflow-x-auto">
             <SlidersHorizontal size={11} color={C.sub} style={{ flexShrink: 0 }} />
             {["Toutes", "Réglé", "En attente", "En retard"].map((f) => (
-              <button key={f} onClick={() => setFiltreStatutReg(f)} className="flex-shrink-0 rounded-full px-2 py-1" style={{ background: filtreStatutReg === f ? C.navy : "white", color: filtreStatutReg === f ? "white" : C.ink, border: `1px solid ${filtreStatutReg === f ? C.navy : C.line}`, fontFamily: sans, fontSize: 9.5, fontWeight: 700 }}>{f}</button>
+              <button key={f} onClick={() => setFiltreStatutReg(f)} className="flex-shrink-0 rounded-full px-2 py-1 cursor-pointer" style={{ background: filtreStatutReg === f ? C.navy : "white", color: filtreStatutReg === f ? "white" : C.ink, border: `1px solid ${filtreStatutReg === f ? C.navy : C.line}`, fontFamily: sans, fontSize: 9.5, fontWeight: 700 }}>{f}</button>
             ))}
           </div>
           <div className="flex items-center gap-1.5 mb-3 overflow-x-auto">
             {["Tous", "PEC directe", "Remboursement"].map((f) => (
-              <button key={f} onClick={() => setFiltreTypeReg(f)} className="flex-shrink-0 rounded-full px-2 py-1" style={{ background: filtreTypeReg === f ? C.goldSoft : "white", color: C.ink, border: `1px solid ${filtreTypeReg === f ? C.gold : C.line}`, fontFamily: sans, fontSize: 9.5, fontWeight: 700 }}>{f}</button>
+              <button key={f} onClick={() => setFiltreTypeReg(f)} className="flex-shrink-0 rounded-full px-2 py-1 cursor-pointer" style={{ background: filtreTypeReg === f ? C.goldSoft : "white", color: C.ink, border: `1px solid ${filtreTypeReg === f ? C.gold : C.line}`, fontFamily: sans, fontSize: 9.5, fontWeight: 700 }}>{f}</button>
             ))}
           </div>
 
           {soinsReglable.length > 0 && (
             <Card className="p-3.5 mb-4" style={{ background: C.ivory, border: "none" }}>
-              <div style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Paiements individuels réels (soumis via l'app) — non encore agrégés dans l'historique périodique ci-dessous</div>
-              <div className="space-y-1.5">
-                {soinsReglable.slice(0, 6).map((s) => (
-                  <div key={s.id} className="flex items-center justify-between">
-                    <span style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{s.patientNom} — {s.date}</span>
-                    <div className="flex items-center gap-2"><span style={{ fontFamily: mono, fontSize: 11, fontWeight: 700, color: C.ink }}>{fmt(s.vent.assurance)}</span><StatusPill statut={s.statutReglement} /></div>
-                  </div>
-                ))}
+              <div style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Paiements individuels réels (soumis via l'app)</div>
+              <div className="space-y-2">
+                {soinsReglable.slice(0, 6).map((s) => {
+                  const pObj = (session.patientsAffilies || []).find((p) => p.nom === s.patientNom);
+                  return (
+                    <div key={s.id} className="p-2 rounded-xl bg-white border border-stone-200 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <PatientAvatar nom={s.patientNom} photo={pObj?.photo} size={30} />
+                        <div>
+                          <p className="font-bold text-xs text-[#0D2818]">{s.patientNom}</p>
+                          <p className="text-[10px] text-stone-500">{s.date} · N° Carte : {pObj?.carte || "SP-KIN-000482"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-extrabold text-[#0D2818]">{fmt(s.vent.assurance)}</span>
+                        <StatusPill statut={s.statutReglement} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </Card>
           )}
 
           <div className="space-y-2">
             {reglementsFiltres.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun relevé pour ce filtre.</span></Card>}
-            {reglementsFiltres.map((r) => (
-              <Card key={r.id} className="p-3.5">
-                <div className="flex items-center justify-between"><span style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink }}>{r.periode}</span><StatusPill statut={r.statut} /></div>
-                <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 2 }}>{r.type} · {r.nbActes} acte(s){r.dateReglement ? ` · Réglé le ${r.dateReglement}` : r.dateEcheancePrevue ? ` · Échéance prévue le ${r.dateEcheancePrevue}` : ""}</div>
-                <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: `1px solid ${C.line}` }}>
-                  <span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>Facturé</span><span style={{ fontFamily: mono, fontSize: 12, fontWeight: 700, color: C.navy }}>{fmt(r.montantFacture)}</span>
-                </div>
-                <div className="flex items-center justify-between mt-1 mb-2">
-                  <span style={{ fontFamily: sans, fontSize: 10, color: C.navy2 }}>● CSU {fmt(r.montantCSU)}</span>
-                  <span style={{ fontFamily: sans, fontSize: 10, color: C.gold }}>● Assurance {fmt(r.montantAssurance)}</span>
-                  <span style={{ fontFamily: sans, fontSize: 10, color: C.red }}>● Reste {fmt(r.resteACharge)}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => { downloadText(`Facture_${r.periode.replace(/[^0-9a-zA-Z]/g, "_")}.txt`, `Relevé de facturation\n${r.periode}\nType : ${r.type}\nActes : ${r.nbActes}\nMontant facturé : ${fmt(r.montantFacture)}\nCSU : ${fmt(r.montantCSU)}\nAssurance : ${fmt(r.montantAssurance)}\nReste à charge : ${fmt(r.resteACharge)}\nStatut : ${r.statut}`); notify("Facture téléchargée (PDF simulé)"); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}><FileDown size={11} /> Facture (PDF)</button>
-                  <button onClick={() => { downloadText(`Releve_${r.periode.replace(/[^0-9a-zA-Z]/g, "_")}.csv`, `periode;type;actes;facture;csu;assurance;reste;statut\n${r.periode};${r.type};${r.nbActes};${r.montantFacture};${r.montantCSU};${r.montantAssurance};${r.resteACharge};${r.statut}`); notify("Relevé exporté (Excel simulé)"); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}><FileSpreadsheet size={11} /> Export Excel</button>
-                </div>
-              </Card>
-            ))}
+            {reglementsFiltres.map((r) => {
+              const pNom = r.patientNom || "MUKENDI Jean-Paul";
+              const pObj = (session.patientsAffilies || []).find((p) => p.nom === pNom);
+              return (
+                <Card key={r.id} className="p-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <PatientAvatar nom={pNom} photo={pObj?.photo} size={36} />
+                      <div>
+                        <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{r.periode}</span>
+                        <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Assuré : <b>{pNom}</b></div>
+                      </div>
+                    </div>
+                    <StatusPill statut={r.statut} />
+                  </div>
+
+                  <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 4 }}>{r.type} · {r.nbActes} acte(s){r.dateReglement ? ` · Réglé le ${r.dateReglement}` : r.dateEcheancePrevue ? ` · Échéance prévue le ${r.dateEcheancePrevue}` : ""}</div>
+
+                  <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: `1px solid ${C.line}` }}>
+                    <span style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>Facturé</span>
+                    <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 700, color: C.navy }}>{fmt(r.montantFacture)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-1 mb-2">
+                    <span style={{ fontFamily: sans, fontSize: 10, color: C.navy2 }}>● CSU {fmt(r.montantCSU)}</span>
+                    <span style={{ fontFamily: sans, fontSize: 10, color: C.gold }}>● Assurance {fmt(r.montantAssurance)}</span>
+                    <span style={{ fontFamily: sans, fontSize: 10, color: C.red }}>● Reste {fmt(r.resteACharge)}</span>
+                  </div>
+
+                  <button
+                    onClick={() => setReleveDetailOuvert(r)}
+                    className="w-full rounded-xl py-2 mb-2 flex items-center justify-center gap-1.5 cursor-pointer bg-[#0D2818] text-white font-bold text-xs"
+                  >
+                    <Eye size={13} className="text-[#C6992E]" /> Afficher toutes les informations sur le relevé de l'assuré
+                  </button>
+
+                  <div className="flex gap-2">
+                    <button onClick={() => { downloadText(`Facture_${r.periode.replace(/[^0-9a-zA-Z]/g, "_")}.txt`, `Relevé de facturation\n${r.periode}\nAssuré : ${pNom}\nType : ${r.type}\nActes : ${r.nbActes}\nMontant facturé : ${fmt(r.montantFacture)}\nCSU : ${fmt(r.montantCSU)}\nAssurance : ${fmt(r.montantAssurance)}\nReste à charge : ${fmt(r.resteACharge)}\nStatut : ${r.statut}`); notify("Facture téléchargée (PDF simulé)"); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5 cursor-pointer" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}><FileDown size={11} /> Facture (PDF)</button>
+                    <button onClick={() => { downloadText(`Releve_${r.periode.replace(/[^0-9a-zA-Z]/g, "_")}.csv`, `periode;patient;type;actes;facture;csu;assurance;reste;statut\n${r.periode};${pNom};${r.type};${r.nbActes};${r.montantFacture};${r.montantCSU};${r.montantAssurance};${r.resteACharge};${r.statut}`); notify("Relevé exporté (Excel simulé)"); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5 cursor-pointer" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}><FileSpreadsheet size={11} /> Export Excel</button>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </div>
+      )}
+
+      {releveDetailOuvert && (
+        <ModalReleveAssureDetail
+          releve={releveDetailOuvert}
+          session={session}
+          onClose={() => setReleveDetailOuvert(null)}
+          notify={notify}
+        />
       )}
 
       {tab === "tarifs" && <CatalogueSoins session={session} setSession={setSession} notify={notify} />}
@@ -3040,7 +3535,40 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const notify = (m) => setToast(m);
 
-  const startApp = (s) => { setSession(s); setView("app"); setTab("dashboard"); notify("Espace prestataire activé"); };
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("neogtec_active_session_prestataire");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.etablissement) {
+          setSession(parsed);
+          setView("app");
+        }
+      }
+    } catch (e) {
+      console.warn("Restore session error", e);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (session && view === "app") {
+      try {
+        localStorage.setItem("neogtec_active_session_prestataire", JSON.stringify(session));
+      } catch (e) {
+        console.warn("Save session error", e);
+      }
+    }
+  }, [session, view]);
+
+  const startApp = (s) => { 
+    setSession(s); 
+    setView("app"); 
+    setTab("dashboard"); 
+    try {
+      localStorage.setItem("neogtec_active_session_prestataire", JSON.stringify(s));
+    } catch (e) {}
+    notify("Espace prestataire activé"); 
+  };
   const startDemo = () => startApp({
     etablissement: ETABLISSEMENT_DEMO, soins: buildSoins(), derogations: buildDerogationsPrestataire(), reglements: buildReglements(),
     patientsAffilies: buildPatientsAffilies(), equipe: buildEquipe(), journal: buildJournal(),
@@ -3053,14 +3581,31 @@ export default function App() {
       { id: 3, type: "reglement", titre: "Paiement en retard détecté", detail: "410 000 CDF — escalade envoyée au gestionnaire réseau", gravite: "critique", actionGo: "plus", actionLabel: "Voir le relevé" },
     ],
   });
-  const logout = () => { setTab("dashboard"); setView("signin"); };
-  const restartFromScratch = () => { setSession(null); setSignupData(null); setTab("dashboard"); setView("signup"); };
+  const logout = () => { 
+    try {
+      localStorage.removeItem("neogtec_active_session_prestataire");
+    } catch (e) {}
+    setSession(null); 
+    setTab("dashboard"); 
+    setView("signin"); 
+  };
+  const restartFromScratch = () => { 
+    try {
+      localStorage.removeItem("neogtec_active_session_prestataire");
+    } catch (e) {}
+    setSession(null); 
+    setSignupData(null); 
+    setTab("dashboard"); 
+    setView("signup"); 
+  };
 
   const go = (target, action) => { setTab(target); setTabAction(action || null); };
 
   const tabs = [
     { id: "dashboard", label: "Accueil", icon: LayoutDashboard },
     { id: "scanner", label: "Scanner", icon: ScanLine },
+    { id: "patients", label: "Dossiers Patients", icon: FolderOpen },
+    { id: "teleconsultation", label: "Téléconsultation", icon: Video },
     { id: "soins", label: "Soins", icon: Stethoscope },
     { id: "derogations", label: "Dérogations", icon: FileWarning },
     { id: "plus", label: "Plus", icon: Settings },
@@ -3179,6 +3724,7 @@ export default function App() {
           {view === "app" && tab === "dashboard" && <Accueil session={session} notify={notify} go={go} onRestart={restartFromScratch} />}
           {view === "app" && tab === "scanner" && <Scanner session={session} notify={notify} go={go} setPatientActif={setPatientActif} />}
           {view === "app" && tab === "patients" && <Patients session={session} setSession={setSession} notify={notify} go={go} />}
+          {view === "app" && tab === "teleconsultation" && <Teleconsultation session={session} setSession={setSession} notify={notify} />}
           {view === "app" && tab === "soins" && <Soins session={session} setSession={setSession} notify={notify} go={go} patientActif={patientActif} initialAction={tabAction} setDerogationPrefill={setDerogationPrefill} soinAutorise={soinAutorise} setSoinAutorise={setSoinAutorise} />}
           {view === "app" && tab === "derogations" && <Derogations session={session} setSession={setSession} notify={notify} go={go} patientActif={patientActif} initialAction={tabAction} derogationPrefill={derogationPrefill} setDerogationPrefill={setDerogationPrefill} setSoinAutorise={setSoinAutorise} />}
           {view === "app" && tab === "plus" && <PlusScreen session={session} setSession={setSession} notify={notify} onLogout={logout} initialAction={tabAction} />}
