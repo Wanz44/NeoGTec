@@ -1,5 +1,6 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import './frontend/lib/localDatabase.ts';
 import App from './frontend/App.tsx';
 import './frontend/index.css';
 import { LanguageProvider } from './frontend/lib/LanguageContext.tsx';
