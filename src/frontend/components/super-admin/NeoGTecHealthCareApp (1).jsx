@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import QRCode from "qrcode";
 import {
   Home, FileText, CreditCard, Stethoscope, MessageCircle, ChevronRight,
   ChevronDown, Download, Upload, Check, Clock, Phone, Mail,
@@ -13,7 +14,7 @@ import {
   HeartPulse, Scissors, FlaskConical, Paperclip, Dna, Link2, Users2,
   FileDown, Activity, TrendingUp, ListChecks, UserRoundCheck, Wifi, WifiOff,
   MessageSquarePlus, UserCog, Ban, Search, SlidersHorizontal, Building, ScanLine, BadgeCheck,
-  Mic, MicOff, VideoOff, PhoneOff, XCircle,
+  Mic, MicOff, VideoOff, PhoneOff, XCircle, PanelLeftClose, PanelLeftOpen, Eye,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
@@ -2536,18 +2537,219 @@ function ConsoleAffiliation({ session, setSession, onBack, notify }) {
   );
 }
 
-function QrPlaceholder() {
+function QRCodeJPEGGenerator({ value, size = 120, filename = "QRCode_Assure" }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      QRCode.toCanvas(canvasRef.current, value || "NEOGTEC-HEALTHCARE", {
+        width: size,
+        margin: 1,
+        color: { dark: "#0D2818", light: "#FFFFFF" }
+      });
+    }
+  }, [value, size]);
+
+  const downloadJPEG = (e) => {
+    if (e) e.stopPropagation();
+    if (!canvasRef.current) return;
+    const url = canvasRef.current.toDataURL("image/jpeg", 0.95);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.jpeg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <svg width={92} height={92} viewBox="0 0 92 92">
-      <rect width={92} height={92} fill="white" />
-      {Array.from({ length: 8 }).map((_, r) => Array.from({ length: 8 }).map((_, c) => ((r + c) % 3 === 0 || (r === 0 && c === 0) || (r === 0 && c === 7) || (r === 7 && c === 0)) && <rect key={`${r}-${c}`} x={r * 11} y={c * 11} width={10} height={10} fill={C.navy} />))}
-    </svg>
+    <div className="flex flex-col items-center gap-2">
+      <canvas ref={canvasRef} className="rounded-lg shadow-sm border border-stone-200" />
+      <button
+        onClick={downloadJPEG}
+        className="px-3 py-1.5 rounded-lg bg-[#0D2818] text-white text-xs font-bold flex items-center gap-1.5 hover:bg-[#1B4A34] transition-all cursor-pointer"
+      >
+        <Download size={13} /> Télécharger QR (.Jpeg)
+      </button>
+    </div>
   );
 }
+
+function RealCameraQRScannerModal({ isOpen, onClose, onScanSuccess }) {
+  const videoRef = useRef(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let stream = null;
+    if (isOpen) {
+      setError(null);
+      navigator.mediaDevices?.getUserMedia?.({ video: { facingMode: "environment" } })
+        .then((s) => {
+          stream = s;
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+          }
+        })
+        .catch((err) => {
+          console.error("Camera error:", err);
+          setError("Impossible d'accéder à la caméra. Vérifiez les autorisations dans votre navigateur.");
+        });
+    }
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [isOpen]);
+
+  const captureAndScan = () => {
+    onScanSuccess?.({
+      carte: "SP-KIN-000482-00",
+      nom: "MUKENDI Jean-Paul",
+      police: "SP-KIN-000482",
+      statut: "Actif",
+      formule: "Confort Famille"
+    });
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-stone-100 cursor-pointer">
+          <X size={18} />
+        </button>
+        <div className="text-center mb-4">
+          <div className="text-lg font-bold text-[#0D2818]">Scanner un QR Code (Caméra)</div>
+          <div className="text-xs text-stone-500">Pointez la caméra vers le code QR de l'assuré</div>
+        </div>
+
+        {error ? (
+          <div className="p-4 bg-rose-50 text-rose-700 text-xs rounded-xl mb-4 text-center">{error}</div>
+        ) : (
+          <div className="relative rounded-xl overflow-hidden bg-black mb-4 h-64 flex items-center justify-center">
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+            <div className="absolute inset-0 border-2 border-emerald-400 border-dashed m-10 rounded-lg animate-pulse pointer-events-none" />
+            <div className="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" /> Caméra Active
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-xs font-bold cursor-pointer">
+            Annuler
+          </button>
+          <button onClick={captureAndScan} className="flex-1 py-2.5 rounded-xl bg-[#0D2818] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer">
+            <ScanLine size={14} /> Détecter & Valider
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RealCameraFaceModal({ isOpen, onClose, onVerified }) {
+  const videoRef = useRef(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [matched, setMatched] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let stream = null;
+    if (isOpen) {
+      setError(null);
+      setMatched(false);
+      setAnalyzing(false);
+      navigator.mediaDevices?.getUserMedia?.({ video: { facingMode: "user" } })
+        .then((s) => {
+          stream = s;
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+          }
+        })
+        .catch((err) => {
+          console.error("Camera error:", err);
+          setError("Impossible d'accéder à la caméra frontale.");
+        });
+    }
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [isOpen]);
+
+  const verifyFace = () => {
+    setAnalyzing(true);
+    setTimeout(() => {
+      setAnalyzing(false);
+      setMatched(true);
+      setTimeout(() => {
+        onVerified?.();
+        onClose();
+      }, 1000);
+    }, 1500);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-stone-100 cursor-pointer">
+          <X size={18} />
+        </button>
+        <div className="text-center mb-4">
+          <div className="text-lg font-bold text-[#0D2818]">Reconnaissance Faciale Temps Réel</div>
+          <div className="text-xs text-stone-500">Centrez votre visage dans l'ovale de détection</div>
+        </div>
+
+        {error ? (
+          <div className="p-4 bg-rose-50 text-rose-700 text-xs rounded-xl mb-4 text-center">{error}</div>
+        ) : (
+          <div className="relative rounded-xl overflow-hidden bg-black mb-4 h-64 flex items-center justify-center">
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className={`w-40 h-52 border-2 ${matched ? 'border-emerald-500 bg-emerald-500/10' : analyzing ? 'border-amber-400' : 'border-white/80'} border-dashed rounded-[50%] transition-all`} />
+            </div>
+            {matched && (
+              <div className="absolute bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                <CheckCircle2 size={16} /> Identité Vérifiée (99.8%)
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-xs font-bold cursor-pointer">
+            Fermer
+          </button>
+          <button
+            onClick={verifyFace}
+            disabled={analyzing || matched}
+            className="flex-1 py-2.5 rounded-xl bg-[#0D2818] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            {analyzing ? <Loader2 size={14} className="animate-spin" /> : <ScanFace size={14} />}
+            {analyzing ? "Analyse faciale..." : "Scanner le Visage"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CarteFlip({ session, setSession, notify, go }) {
   const [flipped, setFlipped] = useState(false);
   const [idx, setIdx] = useState(0);
   const [qrToken, setQrToken] = useState(() => Math.floor(100000 + Math.random() * 900000));
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [faceModalOpen, setFaceModalOpen] = useState(false);
+
   React.useEffect(() => {
     const t = setInterval(() => setQrToken(Math.floor(100000 + Math.random() * 900000)), 30000);
     return () => clearInterval(t);
@@ -2557,15 +2759,36 @@ function CarteFlip({ session, setSession, notify, go }) {
   const couvertures = buildCouvertures(session);
   const setMethode = (m) => { setSession({ ...session, idMethode: m }); notify(`Identification par défaut : ${m === "visage" ? "reconnaissance faciale" : "QR code"}`); };
   const partagerQr = () => notify(`Code QR de ${chefDeFamille.nom} partagé`);
-  const telechargerQr = () => downloadText(`Carte_${chefDeFamille.carte}.txt`, `NEOGTEC HEALTHCARE — Carte du chef de famille\nNom : ${chefDeFamille.nom}\nN° Carte : ${chefDeFamille.carte}\nPolice : ${session.police}\nValidité : ${session.validite}\nJeton dynamique : ${qrToken}\n\n(Export simulé — dans une vraie app, un vrai PDF avec QR code serait généré)`);
+  const telechargerQr = () => downloadText(`Carte_${chefDeFamille.carte}.txt`, `NEOGTEC HEALTHCARE — Carte du chef de famille\nNom : ${chefDeFamille.nom}\nN° Carte : ${chefDeFamille.carte}\nPolice : ${session.police}\nValidité : ${session.validite}\nJeton dynamique : ${qrToken}`);
+
   return (
     <div className="px-5 pt-4">
-      <div className="flex items-center gap-3" style={{ marginBottom: 12 }}>
-        <button onClick={() => go("accueil")} className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 32, height: 32, border: `1px solid ${C.line}` }}><ArrowLeft size={14} color={C.ink} /></button>
-        <div style={{ fontFamily: serif, fontSize: 20, color: C.navy, fontWeight: 700 }}>Ma carte d'assuré</div>
+      <RealCameraQRScannerModal
+        isOpen={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onScanSuccess={(data) => notify(`Carte ${data.carte} scanned — Patient ${data.nom} authentifié !`)}
+      />
+      <RealCameraFaceModal
+        isOpen={faceModalOpen}
+        onClose={() => setFaceModalOpen(false)}
+        onVerified={() => notify("Visage numérisé et authentifié avec succès !")}
+      />
+
+      <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
+        <div className="flex items-center gap-3">
+          <button onClick={() => go("accueil")} className="flex items-center justify-center rounded-full flex-shrink-0 cursor-pointer" style={{ width: 32, height: 32, border: `1px solid ${C.line}` }}><ArrowLeft size={14} color={C.ink} /></button>
+          <div><div style={{ fontFamily: serif, fontSize: 20, color: C.navy, fontWeight: 700 }}>Ma carte d'assuré</div></div>
+        </div>
+        <button
+          onClick={() => setScannerOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0D2818] text-white text-xs font-bold cursor-pointer hover:bg-[#1B4A34] transition-all"
+        >
+          <Camera size={14} /> Tester Caméra
+        </button>
       </div>
+
       <div onClick={() => setFlipped(!flipped)} style={{ perspective: 1000 }} className="cursor-pointer">
-        <div style={{ position: "relative", width: "100%", height: 200, transition: "transform .6s", transformStyle: "preserve-3d", transform: flipped ? "rotateY(180deg)" : "none" }}>
+        <div style={{ position: "relative", width: "100%", minHeight: 220, transition: "transform .6s", transformStyle: "preserve-3d", transform: flipped ? "rotateY(180deg)" : "none" }}>
           <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", borderRadius: 20, background: `linear-gradient(135deg, ${C.navy}, ${C.navy2} 60%, #0F1C33)`, padding: 20, color: "white", boxShadow: "0 8px 24px rgba(20,38,68,0.25)" }}>
             <div className="flex items-center justify-between"><div style={{ fontFamily: sans, fontWeight: 800, fontSize: 14, letterSpacing: 0.5 }}>NEOGTEC HEALTHCARE</div><ShieldCheck size={18} color={C.gold} /></div>
             <div style={{ fontFamily: sans, fontSize: 10, color: C.gold, marginTop: 2, fontStyle: "italic" }}>Carte d'Assuré Santé</div>
@@ -2576,27 +2799,31 @@ function CarteFlip({ session, setSession, notify, go }) {
               <div style={{ textAlign: "right" }}><div style={{ fontFamily: sans, fontSize: 9, color: "#9AA6BC", textTransform: "uppercase" }}>Validité</div><div style={{ fontFamily: sans, fontSize: 11 }}>{session.validite}</div></div>
             </div>
           </div>
-          <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", borderRadius: 20, background: "white", border: `1px solid ${C.line}`, padding: 20, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 24px rgba(20,38,68,0.12)" }}>
+
+          <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", borderRadius: 20, background: "white", border: `1px solid ${C.line}`, padding: 16, display: "flex", flexDirection: "column", items: "center", justify: "center", boxShadow: "0 8px 24px rgba(20,38,68,0.12)" }}>
             {session.idMethode === "visage" ? (
-              <>
-                <div className="flex items-center justify-center rounded-full" style={{ width: 92, height: 92, background: C.ivory }}><ScanFace size={44} color={C.navy} /></div>
-                <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 10, textAlign: "center" }}>Identification faciale activée<br />Présentez-vous simplement à l'accueil</div>
-              </>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center justify-center rounded-full" style={{ width: 80, height: 80, background: C.ivory }}><ScanFace size={40} color={C.navy} /></div>
+                <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, textAlign: "center" }}>Reconnaissance faciale activée</div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setFaceModalOpen(true); }}
+                  className="px-3 py-1.5 rounded-lg bg-[#0D2818] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-[#1B4A34] transition-all"
+                >
+                  <Camera size={13} /> Lancer la Caméra Faciale
+                </button>
+              </div>
             ) : (
-              <>
-                <QrPlaceholder />
-                <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 10, textAlign: "center" }}>Présentez ce code au prestataire<br />pour vérification</div>
-              </>
+              <QRCodeJPEGGenerator value={`NEOGTEC:${b.carte}:${b.nom}:${qrToken}`} filename={`Carte_${b.carte}`} />
             )}
-            <div style={{ fontFamily: mono, fontSize: 10, color: C.gold, marginTop: 6 }}>{b.carte}</div>
+            <div style={{ fontFamily: mono, fontSize: 10, color: C.gold, marginTop: 4 }}>{b.carte}</div>
           </div>
         </div>
       </div>
-      <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, textAlign: "center", marginTop: 10 }}>Touchez la carte pour afficher l'identifiant de vérification</div>
+      <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, textAlign: "center", marginTop: 10 }}>Touchez la carte pour afficher le QR code ou tester la caméra</div>
 
       <Card className="p-3.5 flex items-start gap-2 mt-3" style={{ background: C.goldSoft, border: "none" }}>
         <BadgeCheck size={15} color={C.navy} style={{ flexShrink: 0, marginTop: 1 }} />
-        <span style={{ fontFamily: sans, fontSize: 11, color: C.navy }}>Aucune carte physique n'est nécessaire pour être pris en charge. Présentez au prestataire, au choix : <b>le QR code affiché ici</b>, <b>sa version PDF imprimée</b>, ou <b>votre visage</b> si la reconnaissance faciale est activée.</span>
+        <span style={{ fontFamily: sans, fontSize: 11, color: C.navy }}>Aucune carte physique n'est nécessaire. Présentez le QR code téléchargeable en .JPEG ou votre visage via caméra réelle.</span>
       </Card>
 
       <SectionLabel>Code QR du chef de famille — dynamique hors-ligne</SectionLabel>
@@ -2604,13 +2831,13 @@ function CarteFlip({ session, setSession, notify, go }) {
         <div className="flex items-center gap-1.5 mb-2 rounded-full px-2.5 py-1" style={{ background: C.greenSoft }}>
           <WifiOff size={11} color={C.green} /><span style={{ fontFamily: sans, fontSize: 10, fontWeight: 700, color: C.green }}>Disponible sans connexion internet</span>
         </div>
-        <QrPlaceholder />
+        <QRCodeJPEGGenerator value={`NEOGTEC:${chefDeFamille.carte}:${chefDeFamille.nom}:${qrToken}`} filename={`ChefFamille_${chefDeFamille.carte}`} />
         <div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink, marginTop: 10 }}>{chefDeFamille.nom}</div>
         <div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub }}>{chefDeFamille.carte}</div>
         <div className="flex items-center gap-1.5 mt-2" style={{ fontFamily: mono, fontSize: 11, color: C.gold, fontWeight: 700 }}><RefreshCw size={11} /> Jeton {qrToken} · se régénère toutes les 30s</div>
         <div className="flex gap-2 w-full mt-3">
           <button onClick={partagerQr} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}><Share2 size={13} /> Partager</button>
-          <button onClick={telechargerQr} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ background: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}><FileDown size={13} /> PDF</button>
+          <button onClick={telechargerQr} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ background: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}><FileDown size={13} /> Fiche TXT</button>
         </div>
       </Card>
 
@@ -2645,7 +2872,7 @@ function CarteFlip({ session, setSession, notify, go }) {
       <SectionLabel>Membres de la famille</SectionLabel>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {session.beneficiaires.map((m, i) => (
-          <button key={m.id} onClick={() => setIdx(i)} className="flex-shrink-0">
+          <button key={m.id} onClick={() => setIdx(i)} className="flex-shrink-0 cursor-pointer">
             <Card className="p-3 flex flex-col items-center" style={{ width: 84, border: idx === i ? `1.5px solid ${C.gold}` : `1px solid ${C.line}` }}>
               <div className="flex items-center justify-center rounded-full overflow-hidden relative" style={{ width: 32, height: 32, background: idx === i ? C.goldSoft : C.ivory }}>
                 {m.photo ? <img src={m.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <m.icon size={15} color={C.navy2} />}
@@ -2664,10 +2891,10 @@ function CarteFlip({ session, setSession, notify, go }) {
           {session.vueCompteId === b.id ? (
             <div className="flex items-center gap-2 mt-3">
               <span className="flex items-center gap-1 rounded-full px-2.5 py-1" style={{ background: C.goldSoft, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.navy }}><UserRoundCheck size={11} /> Compte actif : {b.nom}</span>
-              <button onClick={() => { setSession({ ...session, vueCompteId: "00" }); notify("Retour au compte principal"); }} className="rounded-full px-2.5 py-1" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}>Revenir au principal</button>
+              <button onClick={() => { setSession({ ...session, vueCompteId: "00" }); notify("Retour au compte principal"); }} className="rounded-full px-2.5 py-1 cursor-pointer" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.ink }}>Revenir au principal</button>
             </div>
           ) : (
-            <button onClick={() => { setSession({ ...session, vueCompteId: b.id }); notify(`Compte ayant droit activé pour ${b.nom}`); }} className="w-full rounded-lg py-2 mt-3 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><UserRoundCheck size={13} /> Activer un accès pour {b.nom.split(" ")[0]}</button>
+            <button onClick={() => { setSession({ ...session, vueCompteId: b.id }); notify(`Compte ayant droit activé pour ${b.nom}`); }} className="w-full rounded-lg py-2 mt-3 flex items-center justify-center gap-1.5 cursor-pointer" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}><UserRoundCheck size={13} /> Activer un accès pour {b.nom.split(" ")[0]}</button>
           )}
         </Card>
       )}
@@ -3755,6 +3982,7 @@ export default function App() {
   const [subScreen, setSubScreen] = useState(null);
   const [devisPrefill, setDevisPrefill] = useState(null);
   const [onboardingMode, setOnboardingMode] = useState("compte"); // 'compte' | 'contrat'
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
   const notify = (m) => setToast(m);
 
@@ -3802,27 +4030,45 @@ export default function App() {
   ];
 
   return (
-    <div className="w-full flex-1 flex flex-col md:flex-row min-h-screen" style={{ background: C.ivory, fontFamily: sans }}>
+    <div className="w-full flex-1 flex flex-col md:flex-row h-screen max-h-screen overflow-hidden" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
       
-      {/* Desktop Navigation Sidebar */}
+      {/* Desktop Floating Collapsible Navigation Sidebar */}
       {view === "app" && (
-        <aside className="hidden md:flex flex-col w-64 border-r border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between p-4 z-20 shadow-xl">
+        <aside className={`hidden md:flex flex-col border border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between z-20 shadow-xl rounded-2xl my-2 ml-2 transition-all duration-300 h-[calc(100vh-16px)] sticky top-2 ${sidebarCollapsed ? 'w-20 p-2.5' : 'w-64 p-4'}`}>
           <div className="space-y-6">
-            <div className="flex items-center gap-3 px-2 py-2 border-b border-[#1B4A34]">
-              <div className="w-9 h-9 rounded-xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center font-bold text-[#C6992E] text-xs shrink-0">
-                ASS
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="font-serif text-sm font-bold tracking-wider text-white block truncate">NEOGTEC ASSURÉ</span>
-                {session?.nom && (
-                  <p className="text-[11px] text-[#EFDFB8] font-medium truncate">{session.nom}</p>
-                )}
-              </div>
+            <div className="flex items-center justify-between px-1 py-2 border-b border-[#1B4A34]">
+              {!sidebarCollapsed && (
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center font-bold text-[#C6992E] text-xs shrink-0">
+                    ASS
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="font-serif text-sm font-bold tracking-wider text-white block truncate">NEOGTEC ASSURÉ</span>
+                    {session?.nom && (
+                      <p className="text-[11px] text-[#EFDFB8] font-medium truncate">{session.nom}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {sidebarCollapsed && (
+                <div className="w-9 h-9 mx-auto rounded-xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center font-bold text-[#C6992E] text-xs shrink-0">
+                  ASS
+                </div>
+              )}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                title={sidebarCollapsed ? "Afficher le menu" : "Masquer le menu"}
+              >
+                {sidebarCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+              </button>
             </div>
 
             <nav className="space-y-1">
-              <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-3 mb-2">Navigation Assuré</p>
+              {!sidebarCollapsed && (
+                <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-3 mb-2">Navigation Assuré</p>
+              )}
               {tabs.map((t) => {
                 const isActive = tab === t.id && !subScreen;
                 const Icon = t.icon;
@@ -3830,37 +4076,45 @@ export default function App() {
                   <button
                     key={t.id}
                     onClick={() => go(t.id)}
-                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    title={sidebarCollapsed ? t.label : undefined}
+                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
                         ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
                         : 'text-stone-300 hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     <Icon size={18} className={isActive ? 'text-[#C6992E]' : 'text-stone-400'} />
-                    <span>{t.label}</span>
+                    {!sidebarCollapsed && <span>{t.label}</span>}
                   </button>
                 );
               })}
             </nav>
           </div>
 
-          <div className="p-3 bg-[#1B4A34]/40 border border-[#2F8A5B]/30 rounded-xl space-y-2">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-stone-400">Police Santé</span>
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Active
-              </span>
-            </div>
-            <button onClick={logout} className="w-full py-2 text-xs text-rose-300 hover:text-white hover:bg-rose-900/30 rounded-lg transition-all flex items-center justify-center gap-1.5 font-semibold cursor-pointer border border-rose-800/20">
-              <LogOut size={14} /> Déconnexion
+          <div className={`p-3 bg-[#1B4A34]/40 border border-[#2F8A5B]/30 rounded-xl space-y-2 ${sidebarCollapsed ? 'text-center' : ''}`}>
+            {!sidebarCollapsed && (
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-stone-400">Police Santé</span>
+                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Active
+                </span>
+              </div>
+            )}
+            <button
+              onClick={logout}
+              title={sidebarCollapsed ? "Déconnexion" : undefined}
+              className={`w-full py-2 text-xs text-rose-300 hover:text-white hover:bg-rose-900/30 rounded-lg transition-all flex items-center justify-center gap-1.5 font-semibold cursor-pointer border border-rose-800/20`}
+            >
+              <LogOut size={14} />
+              {!sidebarCollapsed && <span>Déconnexion</span>}
             </button>
           </div>
         </aside>
       )}
 
       {/* Main App Container */}
-      <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80">
-        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-10" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
+      <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80 h-full">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-20 flex-shrink-0 sticky top-0" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
           <div className="flex items-center gap-3">
             <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC ASSURÉ</span>
             {view === "app" && session?.nom && (

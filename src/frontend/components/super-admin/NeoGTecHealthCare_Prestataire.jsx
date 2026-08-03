@@ -14,7 +14,7 @@ import {
   MessageCircle, Coins, Banknote, ArrowLeftRight, Package, AlertOctagon,
   PauseCircle, HandCoins, Maximize, Calculator, MinusCircle, PlusCircle,
   HeartPulse, Thermometer, Ruler, Layers, Heart, Scissors, Dna, Paperclip, PenLine,
-  VideoOff, Mic, MicOff, Wifi, PhoneOff, AlertCircle, Clock3,
+  VideoOff, Mic, MicOff, Wifi, PhoneOff, AlertCircle, Clock3, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
@@ -3033,6 +3033,7 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [tab, setTab] = useState("dashboard");
   const [tabAction, setTabAction] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [patientActif, setPatientActif] = useState(null);
   const [derogationPrefill, setDerogationPrefill] = useState(null);
   const [soinAutorise, setSoinAutorise] = useState(null);
@@ -3067,27 +3068,43 @@ export default function App() {
   const derogEnAttente = session?.derogations?.filter((d) => d.statut === "En attente").length || 0;
 
   return (
-    <div className="w-full flex-1 flex flex-col md:flex-row min-h-screen" style={{ background: C.ivory, fontFamily: sans }}>
+    <div className="w-full flex-1 flex flex-col md:flex-row h-screen max-h-screen overflow-hidden" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
       
       {/* Desktop Navigation Sidebar */}
       {view === "app" && (
-        <aside className="hidden md:flex flex-col w-64 border-r border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between p-4 z-20 shadow-xl">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 px-2 py-2 border-b border-[#1B4A34]">
-              <div className="w-9 h-9 rounded-xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center font-bold text-[#C6992E] text-xs shrink-0">
-                PRES
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="font-serif text-sm font-bold tracking-wider text-white block truncate">NEOGTEC SANTE</span>
-                {session?.etablissement?.nom && (
-                  <p className="text-[11px] text-[#EFDFB8] font-medium truncate">{session.etablissement.nom}</p>
+        <aside 
+          className="hidden md:flex flex-col border border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between p-3 my-3 ml-3 rounded-2xl shadow-xl z-20 transition-all duration-300 ease-in-out sticky top-3 h-[calc(100vh-24px)]"
+          style={{ width: sidebarCollapsed ? 72 : 256 }}
+        >
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1 py-1 border-b border-[#1B4A34]">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center font-bold text-[#C6992E] text-xs shrink-0">
+                  PRES
+                </div>
+                {!sidebarCollapsed && (
+                  <div className="min-w-0 flex-1">
+                    <span className="font-serif text-sm font-bold tracking-wider text-white block truncate">NEOGTEC SANTE</span>
+                    {session?.etablissement?.nom && (
+                      <p className="text-[11px] text-[#EFDFB8] font-medium truncate">{session.etablissement.nom}</p>
+                    )}
+                  </div>
                 )}
               </div>
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                title={sidebarCollapsed ? "Afficher le menu" : "Masquer le menu"}
+              >
+                {sidebarCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+              </button>
             </div>
 
             <nav className="space-y-1 max-h-[calc(100vh-220px)] overflow-y-auto">
-              <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-3 mb-2">Navigation Prestataire</p>
+              {!sidebarCollapsed && (
+                <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-2 mb-2">Navigation Prestataire</p>
+              )}
               {tabs.map((t) => {
                 const isActive = tab === t.id;
                 const Icon = t.icon;
@@ -3095,7 +3112,8 @@ export default function App() {
                   <button
                     key={t.id}
                     onClick={() => go(t.id)}
-                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    title={sidebarCollapsed ? t.label : undefined}
+                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
                         ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
                         : 'text-stone-300 hover:bg-white/5 hover:text-white'
@@ -3103,10 +3121,10 @@ export default function App() {
                   >
                     <div className="flex items-center gap-3">
                       <Icon size={18} className={isActive ? 'text-[#C6992E]' : 'text-stone-400'} />
-                      <span>{t.label}</span>
+                      {!sidebarCollapsed && <span>{t.label}</span>}
                     </div>
                     {t.id === "derogations" && derogEnAttente > 0 && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500 text-white">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500 text-white ${sidebarCollapsed ? 'absolute top-1 right-1' : ''}`}>
                         {derogEnAttente}
                       </span>
                     )}
@@ -3116,23 +3134,25 @@ export default function App() {
             </nav>
           </div>
 
-          <div className="p-3 bg-[#1B4A34]/40 border border-[#2F8A5B]/30 rounded-xl space-y-2">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-stone-400">Établissement</span>
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Agréé
-              </span>
-            </div>
-            <button onClick={logout} className="w-full py-2 text-xs text-rose-300 hover:text-white hover:bg-rose-900/30 rounded-lg transition-all flex items-center justify-center gap-1.5 font-semibold cursor-pointer border border-rose-800/20">
-              <LogOut size={14} /> Déconnexion
+          <div className={`p-2.5 bg-[#1B4A34]/40 border border-[#2F8A5B]/30 rounded-xl space-y-2 ${sidebarCollapsed ? 'text-center' : ''}`}>
+            {!sidebarCollapsed && (
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-stone-400">Établissement</span>
+                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Agréé
+                </span>
+              </div>
+            )}
+            <button onClick={logout} title={sidebarCollapsed ? "Déconnexion" : undefined} className="w-full py-2 text-xs text-rose-300 hover:text-white hover:bg-rose-900/30 rounded-lg transition-all flex items-center justify-center gap-1.5 font-semibold cursor-pointer border border-rose-800/20">
+              <LogOut size={14} /> {!sidebarCollapsed && <span>Déconnexion</span>}
             </button>
           </div>
         </aside>
       )}
 
       {/* Main App Container */}
-      <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80">
-        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-10" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
+      <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80 h-full">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-20 flex-shrink-0 sticky top-0" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
           <div className="flex items-center gap-3">
             <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC PRESTATAIRE</span>
             {view === "app" && session?.etablissement?.nom && (

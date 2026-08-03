@@ -12,7 +12,7 @@ import {
   HelpCircle, Server, UploadCloud, DownloadCloud, Timer, Handshake, Target,
   ArchiveRestore, FilePlus2, ClipboardCheck, Paperclip, KeySquare, HardDrive,
   UsersRound, PhoneCall, Award, History, GitCommit, Workflow, Sliders, CloudUpload, Camera,
-  Siren, Radar, FileDown, FileCheck, CreditCard, Smartphone, ReceiptText, Clock3, Upload, AlertCircle, ScanFace, MessageSquare, ListChecks, PenLine, Gavel, XCircle, Shield, ArrowLeftRight, HeartPulse, UserRound,
+  Siren, Radar, FileDown, FileCheck, CreditCard, Smartphone, ReceiptText, Clock3, Upload, AlertCircle, ScanFace, MessageSquare, ListChecks, PenLine, Gavel, XCircle, Shield, ArrowLeftRight, HeartPulse, UserRound, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
@@ -3550,6 +3550,7 @@ export default function App() {
   const [connecte, setConnecte] = useState(false);
   const [roleUtilisateur, setRoleUtilisateur] = useState("administrateur");
   const [page, setPage] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
   const notify = (m) => setToast(m);
 
@@ -3615,36 +3616,72 @@ export default function App() {
   const derogEnAttente = session.derogationsReseau.filter((d) => d.statut === "En attente").length;
 
   return (
-    <div className="flex min-h-screen" style={{ background: C.bg, fontFamily: sans }}>
+    <div className="flex h-screen max-h-screen overflow-hidden" style={{ background: C.bg, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }`}</style>
 
-      {/* SIDEBAR */}
-      <div className="flex flex-col flex-shrink-0" style={{ width: 250, background: C.navy, color: "white" }}>
-        <div className="flex items-center gap-2.5 px-5" style={{ height: 68, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-          <div className="flex items-center justify-center rounded-xl" style={{ width: 34, height: 34, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><Network size={17} color={C.gold} /></div>
-          <div><div style={{ fontFamily: sans, fontWeight: 800, fontSize: 11.5, letterSpacing: 1 }}>NEOGTEC HEALTHCARE</div><div style={{ fontFamily: sans, fontSize: 9.5, color: "#B9C3D6" }}>Back-office Assureur</div></div>
-        </div>
-        <div className="flex-1 py-4 px-3 space-y-1">
-          {nav.map((n) => (
-            <button key={n.id} onClick={() => setPage(n.id)} className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 relative" style={{ background: page === n.id ? "rgba(198,153,46,0.15)" : "transparent", color: page === n.id ? C.gold : "#D7DCE6" }}>
-              <n.icon size={16} />
-              <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: page === n.id ? 700 : 500 }}>{n.label}</span>
-              {n.id === "derogations" && derogEnAttente > 0 && <span className="absolute rounded-full flex items-center justify-center" style={{ right: 10, width: 17, height: 17, background: C.red, fontFamily: sans, fontSize: 9.5, fontWeight: 700, color: "white" }}>{derogEnAttente}</span>}
+      {/* SIDEBAR FLOOTTANTE & RETRACTABLE */}
+      <div 
+        className="flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out my-3 ml-3 rounded-2xl shadow-xl border border-[#1B4A34] z-30 justify-between p-3 sticky top-3 h-[calc(100vh-24px)]" 
+        style={{ width: sidebarCollapsed ? 72 : 250, background: C.navy, color: "white" }}
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-2 py-2 border-b border-white/10">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex items-center justify-center rounded-xl flex-shrink-0" style={{ width: 34, height: 34, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}>
+                <Network size={17} color={C.gold} />
+              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 11.5, letterSpacing: 1, whiteSpace: "nowrap" }}>NEOGTEC HEALTHCARE</div>
+                  <div style={{ fontFamily: sans, fontSize: 9.5, color: "#B9C3D6" }}>Back-office Assureur</div>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+              title={sidebarCollapsed ? "Afficher le menu" : "Masquer le menu"}
+            >
+              {sidebarCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
             </button>
-          ))}
+          </div>
+
+          <nav className="space-y-1 max-h-[calc(100vh-180px)] overflow-y-auto pr-1">
+            {!sidebarCollapsed && (
+              <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-2 mb-2">Navigation Assureur</p>
+            )}
+            {nav.map((n) => (
+              <button 
+                key={n.id} 
+                onClick={() => setPage(n.id)} 
+                title={sidebarCollapsed ? n.label : undefined}
+                className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-2.5'} rounded-xl relative transition-all cursor-pointer`}
+                style={{ background: page === n.id ? "rgba(198,153,46,0.15)" : "transparent", color: page === n.id ? C.gold : "#D7DCE6" }}
+              >
+                <n.icon size={18} className="flex-shrink-0" />
+                {!sidebarCollapsed && <span style={{ fontFamily: sans, fontSize: 12.5, fontWeight: page === n.id ? 700 : 500, whiteSpace: "nowrap" }}>{n.label}</span>}
+                {n.id === "derogations" && derogEnAttente > 0 && (
+                  <span className={`absolute rounded-full flex items-center justify-center ${sidebarCollapsed ? 'top-1 right-1' : 'right-2.5'}`} style={{ width: 17, height: 17, background: C.red, fontFamily: sans, fontSize: 9.5, fontWeight: 700, color: "white" }}>{derogEnAttente}</span>
+                )}
+              </button>
+            ))}
+          </nav>
         </div>
-        <div className="p-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-          <div className="flex items-center gap-2.5">
+
+        <div className={`p-2.5 bg-[#1B4A34]/40 border border-[#2F8A5B]/30 rounded-xl ${sidebarCollapsed ? 'text-center' : ''}`}>
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2.5'}`}>
             <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 32, height: 32, background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 12 }}>GN</div>
-            <div className="flex-1" style={{ minWidth: 0 }}><div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}>{ROLES_ASSUREUR.find((r) => r.id === roleUtilisateur)?.nom}</div><div style={{ fontFamily: sans, fontSize: 9.5, color: "#B9C3D6", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>NeoGTec HealthCare</div></div>
-            <button onClick={() => setConnecte(false)}><LogOut size={15} color="#B9C3D6" /></button>
+            {!sidebarCollapsed && (
+              <div className="flex-1 min-w-0"><div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}>{ROLES_ASSUREUR.find((r) => r.id === roleUtilisateur)?.nom}</div><div style={{ fontFamily: sans, fontSize: 9.5, color: "#B9C3D6", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>NeoGTec HealthCare</div></div>
+            )}
+            <button onClick={() => setConnecte(false)} title="Déconnexion"><LogOut size={15} color="#B9C3D6" /></button>
           </div>
         </div>
       </div>
 
       {/* CONTENU */}
-      <div className="flex-1 flex flex-col" style={{ minWidth: 0 }}>
-        <div className="flex items-center justify-between px-8 flex-shrink-0" style={{ height: 68, background: C.panel, borderBottom: `1px solid ${C.line}` }}>
+      <div className="flex-1 flex flex-col h-full overflow-hidden" style={{ minWidth: 0 }}>
+        <div className="flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-20" style={{ height: 68, background: C.panel, borderBottom: `1px solid ${C.line}` }}>
           <div style={{ fontFamily: serif, fontSize: 19, color: C.navy, fontWeight: 700 }}>{titres[page]}</div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5" style={{ background: C.greenSoft }}>
