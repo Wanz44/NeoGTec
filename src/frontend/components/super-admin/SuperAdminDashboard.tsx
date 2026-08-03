@@ -56,7 +56,7 @@ export function SuperAdminDashboard({ onLogout }: SuperAdminDashboardProps) {
               NG
             </div>
             <div>
-              <span className="font-serif text-lg font-bold tracking-wider text-white">NEOGTEC HEALTHCARE</span>
+              <span className="font-serif text-lg font-bold tracking-wider text-white">NeoGTec insur</span>
               <p className="text-xs text-emerald-400 font-medium">Plateforme Globale d'Assurance Santé</p>
             </div>
           </div>
@@ -128,7 +128,7 @@ export function SuperAdminDashboard({ onLogout }: SuperAdminDashboardProps) {
 
         {/* Footer info */}
         <div className="w-full max-w-6xl mx-auto text-center text-xs text-stone-400 z-10 pt-4 border-t border-white/10">
-          NeoGTec HealthCare Platform &copy; 2026. Tous droits réservés. Sécurité biométrique & synchro temps réel intégrées.
+          NeoGTec insur Platform &copy; 2026. Tous droits réservés. Sécurité biométrique & synchro temps réel intégrées.
         </div>
       </div>
     );

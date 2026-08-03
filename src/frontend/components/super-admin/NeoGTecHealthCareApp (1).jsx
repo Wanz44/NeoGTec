@@ -14,7 +14,7 @@ import {
   HeartPulse, Scissors, FlaskConical, Paperclip, Dna, Link2, Users2,
   FileDown, Activity, TrendingUp, ListChecks, UserRoundCheck, Wifi, WifiOff,
   MessageSquarePlus, UserCog, Ban, Search, SlidersHorizontal, Building, ScanLine, BadgeCheck,
-  Mic, MicOff, VideoOff, PhoneOff, XCircle, PanelLeftClose, PanelLeftOpen, Eye,
+  Mic, MicOff, VideoOff, PhoneOff, XCircle, PanelLeftClose, PanelLeftOpen, Eye, EyeOff, KeyRound,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
@@ -1667,6 +1667,20 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
   const [form, setForm] = useState({ identifiant: prefill?.email || "", motDePasse: "" });
   const [erreur, setErreur] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [showTestAccounts, setShowTestAccounts] = useState(false);
+
+  // Mode Mot de Passe Oublié
+  const [forgotMode, setForgotMode] = useState(false); // false | 'input' | 'otp' | 'success'
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [forgotStep, setForgotStep] = useState(1); // 1: Email, 2: OTP, 3: Success
+  const [forgotError, setForgotError] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+
   const valider = async () => {
     if (!form.identifiant || !form.motDePasse) { setErreur("Veuillez saisir vos identifiants."); return; }
     setErreur("");
@@ -1675,26 +1689,376 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
     setLoading(false);
     onDone(match ? construireSessionReelle(match) : null);
   };
+
+  const handleSendResetCode = (e) => {
+    e.preventDefault();
+    if (!forgotEmail) { setForgotError("Veuillez saisir votre email ou téléphone."); return; }
+    setForgotError("");
+    setForgotLoading(true);
+    setTimeout(() => {
+      setForgotLoading(false);
+      setForgotStep(2);
+      setForgotSuccess("Code de réinitialisation à 6 chiffres envoyé avec succès.");
+    }, 800);
+  };
+
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+    if (!forgotOtp || forgotOtp.length < 4) { setForgotError("Veuillez entrer le code reçu."); return; }
+    if (!newPassword || newPassword.length < 4) { setForgotError("Le nouveau mot de passe doit comporter au moins 4 caractères."); return; }
+    setForgotError("");
+    setForgotLoading(true);
+    setTimeout(() => {
+      setForgotLoading(false);
+      setForgotStep(3);
+    }, 900);
+  };
+
+  const fillTestAccount = (email, pass = "123456") => {
+    setForm({ identifiant: email, motDePasse: pass });
+    setErreur("");
+    setShowTestAccounts(false);
+  };
+
   return (
-    <div className="h-full flex flex-col justify-between px-6 pt-14 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div>
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex items-center justify-center rounded-2xl" style={{ width: 60, height: 60, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><Lock size={26} color={C.gold} /></div>
-          <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 14, color: "white", letterSpacing: 1, marginTop: 12 }}>NEOGTEC HEALTHCARE</div>
-          <div style={{ fontFamily: serif, fontSize: 20, color: "white", marginTop: 8 }}>Connexion</div>
-          <div style={{ fontFamily: sans, fontSize: 11.5, color: "#B9C3D6", marginTop: 4 }}>Votre compte a été créé. Connectez-vous pour continuer.</div>
+    <div className="min-h-full w-full flex items-center justify-center p-4 sm:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
+      <div className="w-full max-w-4xl bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row overflow-hidden text-white">
+        
+        {/* Panneau Latéral Gauche (Aperçu Espace) */}
+        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#06140B] via-[#0A1F13] to-[#0F2D1C] p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C6992E]/30 relative">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                <ShieldCheck size={26} color={C.gold} />
+              </div>
+              <div>
+                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                  NeoGTec insur
+                </span>
+                <span className="text-xs text-[#B9C3D6] font-medium">Espace Assuré & Ayants Droit</span>
+              </div>
+            </div>
+
+            <h3 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="mb-4">
+              Authentification Espace Assuré
+            </h3>
+
+            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", lineHeight: 1.6 }} className="mb-6">
+              Bénéficiez d'un processus de connexion sécurisé, rapide et conforme aux normes d'audit ARCA-RDC les plus strictes.
+            </p>
+
+            <div className="space-y-3 pt-2">
+              <div className="flex items-start gap-2.5">
+                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
+                <span className="text-xs text-[#E7E2D6]">Carte Santé Numérique & QR Code</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
+                <span className="text-xs text-[#E7E2D6]">Demande de Prise en Charge 24/7</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
+                <span className="text-xs text-[#E7E2D6]">Suivi des Ayants Droit & Plafonds</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+            <span className="text-[11px] text-[#B9C3D6]">Sécurité Chiffrée 256-bit</span>
+            <span className="text-[10px] bg-[#C6992E]/20 text-[#C6992E] px-2.5 py-1 rounded-full border border-[#C6992E]/30 font-semibold">ARCA-RDC</span>
+          </div>
         </div>
-        <div className="space-y-2.5">
-          <input style={inputStyle} value={form.identifiant} onChange={(e) => setForm({ ...form, identifiant: e.target.value })} placeholder="Email ou téléphone" />
-          <input style={inputStyle} type="password" value={form.motDePasse} onChange={(e) => setForm({ ...form, motDePasse: e.target.value })} placeholder="Mot de passe" />
-          {erreur && <div className="flex items-center gap-1.5" style={{ color: "#FFB4B0" }}><AlertCircle size={12} /><span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span></div>}
+
+        {/* Panneau Principal Droit (Formulaire & Mot de Passe Oublié) */}
+        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between bg-[#0A1F13]/80">
+          {!forgotMode ? (
+            <div>
+              <div className="mb-6">
+                <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                  Se connecter à l'Espace Assuré
+                </h2>
+                <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                  Accédez à vos garanties, cartes de santé et demandes de remboursement.
+                </p>
+              </div>
+
+              {/* Bouton SSO Google Simulation */}
+              <button
+                type="button"
+                onClick={() => fillTestAccount("jean.paul@domaine.cd", "123456")}
+                className="w-full py-2.5 px-4 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center gap-3 text-xs font-semibold text-white mb-5 cursor-pointer"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                Se connecter avec Google
+              </button>
+
+              <div className="relative flex items-center justify-center mb-5">
+                <div className="border-t border-white/10 w-full"></div>
+                <span className="bg-[#0A1F13] px-3 text-[10px] font-bold text-[#C6992E] uppercase tracking-wider whitespace-nowrap">
+                  OU UTILISER VOS IDENTIFIANTS
+                </span>
+                <div className="border-t border-white/10 w-full"></div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                    NOM OU ADRESSE EMAIL
+                  </label>
+                  <div className="relative">
+                    <input
+                      style={inputStyle}
+                      className="pl-9"
+                      value={form.identifiant}
+                      onChange={(e) => setForm({ ...form, identifiant: e.target.value })}
+                      placeholder="paul@neogtec.com ou téléphone"
+                    />
+                    <Mail size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                    MOT DE PASSE
+                  </label>
+                  <div className="relative">
+                    <input
+                      style={{ ...inputStyle, paddingRight: 38 }}
+                      className="pl-9"
+                      type={showPassword ? "text" : "password"}
+                      value={form.motDePasse}
+                      onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+                      placeholder="••••••••••••"
+                    />
+                    <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3.5 text-[#B9C3D6] hover:text-white cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer text-[#B9C3D6] hover:text-white select-none">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="rounded border-white/20 bg-white/10 text-[#C6992E] focus:ring-0 w-3.5 h-3.5"
+                    />
+                    <span>Souviens-toi de moi</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => { setForgotMode(true); setForgotStep(1); setForgotError(""); setForgotSuccess(""); }}
+                    className="text-[#C6992E] hover:underline font-semibold cursor-pointer"
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </div>
+
+                {erreur && (
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-950/80 border border-red-800/60 text-red-200 text-xs">
+                    <AlertCircle size={15} className="shrink-0" />
+                    <span>{erreur}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Accordéon Comptes de Test */}
+              <div className="mt-5 border border-[#C6992E]/30 rounded-2xl bg-[#C6992E]/10 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowTestAccounts(!showTestAccounts)}
+                  className="w-full p-2.5 px-3.5 flex items-center justify-between text-xs font-bold text-[#C6992E] hover:bg-[#C6992E]/20 transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <KeyRound size={14} />
+                    🔑 Comptes de test & Simulation (Cliquez pour tester)
+                  </span>
+                  {showTestAccounts ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+                {showTestAccounts && (
+                  <div className="p-3 border-t border-[#C6992E]/20 space-y-1.5 text-xs bg-[#06140B]/80">
+                    <button
+                      type="button"
+                      onClick={() => fillTestAccount("jean.paul@domaine.cd", "123456")}
+                      className="w-full p-2 rounded-xl bg-white/5 hover:bg-[#C6992E]/20 text-left flex items-center justify-between text-stone-200 transition-colors cursor-pointer"
+                    >
+                      <div>
+                        <div className="font-semibold text-white">Jean-Paul (Assuré Titulaire)</div>
+                        <div className="text-[11px] text-[#B9C3D6]">jean.paul@domaine.cd</div>
+                      </div>
+                      <span className="text-[10px] bg-[#C6992E] text-[#0D2818] font-bold px-2 py-0.5 rounded">Remplir</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <button
+                  type="button"
+                  onClick={valider}
+                  disabled={loading}
+                  className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg cursor-pointer"
+                  style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}
+                >
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : <Lock size={15} />}
+                  {loading ? "Connexion en cours…" : "Se connecter à l'Espace Assuré"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onGoSignUp}
+                  className="w-full text-center py-2 cursor-pointer hover:underline text-xs text-stone-300"
+                >
+                  Pas encore de compte ? <span style={{ color: C.gold, fontWeight: 700 }}>S'inscrire</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Mode Réinitialisation de Mot de Passe */
+            <div className="h-full flex flex-col justify-between">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setForgotMode(false)}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#B9C3D6] hover:text-white mb-6 cursor-pointer"
+                >
+                  <ArrowLeft size={14} /> Retour à la connexion
+                </button>
+
+                <div className="mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] mb-3">
+                    <KeyRound size={24} />
+                  </div>
+                  <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                    Mot de passe oublié
+                  </h2>
+                  <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                    Réinitialisez facilement l'accès à votre compte Assuré NeoGTec.
+                  </p>
+                </div>
+
+                {forgotStep === 1 && (
+                  <form onSubmit={handleSendResetCode} className="space-y-4">
+                    <div>
+                      <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                        VOTRE EMAIL OU TÉLÉPHONE ENREGISTRÉ
+                      </label>
+                      <div className="relative">
+                        <input
+                          style={inputStyle}
+                          className="pl-9"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          placeholder="ex : paul@neogtec.com"
+                        />
+                        <Mail size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+                      </div>
+                    </div>
+
+                    {forgotError && (
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-950/80 border border-red-800/60 text-red-200 text-xs">
+                        <AlertCircle size={15} className="shrink-0" />
+                        <span>{forgotError}</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={forgotLoading}
+                      className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 cursor-pointer font-bold text-xs shadow-lg mt-4"
+                      style={{ background: C.gold, color: C.navy }}
+                    >
+                      {forgotLoading ? <Loader2 size={16} className="animate-spin" /> : "Envoyer le code de réinitialisation"}
+                    </button>
+                  </form>
+                )}
+
+                {forgotStep === 2 && (
+                  <form onSubmit={handleResetPassword} className="space-y-4">
+                    {forgotSuccess && (
+                      <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-800/60 text-emerald-200 text-xs flex items-center gap-2">
+                        <CheckCircle2 size={16} className="shrink-0 text-emerald-400" />
+                        <span>{forgotSuccess}</span>
+                      </div>
+                    )}
+
+                    <div>
+                      <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                        CODE DE VÉRIFICATION (6 CHIFFRES)
+                      </label>
+                      <input
+                        style={inputStyle}
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value)}
+                        placeholder="ex: 849201"
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                        NOUVEAU MOT DE PASSE
+                      </label>
+                      <input
+                        style={inputStyle}
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                      />
+                    </div>
+
+                    {forgotError && (
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-950/80 border border-red-800/60 text-red-200 text-xs">
+                        <AlertCircle size={15} className="shrink-0" />
+                        <span>{forgotError}</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={forgotLoading}
+                      className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 cursor-pointer font-bold text-xs shadow-lg mt-4"
+                      style={{ background: C.gold, color: C.navy }}
+                    >
+                      {forgotLoading ? <Loader2 size={16} className="animate-spin" /> : "Mettre à jour le mot de passe"}
+                    </button>
+                  </form>
+                )}
+
+                {forgotStep === 3 && (
+                  <div className="text-center py-6 space-y-4">
+                    <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto">
+                      <CheckCircle2 size={32} />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Mot de passe réinitialisé !</h3>
+                    <p className="text-xs text-[#B9C3D6] max-w-xs mx-auto">
+                      Votre mot de passe a été mis à jour avec succès. Vous pouvez à présent vous connecter.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setForgotMode(false)}
+                      className="w-full rounded-2xl py-3.5 cursor-pointer font-bold text-xs shadow-lg mt-4"
+                      style={{ background: C.gold, color: C.navy }}
+                    >
+                      Retour à la connexion
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-      <div className="w-full space-y-3">
-        <button onClick={valider} disabled={loading} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-transform" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}>
-          {loading ? <Loader2 size={16} className="animate-spin" /> : <Lock size={15} />} {loading ? "Connexion…" : "Se connecter"}
-        </button>
-        <button onClick={onGoSignUp} className="w-full text-center py-2" style={{ fontFamily: sans, fontSize: 12.5, color: "white" }}>Pas encore de compte ? <span style={{ color: C.gold, fontWeight: 700 }}>S'inscrire</span></button>
       </div>
     </div>
   );
@@ -1702,17 +2066,19 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
 
 function Welcome({ onSubscribe, onDemo, onDevis }) {
   return (
-    <div className="h-full flex flex-col items-center justify-between px-6 pt-16 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div className="flex flex-col items-center text-center">
-        <div className="flex items-center justify-center rounded-2xl" style={{ width: 72, height: 72, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><ShieldCheck size={34} color={C.gold} /></div>
-        <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 15, color: "white", letterSpacing: 1, marginTop: 18 }}>NEOGTEC HEALTHCARE</div>
-        <div style={{ fontFamily: serif, fontSize: 24, color: "white", marginTop: 10, lineHeight: 1.3 }}>Votre assurance santé,<br />entièrement à distance</div>
-        <div style={{ fontFamily: sans, fontSize: 12.5, color: "#B9C3D6", marginTop: 10, maxWidth: 280 }}>Souscrivez, gérez vos garanties, demandez une prise en charge et suivez vos remboursements sans jamais vous déplacer.</div>
-      </div>
-      <div className="w-full space-y-3">
-        <button onClick={onSubscribe} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-transform" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}><Sparkles size={16} /> Souscrire à une police</button>
-        <button onClick={onDevis} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.gold}`, color: C.gold, fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}><Calculator size={15} /> Faire un devis gratuit</button>
-        <button onClick={onDemo} className="w-full rounded-xl py-3.5" style={{ border: "1px solid rgba(255,255,255,0.3)", color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}>J'ai déjà un compte</button>
+    <div className="min-h-full w-full flex items-center justify-center p-4 sm:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
+      <div className="w-full max-w-md bg-[#0A1F13]/90 md:bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md flex flex-col justify-between items-center text-center">
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center justify-center rounded-2xl mb-3" style={{ width: 72, height: 72, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><ShieldCheck size={34} color={C.gold} /></div>
+          <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }}>NeoGTec insur</div>
+          <div style={{ fontFamily: serif, fontSize: 24, color: "white", marginTop: 8, lineHeight: 1.3, fontWeight: 700 }}>Votre assurance santé,<br />entièrement à distance</div>
+          <div style={{ fontFamily: sans, fontSize: 12.5, color: "#B9C3D6", marginTop: 10, maxWidth: 300 }}>Souscrivez, gérez vos garanties, demandez une prise en charge et suivez vos remboursements sans jamais vous déplacer.</div>
+        </div>
+        <div className="w-full space-y-3 mt-8">
+          <button onClick={onSubscribe} className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg cursor-pointer" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}><Sparkles size={16} /> Souscrire à une police</button>
+          <button onClick={onDevis} className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 cursor-pointer hover:bg-white/5 transition-colors" style={{ border: `1px solid ${C.gold}`, color: C.gold, fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}><Calculator size={15} /> Faire un devis gratuit</button>
+          <button onClick={onDemo} className="w-full rounded-2xl py-3.5 cursor-pointer hover:bg-white/10 transition-colors" style={{ border: "1px solid rgba(255,255,255,0.3)", color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13 }}>J'ai déjà un compte</button>
+        </div>
       </div>
     </div>
   );
@@ -4117,9 +4483,6 @@ export default function App() {
             </div>
 
             <nav className="space-y-1">
-              {!sidebarCollapsed && (
-                <p className="text-[10px] font-bold text-[#C6992E] uppercase tracking-wider px-3 mb-2">Navigation Assuré</p>
-              )}
               {tabs.map((t) => {
                 const isActive = tab === t.id && !subScreen;
                 const Icon = t.icon;
