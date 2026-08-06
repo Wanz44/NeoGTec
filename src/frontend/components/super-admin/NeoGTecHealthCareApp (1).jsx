@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import QRCode from "qrcode";
 import {
   Home, FileText, CreditCard, Stethoscope, MessageCircle, ChevronRight,
-  ChevronDown, Download, Upload, Check, Clock, Phone, Mail,
+  ChevronDown, ChevronUp, Download, Upload, Check, Clock, Phone, Mail,
   MapPin, ShieldCheck, AlertCircle, X, Send, Trash2, ArrowLeft,
   CheckCircle2, Loader2, Baby, Heart, Smartphone, Landmark,
   PenLine, Sparkles, UserPlus, UserCheck, Camera, ScanFace, Navigation,
@@ -1006,20 +1006,45 @@ function SignaturePad({ onChange }) {
    Utilisé par Onboarding (souscription) et Devis (simulation)
 ------------------------------------------------------------------- */
 function SubscriberForm({ identite, setIdentite, identitePhoto, setIdentitePhoto, famille, setFamille, addBenef, setAddBenef, addFamille, removeFamille }) {
+  const [showWebcam, setShowWebcam] = useState(false);
+  const fileInputRef = useRef(null);
   const hasConjoint = famille.some((f) => f.lien === "Conjoint");
   return (
     <>
+      <RealCameraFaceModal
+        isOpen={showWebcam}
+        onClose={() => setShowWebcam(false)}
+        onVerified={() => {
+          setIdentitePhoto("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80");
+          setShowWebcam(false);
+        }}
+      />
       <div className="px-5 space-y-3">
-        <div className="flex justify-center mb-1">
-          <label className="relative cursor-pointer">
-            <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 76, height: 76, background: C.ivory, border: `2px dashed ${identitePhoto ? C.green : C.red}` }}>
-              {identitePhoto ? <img src={identitePhoto} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={26} color={C.navy2} />}
+        <div className="flex flex-col items-center justify-center mb-1">
+          <div className="relative mb-2">
+            <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 80, height: 80, background: C.ivory, border: `2px dashed ${identitePhoto ? C.green : C.red}` }}>
+              {identitePhoto ? <img src={identitePhoto} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={28} color={C.navy2} />}
             </div>
-            <div className="flex items-center justify-center rounded-full absolute" style={{ width: 24, height: 24, background: C.navy, bottom: -2, right: -2, border: "2px solid white" }}><Camera size={11} color="white" /></div>
-            <input type="file" accept="image/*" capture="user" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setIdentitePhoto(URL.createObjectURL(f)); }} />
-          </label>
+          </div>
+          <div className="flex gap-2 mb-1">
+            <button
+              type="button"
+              onClick={() => setShowWebcam(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0D2818] text-white text-xs font-bold hover:bg-[#1B4A34] transition-all cursor-pointer"
+            >
+              <Camera size={13} /> 1. Capture Caméra
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 bg-white text-stone-800 text-xs font-bold hover:bg-stone-50 transition-all cursor-pointer"
+            >
+              <Upload size={13} /> 2. Importer Fichier
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setIdentitePhoto(URL.createObjectURL(f)); }} />
+          </div>
         </div>
-        <div style={{ fontFamily: sans, fontSize: 10.5, color: identitePhoto ? C.sub : C.red, textAlign: "center", marginBottom: 6 }}>{identitePhoto ? "Photo ajoutée" : "Photo recommandée (utilisée aussi pour la reconnaissance faciale)"}</div>
+        <div style={{ fontFamily: sans, fontSize: 10.5, color: identitePhoto ? C.green : C.red, textAlign: "center", marginBottom: 6, fontWeight: 600 }}>{identitePhoto ? "✓ Photo de profil enregistrée" : "Photo requise (capture caméra ou import fichier local)"}</div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Nom *"><input style={inputStyle} value={identite.nom} onChange={(e) => setIdentite({ ...identite, nom: e.target.value })} placeholder="Nom" /></Field>
           <Field label="Prénom *"><input style={inputStyle} value={identite.prenom} onChange={(e) => setIdentite({ ...identite, prenom: e.target.value })} placeholder="Prénom" /></Field>
@@ -1117,10 +1142,11 @@ function WizardNav({ onBack, onNext, nextLabel = "Continuer", disabled }) {
 }
 
 function Onboarding({ onFinish, onCancel, initial }) {
-  const [step, setStep] = useState(initial ? 3 : 0);
+  const [step, setStep] = useState(initial?.startStep !== undefined ? initial.startStep : (initial?.formule ? 3 : 0));
   const [formule, setFormule] = useState(initial?.formule || null);
   const [expanded, setExpanded] = useState(null);
-  const [identite, setIdentite] = useState(initial?.identite || { nom: "", prenom: "", naissance: "", sexe: "Masculin", profession: "", telephone: "", ville: "Kinshasa", adresse: "", email: "", grade: "agent", typePiece: "Carte d'électeur", numeroPieceIdentite: "", declarationSante: "", groupeSanguin: "", allergies: "" });
+  const defaultIdentite = { nom: "", prenom: "", naissance: "", sexe: "Masculin", profession: "", telephone: "", ville: "Kinshasa", adresse: "", email: "", grade: "agent", typePiece: "Carte d'électeur", numeroPieceIdentite: "", declarationSante: "", groupeSanguin: "", allergies: "" };
+  const [identite, setIdentite] = useState(initial?.identite ? { ...defaultIdentite, ...initial.identite } : defaultIdentite);
   const [identitePhoto, setIdentitePhoto] = useState("");
   const [famille, setFamille] = useState(initial?.famille || []);
   const [addBenef, setAddBenef] = useState({ lien: "Conjoint", nom: "", naissance: "", photo: "", sexe: "Féminin", lieuNaissance: "", telephone: "", adresse: "", groupeSanguin: "" });
@@ -1432,15 +1458,41 @@ function Onboarding({ onFinish, onCancel, initial }) {
           <div className="px-5">
             <div style={{ fontFamily: sans, fontSize: 12, color: C.sub, marginBottom: 10 }}>Réglez votre quote-part de <b style={{ color: C.ink }}>{fmt(partSalarie)}</b> pour activer le contrat.</div>
             {validationStatus !== "approved" && (
-              <Card className="p-4 mb-3" style={{ background: validationStatus === "pending" ? C.goldSoft : C.ivory, border: "none" }}>
-                <div style={{ fontFamily: sans, fontSize: 12, color: C.ink, marginBottom: 10 }}>
-                  {validationStatus === "pending"
-                    ? "Validation administrative en cours — votre dossier est en review avant paiement."
-                    : "Votre dossier doit être validé par le service administratif avant d'accéder au paiement."}
+              <Card className="p-4 mb-3 border border-amber-300 bg-amber-50/80">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-amber-100 rounded-xl text-amber-800 shrink-0 mt-0.5">
+                    <Clock size={20} className={validationStatus === "pending" ? "animate-spin" : ""} />
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.navy }}>
+                      {validationStatus === "pending" ? "Formulaire sous vérification par un administrateur" : "Validation administrative requise"}
+                    </div>
+                    <div style={{ fontFamily: sans, fontSize: 11.5, color: C.ink, marginTop: 4 }}>
+                      {validationStatus === "pending"
+                        ? "Votre dossier est actuellement sous examen par nos services administratifs. L'accès au paiement sera débloqué automatiquement dès la confirmation accordée."
+                        : "Votre dossier doit faire l'objet d'une vérification préalable par le service de souscription avant de pouvoir procéder au paiement."}
+                    </div>
+                  </div>
                 </div>
-                <button onClick={submitForValidation} disabled={validationStatus !== "idle"} className="w-full rounded-xl py-3 flex items-center justify-center gap-2" style={{ background: validationStatus === "pending" ? C.navy : C.gold, color: validationStatus === "pending" ? "white" : C.navy, fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}>
-                  {validationStatus === "pending" ? "Validation en cours…" : "Soumettre pour validation administrative"}
-                </button>
+
+                <div className="mt-4 pt-3 border-t border-amber-200 flex flex-col gap-2">
+                  {validationStatus === "idle" && (
+                    <button
+                      onClick={submitForValidation}
+                      className="w-full rounded-xl py-3 flex items-center justify-center gap-2 cursor-pointer font-bold text-xs bg-[#0D2818] text-white shadow"
+                    >
+                      <ShieldCheck size={16} /> Soumettre mon dossier pour validation
+                    </button>
+                  )}
+                  {validationStatus === "pending" && (
+                    <button
+                      onClick={() => setValidationStatus("approved")}
+                      className="w-full rounded-xl py-2.5 flex items-center justify-center gap-2 cursor-pointer font-bold text-xs bg-[#C6992E] text-[#0D2818] shadow hover:bg-[#b08726] transition-all"
+                    >
+                      <CheckCircle2 size={16} /> Simuler l'approbation administrative immédiate
+                    </button>
+                  )}
+                </div>
               </Card>
             )}
             <div className="grid grid-cols-3 gap-2 mb-3">
@@ -4107,29 +4159,55 @@ function Sinistres({ notify, session, setSession, sub, setSub, go }) {
 
         {/* HISTORIQUE */}
         {sub === "histo" && (
-          <div className="space-y-2">
-            <button onClick={synchroniserPec} disabled={syncingPec} className="w-full rounded-xl py-2.5 mb-1 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}>
-              {syncingPec ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} {syncingPec ? "Synchronisation…" : "Synchroniser avec le réseau de soins"}
+          <div className="space-y-3">
+            <button onClick={synchroniserPec} disabled={syncingPec} className="w-full rounded-2xl py-3 mb-1 flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm" style={{ border: `1.5px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12.5, fontWeight: 700, background: "white" }}>
+              {syncingPec ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />} {syncingPec ? "Synchronisation en cours…" : "Synchroniser le réseau de soins"}
             </button>
             {pecReseau.length > 0 && (
-              <div className="mb-2">
-                <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.sub, textTransform: "uppercase", margin: "6px 2px" }}>Confirmées par un établissement du réseau</div>
+              <div className="mb-3">
+                <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 800, color: C.navy, textTransform: "uppercase", letterSpacing: 0.5, margin: "6px 2px" }}> Confirmées par le réseau de soins</div>
                 {pecReseau.map((p) => (
-                  <Card key={p.uid} className="p-3.5 mb-2">
-                    <div className="flex items-center justify-between"><div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{p.etablissement}</div><StatusPill statut={p.statutReglement} /></div>
-                    <div className="flex items-center justify-between mt-1 mb-2"><span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{p.acteLibelle} · {p.date}{p.heure ? ` à ${p.heure}` : ""}</span><span style={{ fontFamily: mono, fontSize: 12, color: C.navy }}>{fmt(p.montant)}</span></div>
+                  <Card key={p.uid} className="p-4 mb-2 border border-stone-200 shadow-sm">
+                    <div className="flex items-center justify-between"><div style={{ fontFamily: sans, fontSize: 13.5, fontWeight: 700, color: C.ink }}>{p.etablissement}</div><StatusPill statut={p.statutReglement} /></div>
+                    <div className="flex items-center justify-between mt-1 mb-2"><span style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{p.acteLibelle} · {p.date}{p.heure ? ` à ${p.heure}` : ""}</span><span style={{ fontFamily: mono, fontSize: 13, color: C.navy, fontWeight: 700 }}>{fmt(p.montant)}</span></div>
                     {p.vent && <VentilationBar vent={p.vent} montant={p.montant} />}
-                    {p.numeroBordereau && <div className="flex items-center gap-1.5 mt-2"><CheckCircle2 size={11} color={C.green} /><span style={{ fontFamily: mono, fontSize: 10, color: C.green, fontWeight: 700 }}>Réglé par l'assureur — bordereau {p.numeroBordereau}</span></div>}
+                    {p.numeroBordereau && (
+                      <div className="flex items-center gap-1.5 mt-2.5 pt-2 border-t border-stone-100">
+                        <CheckCircle2 size={13} color={C.green} />
+                        <span style={{ fontFamily: mono, fontSize: 10.5, color: C.green, fontWeight: 700 }}>Réglé par l'assureur — Bordereau N° {p.numeroBordereau}</span>
+                      </div>
+                    )}
                   </Card>
                 ))}
-                <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.sub, textTransform: "uppercase", margin: "10px 2px 6px" }}>Déclarées depuis l'app</div>
+                <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 800, color: C.navy, textTransform: "uppercase", letterSpacing: 0.5, margin: "12px 2px 6px" }}> Declarées en ligne par l'assuré</div>
               </div>
             )}
-            {session.histo.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12.5, color: C.sub }}>Aucun sinistre déclaré pour l'instant.</span></Card>}
+            {session.histo.length === 0 && <Card className="p-6 text-center"><span style={{ fontFamily: sans, fontSize: 12.5, color: C.sub }}>Aucun demande de soins/sinistre enregistrée.</span></Card>}
             {session.histo.map((h) => (
-              <Card key={h.id} className="p-3.5">
-                <div className="flex items-center justify-between"><div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{h.prestataire}</div><StatusPill statut={h.statut} /></div>
-                <div className="flex items-center justify-between mt-1 mb-2"><span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{h.type} · {h.date}</span><span style={{ fontFamily: mono, fontSize: 12, color: C.navy }}>{fmt(h.montant)}</span></div>
+              <Card key={h.id} className="p-4 border border-stone-200 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <Building2 size={15} className="text-amber-700" />
+                    <span style={{ fontFamily: sans, fontSize: 13.5, fontWeight: 700, color: C.ink }}>{h.prestataire}</span>
+                  </div>
+                  <StatusPill statut={h.statut} />
+                </div>
+                <div className="flex items-center justify-between mt-1 mb-2">
+                  <div className="flex items-center gap-2 text-xs text-stone-500">
+                    <span>{h.type}</span>
+                    <span>•</span>
+                    <span>{h.date}</span>
+                  </div>
+                  <span style={{ fontFamily: mono, fontSize: 13.5, color: C.navy, fontWeight: 800 }}>{fmt(h.montant)}</span>
+                </div>
+                <div className="flex items-center gap-2 my-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <Paperclip size={10} /> Facture & Prescription
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-stone-100 text-stone-700">
+                    <FileText size={10} /> Référence : SIN-{h.id}
+                  </span>
+                </div>
                 {h.vent && <VentilationBar vent={h.vent} montant={h.montant} />}
                 {h.statut === "Validé" && (
                   <div className="mt-3 pt-2" style={{ borderTop: `1px solid ${C.line}` }}>
@@ -4785,6 +4863,8 @@ export default function App() {
 
   const go = (target, sub) => {
     if (["dossier", "devis", "notifications", "profil", "settings", "contrats", "affiliation"].includes(target)) { setSubScreen(target === "settings" ? "profil" : target); return; }
+    if (target === "prestataires") { setSubScreen(null); setTab("sinistres"); setSinistresSub("prest"); return; }
+    if (target === "remboursements") { setSubScreen(null); setTab("sinistres"); setSinistresSub("remb"); return; }
     setSubScreen(null);
     setTab(target);
     if (target === "sinistres" && sub) setSinistresSub(sub);
@@ -4798,6 +4878,8 @@ export default function App() {
     { id: "police", label: "Police", icon: FileText },
     { id: "carte", label: "Carte", icon: CreditCard },
     { id: "sinistres", label: "Soins", icon: Stethoscope },
+    { id: "prestataires", label: "Prestataires", icon: Navigation },
+    { id: "remboursements", label: "Remboursements", icon: ClipboardList },
     { id: "paiement", label: "Paiement", icon: Wallet },
     { id: "assistance", label: "Aide", icon: MessageCircle },
   ];
@@ -4895,7 +4977,30 @@ export default function App() {
         )}
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 max-w-7xl w-full mx-auto">
-          {view === "signup" && <SignUp onDone={(data) => { setSignupData(data); setView("signin"); }} onGoSignIn={() => setView("signin")} />}
+          {view === "signup" && (
+            <SignUp
+              onDone={(data) => {
+                setSignupData(data);
+                const nameParts = (data.nom || "").trim().split(" ");
+                const prenom = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+                const nom = nameParts[0] || data.nom || "";
+                const prefillData = {
+                  startStep: 0,
+                  identite: {
+                    nom: nom,
+                    prenom: prenom,
+                    email: data.email || "",
+                    telephone: data.telephone || "",
+                  }
+                };
+                setDevisPrefill(prefillData);
+                setOnboardingMode("compte");
+                setView("onboarding");
+                notify("Compte créé avec succès ! Poursuivez les 8 étapes de votre souscription.");
+              }}
+              onGoSignIn={() => setView("signin")}
+            />
+          )}
           {view === "signin" && <SignIn prefill={signupData} onDone={(sessionReelle) => (sessionReelle ? startApp(sessionReelle) : setView("welcome"))} onGoSignUp={() => setView("signup")} />}
           {view === "welcome" && <Welcome onSubscribe={() => { setOnboardingMode("compte"); setView("onboarding"); }} onDemo={() => startApp(DEMO_SESSION)} onDevis={() => setView("devis")} />}
           {view === "devis" && <Devis notify={notify} onBack={() => setView("welcome")} onSouscrire={passerALaSouscription} />}

@@ -907,14 +907,75 @@ function PlusScreen({ session, setSession, notify, onLogout, go }) {
       {tab === "assistance" && <MessagerieEntreprise session={session} notify={notify} />}
 
       {tab === "parametres" && (
-        <div className="px-5 space-y-2">
+        <div className="px-5 space-y-3">
           <Card className="p-4">
-            <div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{session.entreprise.nom}</div>
-            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{session.entreprise.secteur}</div>
-            <div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub, marginTop: 4 }}>{session.entreprise.rccm}</div>
-            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 4 }}>{session.entreprise.contactRH}</div>
-            <div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub }}>{session.entreprise.contrat} · {session.entreprise.formule}</div>
+            <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.navy }}>Profil Entreprise</div>
+            <div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink, marginTop: 4 }}>{session.entreprise.nom}</div>
+            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{session.entreprise.secteur} · RCCM : {session.entreprise.rccm || "Non renseigné"}</div>
+            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 4 }}>Contact RH : {session.entreprise.contactRH}</div>
+            <div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub, marginTop: 2 }}>{session.entreprise.contrat} · {session.entreprise.formule}</div>
           </Card>
+
+          <Card className="p-4 space-y-3">
+            <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.navy }}>Gestion des Rôles & Accès Admin B2B</div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg" style={{ background: C.ivory }}>
+                <div>
+                  <div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}>Super Administrateur RH</div>
+                  <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Accès total (flotte, dérogations, factures, contrat)</div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: C.greenSoft, color: C.green }}>Actif</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg" style={{ background: C.ivory }}>
+                <div>
+                  <div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}>Valideur Dérogations & Médical</div>
+                  <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Validation des demandes hors plafond & dérogations</div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: C.amberSoft, color: C.amber }}>1 utilisateur</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg" style={{ background: C.ivory }}>
+                <div>
+                  <div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}>Gestionnaire Comptabilité / Paie</div>
+                  <div style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Paiement des cotisations & suivi des surplus de dérogation</div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: C.greenSoft, color: C.green }}>Actif</span>
+              </div>
+            </div>
+            <button onClick={() => notify("Nouveau rôle administrateur ajouté")} className="w-full py-2 rounded-xl text-xs font-bold" style={{ border: `1px solid ${C.line}`, color: C.navy2 }}>+ Ajouter un administrateur B2B</button>
+          </Card>
+
+          <Card className="p-4 space-y-3">
+            <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.navy }}>Alertes & Notifications B2B</div>
+            <div className="space-y-2">
+              <label className="flex items-center justify-between cursor-pointer">
+                <span style={{ fontFamily: sans, fontSize: 11.5, color: C.ink }}>Alertes de consommation (80% et 90% du plafond)</span>
+                <input type="checkbox" defaultChecked className="rounded" />
+              </label>
+              <label className="flex items-center justify-between cursor-pointer">
+                <span style={{ fontFamily: sans, fontSize: 11.5, color: C.ink }}>Notifications de nouvelles dérogations soumises</span>
+                <input type="checkbox" defaultChecked className="rounded" />
+              </label>
+              <label className="flex items-center justify-between cursor-pointer">
+                <span style={{ fontFamily: sans, fontSize: 11.5, color: C.ink }}>Rappels d'échéances de factures & cotisations</span>
+                <input type="checkbox" defaultChecked className="rounded" />
+              </label>
+            </div>
+          </Card>
+
+          <Card className="p-4 space-y-3">
+            <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.navy }}>Préférences de Facturation</div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <span style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Mode de paiement</span>
+                <div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink, marginTop: 2 }}>Virement / Mobile Money</div>
+              </div>
+              <div>
+                <span style={{ fontFamily: sans, fontSize: 10, color: C.sub }}>Périodicité</span>
+                <div style={{ fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink, marginTop: 2 }}>Mensuelle</div>
+              </div>
+            </div>
+          </Card>
+
           <button onClick={onLogout} className="w-full rounded-xl py-3 flex items-center justify-center gap-2 mt-2" style={{ border: `1px solid ${C.red}`, color: C.red, fontFamily: sans, fontWeight: 700, fontSize: 13 }}><LogOut size={15} /> Se déconnecter</button>
         </div>
       )}
@@ -2222,14 +2283,17 @@ function OnboardingEntreprise({ onFinish, onCancel }) {
         <>
           <div className="px-5">
             <Card className="p-4 mb-3">
-              <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Récapitulatif</div>
-              <div style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{infos.nom} · {infos.secteur || "—"}</div>
-              <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{grades.length} grades configurés · Formule Confort Entreprise</div>
+              <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Récapitulatif de votre entreprise</div>
+              <div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{infos.nom}</div>
+              <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub, marginTop: 2 }}>Secteur : {infos.secteur || "—"} · RCCM : {infos.rccm || "—"}</div>
+              <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub, marginTop: 2 }}>Contact RH : {infos.contactRH} ({infos.email || infos.telephone || "—"})</div>
+              <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub, marginTop: 2 }}>{grades.length} grades de couverture configurés · Formule {infos.formule} Entreprise</div>
             </Card>
-            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, textAlign: "center" }}>Vous pourrez ajouter vos employés juste après l'activation.</div>
+            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, textAlign: "center" }}>Vous pourrez ajouter vos employés et personnaliser les paramètres juste après l'activation.</div>
           </div>
-          <div className="px-5 mt-3">
-            <button onClick={activer} disabled={creating} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}>
+          <div className="px-5 flex gap-3 mt-3">
+            <button onClick={() => setStep(1)} className="flex items-center justify-center rounded-xl" style={{ width: 46, height: 46, border: `1px solid ${C.line}`, background: "white" }} title="Retour à l'étape précédente"><ArrowLeft size={17} color={C.ink} /></button>
+            <button onClick={activer} disabled={creating} className="flex-1 rounded-xl py-3.5 flex items-center justify-center gap-2 cursor-pointer" style={{ background: C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}>
               {creating ? <Loader2 size={16} className="animate-spin" /> : <Building2 size={15} color={C.gold} />} {creating ? "Activation…" : "Activer mon espace entreprise"}
             </button>
           </div>
