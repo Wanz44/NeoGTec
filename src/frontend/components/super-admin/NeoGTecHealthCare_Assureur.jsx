@@ -132,57 +132,65 @@ function buildEntreprises() {
   ];
 }
 const RESEAU_HOPITAUX_RDC = [
-  { cat: 'Réseau des hôpitaux', items: [
-    { nom: 'RIVIERA CLINIC', commune: 'BANDALUNGWA', avenue: 'AV.NSENGE N°5116', quartier: 'MAKELELE' },
-    { nom: 'CM LA PATIENCE', commune: 'BANDALUNGWA', avenue: 'AV INGA REF, COMMUNE', quartier: 'KIMBONDO' },
-    { nom: 'CH LA BORNE', commune: 'NGALIEMA', avenue: 'AV MARINE 28, AUX ENCEINTES DU CH LA BORNE', quartier: 'UPN' },
-    { nom: 'CH  BOLINGANI', commune: 'NGALIEMA', avenue: 'AV  SONGE,24363', quartier: 'MUSEY' },
-    { nom: 'CLINIQUE DES ANGES', commune: 'NGALIEMA', avenue: 'ROUTE DE MATADI N°5351', quartier: 'BINZA OZONE' },
-    { nom: 'YADAH CLINIC', commune: 'GOMBE', avenue: 'REVOLUTION 11', quartier: 'GOMBE' },
-    { nom: 'CLINIC CAROLINE', commune: 'GOMBE', avenue: 'AV KAUKA', quartier: 'DERIERE ROYALE' },
-    { nom: 'CH MUTUALISTE', commune: 'KASAVUBU', avenue: 'IKELEMBA,52', quartier: 'ANCIEN COMBATTANT' },
-    { nom: 'POLYCLINIQUE LIGHT', commune: 'KIMBANSEKE', avenue: 'BLV LUMUMBA', quartier: 'Q3 ARRET VODACOM' },
-    { nom: 'CLINIQUE IK', commune: 'KINTAMBO', avenue: 'AV KWANGO N°3', quartier: 'MAGASIN-KINTAMBO' },
-    { nom: 'CM GOMBELE', commune: 'LEMBA', avenue: 'AV IKUKU N°8 Réf New-lys', quartier: 'RIGHINI' },
-    { nom: 'HOPITAL SAINT GABRIEL', commune: 'LEMBA', avenue: 'AV KILIDJA 6095/9', quartier: 'GOMBELE/LEMBA TERMUNUS' },
-    { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: '15 EME RUE-LIMETE' },
-    { nom: 'CLINIC PROMEDIS/LIMETE', commune: 'LIMETE', avenue: '10 èm RUE N° 22D', quartier: 'INDUSTRIEL' },
-    { nom: 'MOYI MWA TONGO', commune: 'LIMETE', avenue: '4EME RUE INDUSTRIEL', quartier: 'LIMETE' },
-    { nom: 'CH BIEN ETRE', commune: 'LIMETE', avenue: 'AV CONGO 8', quartier: 'SALONGO' },
-    { nom: 'CENTRE DE MEDECINE SPECIALISEE DE LIMETE', commune: 'LIMETE', avenue: '10EME RUE DALLIAS 582', quartier: 'LIMETE RESIDENTIEL' },
-    { nom: 'CH MA PROVIDENCE', commune: 'KALAMU', avenue: 'LOTAS 1029', quartier: 'NZAMBA AVOCAT' },
-    { nom: 'CLINIQUE DES ANGES VIP', commune: 'LINGWALA', avenue: 'Crois des AV Costa et Mushi', quartier: 'BEAU VENT' },
-    { nom: 'BIOPHARM 2', commune: 'LINGWALA', avenue: 'AV KATO', quartier: 'HUILERIE' },
-    { nom: 'CH EMILIA', commune: 'MATETE', avenue: 'KUNDA 1 N°16', quartier: 'KUNDA 1' },
-    { nom: 'CLINIC PROMEDIS/ NGALIEMA', commune: 'NGALIEMA', avenue: 'AV MAKUTU N°2', quartier: 'BINZA OZONE' },
-    { nom: 'CLINIQUE SAPHIR', commune: 'KINTAMBO', avenue: 'AV TRANSVERSALE 2', quartier: 'JOLIE PARC' },
-    { nom: 'CH BONNE FOI', commune: 'NSELE', avenue: 'AV MBULU 44', quartier: 'MPASA I' },
-    { nom: 'SAINT LUC DE DAIPAIN', commune: 'N\'SELE', avenue: 'DAIPAIN', quartier: 'DAIPAIN' },
-    { nom: 'CH MARIA ANTHONIA DE PARIS', commune: 'N\'SELE', avenue: 'AV COLONEL NZADI 1', quartier: 'NGAMABA/MPASA' },
-    { nom: 'CLINIC PROMEDIS/ N\'SELE', commune: 'N\'SELE', avenue: 'AV KAKENZA N°2', quartier: 'COPELA-PLAZA' },
-    { nom: 'CLINIQUE OASIS DE VIE', commune: 'BARUMBU', avenue: '6051 KABAMBARE', quartier: 'BEAU MARCHE-NDOLO' },
-    { nom: 'CH DAMFER', commune: 'N\'SELE', avenue: 'AV MAKELELE 107', quartier: 'MPASA I' },
-    { nom: 'RENE DES HAES', commune: 'MONT NGAFULA', avenue: 'AV LUZIZILA 18', quartier: 'KIMWENZA-MISSION' },
-    { nom: 'CH SAINT GILD', commune: 'MONT NGAFULA', avenue: 'AV MONASTERE KINSAHSA-KINDELE', quartier: 'KINDELE' },
-    { nom: 'CS ET MATERNITE SAINT VINCENT DE PAUL', commune: 'MONT NGAFULA', avenue: 'AV LEMBI 5  Q/MUSHI/MBUDI', quartier: 'MBUDI' },
-    { nom: 'PROMEDIS CITE VERTE', commune: 'MONT NGAFULA', avenue: '12 EME RUE VLLA 3', quartier: 'CITE VERTE' },
-  ]},
-  { cat: 'Structures de BDOM', items: [
-    { nom: 'CS  NTOMBWA YA  MARIA', commune: 'MASINA', avenue: 'LOLA  II,4', quartier: 'MASINA SANS FIL' },
-    { nom: 'CH  LISUNGI', commune: 'MONT NGAFULA', avenue: 'ROUTE DU LAC DE MA VALLEE', quartier: 'MPUMBU' },
-    { nom: 'CS  MATER DEI', commune: 'MONT NGAFULA', avenue: 'ROUTE DE MATADI', quartier: 'KIMBONDO' },
-  ]},
-  { cat: 'Structures hyperspécialisées', items: [
-    { nom: 'CLINIQUE DENTAIRE LA CANINE', commune: 'GOMBE', avenue: 'AV DE LA JUSTICE 44', quartier: 'GOMBE' },
-    { nom: 'CDM PHTALMOLOGIQUE ET DENTAIRE', commune: 'GOMBE', avenue: 'AV MONGALA 10 REF MIDEMA', quartier: 'GOMBE' },
-    { nom: 'HJ HOSPITALS/EXAMENS SPECIALISES', commune: 'LIMETE', avenue: '1ERE RUE, INDISTRIEL', quartier: '1ERE RUE INDISTRIEL' },
-  ]},
-  { cat: 'Structures en cas de transfert', items: [
-    { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: 'MOTEL FIKIN' },
-    { nom: 'CLINIQUE BONDEKO', commune: 'LIMETE', avenue: 'AV YOLO N°7259', quartier: 'LIMETE-RESIDENTIEL' },
-    { nom: 'HGR/PEDIATRIE  KALEMBELEMBE', commune: 'LINGWALA', avenue: 'AV  KALEMBELEMBE', quartier: 'NGONDALOKOMBE' },
-    { nom: 'CH  MONKOLE', commune: 'MT NGAFULA', avenue: 'AV MONKOLE', quartier: '' },
-  ]},
+  {
+    cat: 'Réseau des hôpitaux', items: [
+      { nom: 'RIVIERA CLINIC', commune: 'BANDALUNGWA', avenue: 'AV.NSENGE N°5116', quartier: 'MAKELELE' },
+      { nom: 'CM LA PATIENCE', commune: 'BANDALUNGWA', avenue: 'AV INGA REF, COMMUNE', quartier: 'KIMBONDO' },
+      { nom: 'CH LA BORNE', commune: 'NGALIEMA', avenue: 'AV MARINE 28, AUX ENCEINTES DU CH LA BORNE', quartier: 'UPN' },
+      { nom: 'CH  BOLINGANI', commune: 'NGALIEMA', avenue: 'AV  SONGE,24363', quartier: 'MUSEY' },
+      { nom: 'CLINIQUE DES ANGES', commune: 'NGALIEMA', avenue: 'ROUTE DE MATADI N°5351', quartier: 'BINZA OZONE' },
+      { nom: 'YADAH CLINIC', commune: 'GOMBE', avenue: 'REVOLUTION 11', quartier: 'GOMBE' },
+      { nom: 'CLINIC CAROLINE', commune: 'GOMBE', avenue: 'AV KAUKA', quartier: 'DERIERE ROYALE' },
+      { nom: 'CH MUTUALISTE', commune: 'KASAVUBU', avenue: 'IKELEMBA,52', quartier: 'ANCIEN COMBATTANT' },
+      { nom: 'POLYCLINIQUE LIGHT', commune: 'KIMBANSEKE', avenue: 'BLV LUMUMBA', quartier: 'Q3 ARRET VODACOM' },
+      { nom: 'CLINIQUE IK', commune: 'KINTAMBO', avenue: 'AV KWANGO N°3', quartier: 'MAGASIN-KINTAMBO' },
+      { nom: 'CM GOMBELE', commune: 'LEMBA', avenue: 'AV IKUKU N°8 Réf New-lys', quartier: 'RIGHINI' },
+      { nom: 'HOPITAL SAINT GABRIEL', commune: 'LEMBA', avenue: 'AV KILIDJA 6095/9', quartier: 'GOMBELE/LEMBA TERMUNUS' },
+      { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: '15 EME RUE-LIMETE' },
+      { nom: 'CLINIC PROMEDIS/LIMETE', commune: 'LIMETE', avenue: '10 èm RUE N° 22D', quartier: 'INDUSTRIEL' },
+      { nom: 'MOYI MWA TONGO', commune: 'LIMETE', avenue: '4EME RUE INDUSTRIEL', quartier: 'LIMETE' },
+      { nom: 'CH BIEN ETRE', commune: 'LIMETE', avenue: 'AV CONGO 8', quartier: 'SALONGO' },
+      { nom: 'CENTRE DE MEDECINE SPECIALISEE DE LIMETE', commune: 'LIMETE', avenue: '10EME RUE DALLIAS 582', quartier: 'LIMETE RESIDENTIEL' },
+      { nom: 'CH MA PROVIDENCE', commune: 'KALAMU', avenue: 'LOTAS 1029', quartier: 'NZAMBA AVOCAT' },
+      { nom: 'CLINIQUE DES ANGES VIP', commune: 'LINGWALA', avenue: 'Crois des AV Costa et Mushi', quartier: 'BEAU VENT' },
+      { nom: 'BIOPHARM 2', commune: 'LINGWALA', avenue: 'AV KATO', quartier: 'HUILERIE' },
+      { nom: 'CH EMILIA', commune: 'MATETE', avenue: 'KUNDA 1 N°16', quartier: 'KUNDA 1' },
+      { nom: 'CLINIC PROMEDIS/ NGALIEMA', commune: 'NGALIEMA', avenue: 'AV MAKUTU N°2', quartier: 'BINZA OZONE' },
+      { nom: 'CLINIQUE SAPHIR', commune: 'KINTAMBO', avenue: 'AV TRANSVERSALE 2', quartier: 'JOLIE PARC' },
+      { nom: 'CH BONNE FOI', commune: 'NSELE', avenue: 'AV MBULU 44', quartier: 'MPASA I' },
+      { nom: 'SAINT LUC DE DAIPAIN', commune: 'N\'SELE', avenue: 'DAIPAIN', quartier: 'DAIPAIN' },
+      { nom: 'CH MARIA ANTHONIA DE PARIS', commune: 'N\'SELE', avenue: 'AV COLONEL NZADI 1', quartier: 'NGAMABA/MPASA' },
+      { nom: 'CLINIC PROMEDIS/ N\'SELE', commune: 'N\'SELE', avenue: 'AV KAKENZA N°2', quartier: 'COPELA-PLAZA' },
+      { nom: 'CLINIQUE OASIS DE VIE', commune: 'BARUMBU', avenue: '6051 KABAMBARE', quartier: 'BEAU MARCHE-NDOLO' },
+      { nom: 'CH DAMFER', commune: 'N\'SELE', avenue: 'AV MAKELELE 107', quartier: 'MPASA I' },
+      { nom: 'RENE DES HAES', commune: 'MONT NGAFULA', avenue: 'AV LUZIZILA 18', quartier: 'KIMWENZA-MISSION' },
+      { nom: 'CH SAINT GILD', commune: 'MONT NGAFULA', avenue: 'AV MONASTERE KINSAHSA-KINDELE', quartier: 'KINDELE' },
+      { nom: 'CS ET MATERNITE SAINT VINCENT DE PAUL', commune: 'MONT NGAFULA', avenue: 'AV LEMBI 5  Q/MUSHI/MBUDI', quartier: 'MBUDI' },
+      { nom: 'PROMEDIS CITE VERTE', commune: 'MONT NGAFULA', avenue: '12 EME RUE VLLA 3', quartier: 'CITE VERTE' },
+    ]
+  },
+  {
+    cat: 'Structures de BDOM', items: [
+      { nom: 'CS  NTOMBWA YA  MARIA', commune: 'MASINA', avenue: 'LOLA  II,4', quartier: 'MASINA SANS FIL' },
+      { nom: 'CH  LISUNGI', commune: 'MONT NGAFULA', avenue: 'ROUTE DU LAC DE MA VALLEE', quartier: 'MPUMBU' },
+      { nom: 'CS  MATER DEI', commune: 'MONT NGAFULA', avenue: 'ROUTE DE MATADI', quartier: 'KIMBONDO' },
+    ]
+  },
+  {
+    cat: 'Structures hyperspécialisées', items: [
+      { nom: 'CLINIQUE DENTAIRE LA CANINE', commune: 'GOMBE', avenue: 'AV DE LA JUSTICE 44', quartier: 'GOMBE' },
+      { nom: 'CDM PHTALMOLOGIQUE ET DENTAIRE', commune: 'GOMBE', avenue: 'AV MONGALA 10 REF MIDEMA', quartier: 'GOMBE' },
+      { nom: 'HJ HOSPITALS/EXAMENS SPECIALISES', commune: 'LIMETE', avenue: '1ERE RUE, INDISTRIEL', quartier: '1ERE RUE INDISTRIEL' },
+    ]
+  },
+  {
+    cat: 'Structures en cas de transfert', items: [
+      { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: 'MOTEL FIKIN' },
+      { nom: 'CLINIQUE BONDEKO', commune: 'LIMETE', avenue: 'AV YOLO N°7259', quartier: 'LIMETE-RESIDENTIEL' },
+      { nom: 'HGR/PEDIATRIE  KALEMBELEMBE', commune: 'LINGWALA', avenue: 'AV  KALEMBELEMBE', quartier: 'NGONDALOKOMBE' },
+      { nom: 'CH  MONKOLE', commune: 'MT NGAFULA', avenue: 'AV MONKOLE', quartier: '' },
+    ]
+  },
 ];
 
 function buildPrestataires() {
@@ -217,44 +225,60 @@ function buildAssuresIndividuels() {
 const CRM_ETAPES = ["Nouveau", "Contacté", "Devis envoyé", "Négociation", "Gagné", "Perdu"];
 function buildProspects() {
   return [
-    { id: 7, nom: "MININGCO SARL", type: "Entreprise", contact: "NGOYI Beatrice — Directrice RH", telephone: "+243 81 111 0022", email: "rh@miningco.cd", ville: "Kinshasa", source: "Courtier", courtierNom: "Congo Assurance Courtage SARL", statut: "Gagné", formuleInteret: "Confort Famille", valeurEstimee: 25000000, commercial: "Ilunga Patrick", dateCreation: "02/06/2025", prochainSuivi: "—", commissionPayee: true, activites: [
-      { id: 1, type: "Appel", texte: "Premier contact via courtier partenaire, recherche couverture santé pour le personnel minier", date: "02/06/2025", auteur: "Ilunga Patrick" },
-      { id: 2, type: "Réunion", texte: "Présentation de l'offre Confort Famille sur site à Kolwezi", date: "12/06/2025", auteur: "Ilunga Patrick" },
-      { id: 3, type: "Devis envoyé", texte: "Devis final accepté pour 6 employés + ayants droit", date: "25/06/2025", auteur: "Ilunga Patrick" },
-      { id: 4, type: "Note", texte: "Contrat signé — compte créé dans Comptes réseau, activation au 01/07/2025", date: "30/06/2025", auteur: "Ilunga Patrick" },
-    ], compteConverti: true },
-    { id: 8, nom: "KASONGO Nadège", type: "Assuré simple", contact: "KASONGO Nadège", telephone: "+243 89 777 4411", email: "n.kasongo@gmail.com", ville: "Kinshasa", source: "Site web", statut: "Perdu", formuleInteret: "Essentiel", valeurEstimee: 700000, commercial: "Ngoyi Sarah", dateCreation: "18/09/2025", prochainSuivi: "—", motifPerte: "N'a plus donné suite après le devis", activites: [
-      { id: 1, type: "Email", texte: "Demande d'information reçue via le site", date: "18/09/2025", auteur: "Système" },
-      { id: 2, type: "Devis envoyé", texte: "Devis Essentiel individuel envoyé", date: "22/09/2025", auteur: "Ngoyi Sarah" },
-      { id: 3, type: "Note", texte: "Relancée deux fois sans réponse — dossier clos", date: "10/11/2025", auteur: "Ngoyi Sarah" },
-    ] },
-    { id: 1, nom: "SOMIKI SARL", type: "Entreprise", contact: "Kabongo Alphonse — DRH", telephone: "+243 81 222 3344", email: "rh@somiki.cd", ville: "Lubumbashi", source: "Démarchage", statut: "Négociation", formuleInteret: "Confort Famille", valeurEstimee: 18000000, commercial: "Ilunga Patrick", dateCreation: "12/06/2026", prochainSuivi: "16/07/2026", activites: [
-      { id: 1, type: "Appel", texte: "Premier contact, intéressés par une couverture pour 40 employés", date: "12/06/2026", auteur: "Ilunga Patrick" },
-      { id: 2, type: "Réunion", texte: "Présentation de l'offre Confort Famille sur site", date: "25/06/2026", auteur: "Ilunga Patrick" },
-      { id: 3, type: "Devis envoyé", texte: "Devis transmis pour 40 employés + ayants droit — 18 000 000 CDF/an", date: "02/07/2026", auteur: "Ilunga Patrick" },
-    ] },
-    { id: 2, nom: "KALALA Espérance", type: "Chef de famille", contact: "KALALA Espérance", telephone: "+243 89 555 1122", email: "e.kalala@gmail.com", ville: "Kinshasa", source: "Recommandation", statut: "Devis envoyé", formuleInteret: "Premium", valeurEstimee: 3800000, commercial: "Ngoyi Sarah", dateCreation: "28/06/2026", prochainSuivi: "17/07/2026", activites: [
-      { id: 1, type: "Appel", texte: "Recommandée par un client existant, famille de 5 personnes", date: "28/06/2026", auteur: "Ngoyi Sarah" },
-      { id: 2, type: "Devis envoyé", texte: "Devis Premium famille de 5 envoyé par WhatsApp", date: "05/07/2026", auteur: "Ngoyi Sarah" },
-    ] },
-    { id: 3, nom: "Cabinet BONDO & Associés", type: "Entreprise", contact: "Bondo Michel — Gérant", telephone: "+243 82 444 7788", email: "contact@bondo-associes.cd", ville: "Kinshasa", source: "Site web", statut: "Contacté", formuleInteret: "Essentiel", valeurEstimee: 4200000, commercial: "Ilunga Patrick", dateCreation: "05/07/2026", prochainSuivi: "18/07/2026", activites: [
-      { id: 1, type: "Email", texte: "Demande d'information reçue via le site — cabinet de 8 personnes", date: "05/07/2026", auteur: "Système" },
-      { id: 2, type: "Appel", texte: "Premier échange, envoi de la documentation en cours", date: "08/07/2026", auteur: "Ilunga Patrick" },
-    ] },
-    { id: 4, nom: "MBUYI Grâce", type: "Assuré simple", contact: "MBUYI Grâce", telephone: "+243 84 333 9900", email: "grace.mbuyi@yahoo.fr", ville: "Goma", source: "Salon", statut: "Nouveau", formuleInteret: "Lisanga 65$", valeurEstimee: 182000, commercial: "Ngoyi Sarah", dateCreation: "10/07/2026", prochainSuivi: "15/07/2026", activites: [
-      { id: 1, type: "Note", texte: "Rencontrée au salon santé de Goma, intéressée par la mutuelle Lisanga", date: "10/07/2026", auteur: "Ngoyi Sarah" },
-    ] },
-    { id: 5, nom: "TransCongo Logistique", type: "Entreprise", contact: "Wamba Julie — RH", telephone: "+243 81 999 4455", email: "j.wamba@transcongo.cd", ville: "Kinshasa", source: "Courtier", courtierNom: "Congo Assurance Courtage SARL", statut: "Gagné", formuleInteret: "Confort Famille", valeurEstimee: 32000000, commercial: "Ilunga Patrick", dateCreation: "02/05/2026", prochainSuivi: "—", commissionPayee: false, activites: [
-      { id: 1, type: "Appel", texte: "Introduit par un courtier partenaire", date: "02/05/2026", auteur: "Ilunga Patrick" },
-      { id: 2, type: "Réunion", texte: "Négociation des grades et plafonds", date: "20/05/2026", auteur: "Ilunga Patrick" },
-      { id: 3, type: "Devis envoyé", texte: "Devis final accepté pour 85 employés", date: "10/06/2026", auteur: "Ilunga Patrick" },
-      { id: 4, type: "Note", texte: "Contrat signé — compte créé dans Comptes réseau", date: "01/07/2026", auteur: "Ilunga Patrick" },
-    ], compteConverti: true },
-    { id: 6, nom: "PHARMAKIN Sprl", type: "Entreprise", contact: "Tshisola Robert", telephone: "+243 85 111 2233", email: "r.tshisola@pharmakin.cd", ville: "Kinshasa", source: "Démarchage", statut: "Perdu", formuleInteret: "Essentiel", valeurEstimee: 6000000, commercial: "Ngoyi Sarah", dateCreation: "15/05/2026", prochainSuivi: "—", motifPerte: "A choisi un concurrent moins cher", activites: [
-      { id: 1, type: "Appel", texte: "Premier contact, 12 employés", date: "15/05/2026", auteur: "Ngoyi Sarah" },
-      { id: 2, type: "Devis envoyé", texte: "Devis Essentiel envoyé", date: "22/05/2026", auteur: "Ngoyi Sarah" },
-      { id: 3, type: "Note", texte: "A choisi un concurrent proposant un tarif plus bas — dossier clos", date: "10/06/2026", auteur: "Ngoyi Sarah" },
-    ] },
+    {
+      id: 7, nom: "MININGCO SARL", type: "Entreprise", contact: "NGOYI Beatrice — Directrice RH", telephone: "+243 81 111 0022", email: "rh@miningco.cd", ville: "Kinshasa", source: "Courtier", courtierNom: "Congo Assurance Courtage SARL", statut: "Gagné", formuleInteret: "Confort Famille", valeurEstimee: 25000000, commercial: "Ilunga Patrick", dateCreation: "02/06/2025", prochainSuivi: "—", commissionPayee: true, activites: [
+        { id: 1, type: "Appel", texte: "Premier contact via courtier partenaire, recherche couverture santé pour le personnel minier", date: "02/06/2025", auteur: "Ilunga Patrick" },
+        { id: 2, type: "Réunion", texte: "Présentation de l'offre Confort Famille sur site à Kolwezi", date: "12/06/2025", auteur: "Ilunga Patrick" },
+        { id: 3, type: "Devis envoyé", texte: "Devis final accepté pour 6 employés + ayants droit", date: "25/06/2025", auteur: "Ilunga Patrick" },
+        { id: 4, type: "Note", texte: "Contrat signé — compte créé dans Comptes réseau, activation au 01/07/2025", date: "30/06/2025", auteur: "Ilunga Patrick" },
+      ], compteConverti: true
+    },
+    {
+      id: 8, nom: "KASONGO Nadège", type: "Assuré simple", contact: "KASONGO Nadège", telephone: "+243 89 777 4411", email: "n.kasongo@gmail.com", ville: "Kinshasa", source: "Site web", statut: "Perdu", formuleInteret: "Essentiel", valeurEstimee: 700000, commercial: "Ngoyi Sarah", dateCreation: "18/09/2025", prochainSuivi: "—", motifPerte: "N'a plus donné suite après le devis", activites: [
+        { id: 1, type: "Email", texte: "Demande d'information reçue via le site", date: "18/09/2025", auteur: "Système" },
+        { id: 2, type: "Devis envoyé", texte: "Devis Essentiel individuel envoyé", date: "22/09/2025", auteur: "Ngoyi Sarah" },
+        { id: 3, type: "Note", texte: "Relancée deux fois sans réponse — dossier clos", date: "10/11/2025", auteur: "Ngoyi Sarah" },
+      ]
+    },
+    {
+      id: 1, nom: "SOMIKI SARL", type: "Entreprise", contact: "Kabongo Alphonse — DRH", telephone: "+243 81 222 3344", email: "rh@somiki.cd", ville: "Lubumbashi", source: "Démarchage", statut: "Négociation", formuleInteret: "Confort Famille", valeurEstimee: 18000000, commercial: "Ilunga Patrick", dateCreation: "12/06/2026", prochainSuivi: "16/07/2026", activites: [
+        { id: 1, type: "Appel", texte: "Premier contact, intéressés par une couverture pour 40 employés", date: "12/06/2026", auteur: "Ilunga Patrick" },
+        { id: 2, type: "Réunion", texte: "Présentation de l'offre Confort Famille sur site", date: "25/06/2026", auteur: "Ilunga Patrick" },
+        { id: 3, type: "Devis envoyé", texte: "Devis transmis pour 40 employés + ayants droit — 18 000 000 CDF/an", date: "02/07/2026", auteur: "Ilunga Patrick" },
+      ]
+    },
+    {
+      id: 2, nom: "KALALA Espérance", type: "Chef de famille", contact: "KALALA Espérance", telephone: "+243 89 555 1122", email: "e.kalala@gmail.com", ville: "Kinshasa", source: "Recommandation", statut: "Devis envoyé", formuleInteret: "Premium", valeurEstimee: 3800000, commercial: "Ngoyi Sarah", dateCreation: "28/06/2026", prochainSuivi: "17/07/2026", activites: [
+        { id: 1, type: "Appel", texte: "Recommandée par un client existant, famille de 5 personnes", date: "28/06/2026", auteur: "Ngoyi Sarah" },
+        { id: 2, type: "Devis envoyé", texte: "Devis Premium famille de 5 envoyé par WhatsApp", date: "05/07/2026", auteur: "Ngoyi Sarah" },
+      ]
+    },
+    {
+      id: 3, nom: "Cabinet BONDO & Associés", type: "Entreprise", contact: "Bondo Michel — Gérant", telephone: "+243 82 444 7788", email: "contact@bondo-associes.cd", ville: "Kinshasa", source: "Site web", statut: "Contacté", formuleInteret: "Essentiel", valeurEstimee: 4200000, commercial: "Ilunga Patrick", dateCreation: "05/07/2026", prochainSuivi: "18/07/2026", activites: [
+        { id: 1, type: "Email", texte: "Demande d'information reçue via le site — cabinet de 8 personnes", date: "05/07/2026", auteur: "Système" },
+        { id: 2, type: "Appel", texte: "Premier échange, envoi de la documentation en cours", date: "08/07/2026", auteur: "Ilunga Patrick" },
+      ]
+    },
+    {
+      id: 4, nom: "MBUYI Grâce", type: "Assuré simple", contact: "MBUYI Grâce", telephone: "+243 84 333 9900", email: "grace.mbuyi@yahoo.fr", ville: "Goma", source: "Salon", statut: "Nouveau", formuleInteret: "Lisanga 65$", valeurEstimee: 182000, commercial: "Ngoyi Sarah", dateCreation: "10/07/2026", prochainSuivi: "15/07/2026", activites: [
+        { id: 1, type: "Note", texte: "Rencontrée au salon santé de Goma, intéressée par la mutuelle Lisanga", date: "10/07/2026", auteur: "Ngoyi Sarah" },
+      ]
+    },
+    {
+      id: 5, nom: "TransCongo Logistique", type: "Entreprise", contact: "Wamba Julie — RH", telephone: "+243 81 999 4455", email: "j.wamba@transcongo.cd", ville: "Kinshasa", source: "Courtier", courtierNom: "Congo Assurance Courtage SARL", statut: "Gagné", formuleInteret: "Confort Famille", valeurEstimee: 32000000, commercial: "Ilunga Patrick", dateCreation: "02/05/2026", prochainSuivi: "—", commissionPayee: false, activites: [
+        { id: 1, type: "Appel", texte: "Introduit par un courtier partenaire", date: "02/05/2026", auteur: "Ilunga Patrick" },
+        { id: 2, type: "Réunion", texte: "Négociation des grades et plafonds", date: "20/05/2026", auteur: "Ilunga Patrick" },
+        { id: 3, type: "Devis envoyé", texte: "Devis final accepté pour 85 employés", date: "10/06/2026", auteur: "Ilunga Patrick" },
+        { id: 4, type: "Note", texte: "Contrat signé — compte créé dans Comptes réseau", date: "01/07/2026", auteur: "Ilunga Patrick" },
+      ], compteConverti: true
+    },
+    {
+      id: 6, nom: "PHARMAKIN Sprl", type: "Entreprise", contact: "Tshisola Robert", telephone: "+243 85 111 2233", email: "r.tshisola@pharmakin.cd", ville: "Kinshasa", source: "Démarchage", statut: "Perdu", formuleInteret: "Essentiel", valeurEstimee: 6000000, commercial: "Ngoyi Sarah", dateCreation: "15/05/2026", prochainSuivi: "—", motifPerte: "A choisi un concurrent moins cher", activites: [
+        { id: 1, type: "Appel", texte: "Premier contact, 12 employés", date: "15/05/2026", auteur: "Ngoyi Sarah" },
+        { id: 2, type: "Devis envoyé", texte: "Devis Essentiel envoyé", date: "22/05/2026", auteur: "Ngoyi Sarah" },
+        { id: 3, type: "Note", texte: "A choisi un concurrent proposant un tarif plus bas — dossier clos", date: "10/06/2026", auteur: "Ngoyi Sarah" },
+      ]
+    },
   ];
 }
 
@@ -427,65 +451,28 @@ function Connexion({ onDone }) {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
-      <div className="w-full max-w-4xl bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row overflow-hidden text-white">
-        
-        {/* Panneau Latéral Gauche (Aperçu Back-Office) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#06140B] via-[#0A1F13] to-[#0F2D1C] p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C6992E]/30 relative">
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        {!forgotMode ? (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
-                <Network size={26} color={C.gold} />
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner font-bold text-sm">
+                  NG
+                </div>
+                <div>
+                  <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                    NeoGTec insur
+                  </span>
+                  <span className="text-xs text-[#B9C3D6] font-medium">Back-Office Assureur</span>
+                </div>
               </div>
-              <div>
-                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
-                  NeoGTec insur
-                </span>
-                <span className="text-xs text-[#B9C3D6] font-medium">Back-Office Assureur</span>
-              </div>
+              <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                Connexion Staff & Administration
+              </h2>
+              <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                Accès réservé au personnel NeoGTec insur
+              </p>
             </div>
-
-            <h3 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="mb-4">
-              Centre Névralgique du Réseau
-            </h3>
-
-            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", lineHeight: 1.6 }} className="mb-6">
-              Référentiel maître, comptes réseau, dérogations, règlements et pilotage financier interconnectés en temps réel.
-            </p>
-
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Validation des dérogations en direct</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Gestion des polices d'assurance & cotisations</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Supervision de la téléconsultation & prestataires</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] text-[#B9C3D6]">Espace Staff Sécurisé</span>
-            <span className="text-[10px] bg-[#C6992E]/20 text-[#C6992E] px-2.5 py-1 rounded-full border border-[#C6992E]/30 font-semibold">ARCA-RDC</span>
-          </div>
-        </div>
-
-        {/* Panneau Principal Droit (Formulaire Staff & Mot de Passe Oublié) */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between bg-[#0A1F13]/80">
-          {!forgotMode ? (
-            <div>
-              <div className="mb-6">
-                <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
-                  Connexion Staff & Administration
-                </h2>
-                <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
-                  Accès réservé au personnel NeoGTec insur
-                </p>
-              </div>
 
               {/* Bouton SSO Google Simulation */}
               <button
@@ -784,7 +771,6 @@ function Connexion({ onDone }) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
@@ -1091,8 +1077,8 @@ function FormulaireCompte({ type, onCreer, onAnnuler, prefill }) {
   const champsObligatoires = type === "entreprise"
     ? [form.nom, form.secteur, form.telephone, form.email, form.contact, form.formule]
     : type === "prestataire"
-    ? [form.nom, form.typeEtablissement, form.ville, form.numeroAgrement, form.responsable, form.telephone, form.email, form.latitude, form.longitude]
-    : [form.nom, form.telephone, form.email, form.formule];
+      ? [form.nom, form.typeEtablissement, form.ville, form.numeroAgrement, form.responsable, form.telephone, form.email, form.latitude, form.longitude]
+      : [form.nom, form.telephone, form.email, form.formule];
   const formValide = champsObligatoires.every((c) => c && String(c).trim());
 
   const valider = () => {
@@ -2122,8 +2108,8 @@ function Comptes({ session, setSession, notify }) {
 
           <Table columns={
             tab === "entreprise" ? [{ label: "Raison sociale" }, { label: "Secteur" }, { label: "Contrat" }, { label: "Employés", align: "center" }, { label: "Statut", align: "center" }]
-            : tab === "prestataire" ? [{ label: "Établissement" }, { label: "Type" }, { label: "N° agrément" }, { label: "CSU maternité", align: "center" }, { label: "Statut", align: "center" }]
-            : [{ label: "Assuré" }, { label: "Police" }, { label: "Formule" }, { label: "Ayants droit", align: "center" }, { label: "Statut", align: "center" }]
+              : tab === "prestataire" ? [{ label: "Établissement" }, { label: "Type" }, { label: "N° agrément" }, { label: "CSU maternité", align: "center" }, { label: "Statut", align: "center" }]
+                : [{ label: "Assuré" }, { label: "Police" }, { label: "Formule" }, { label: "Ayants droit", align: "center" }, { label: "Statut", align: "center" }]
           }>
             {liste.map((c) => (
               <tr key={c.id} onClick={() => setSelection(c.id)} className="cursor-pointer" style={{ borderBottom: `1px solid ${C.line}` }}>
@@ -2150,8 +2136,8 @@ function DetailCompte({ type, compte, onRetour, onEnregistrer, onSuspendre }) {
   const champs = type === "entreprise"
     ? [["secteur", "Secteur d'activité"], ["contrat", "N° de contrat"], ["rccm", "RCCM"], ["adresse", "Adresse"], ["telephone", "Téléphone"], ["email", "Email"], ["formule", "Formule"]]
     : type === "prestataire"
-    ? [["type", "Type d'établissement"], ["numeroAgrement", "N° d'agrément"], ["responsable", "Responsable"], ["commune", "Ville / Commune"], ["telephone", "Téléphone"], ["email", "Email"], ["specialites", "Spécialités"]]
-    : [["police", "N° de police"], ["contrat", "N° de contrat"], ["formule", "Formule"], ["telephone", "Téléphone"], ["email", "Email"], ["nbAyantsDroit", "Ayants droit"]];
+      ? [["type", "Type d'établissement"], ["numeroAgrement", "N° d'agrément"], ["responsable", "Responsable"], ["commune", "Ville / Commune"], ["telephone", "Téléphone"], ["email", "Email"], ["specialites", "Spécialités"]]
+      : [["police", "N° de police"], ["contrat", "N° de contrat"], ["formule", "Formule"], ["telephone", "Téléphone"], ["email", "Email"], ["nbAyantsDroit", "Ayants droit"]];
 
   return (
     <Card className="p-5">
@@ -3249,7 +3235,7 @@ function MessagerieInterne({ session, setSession, notify }) {
 
   const optionsDestinataire = nouveau.destinataireType === "entreprise" ? session.entreprises.map((e) => e.nom)
     : nouveau.destinataireType === "prestataire" ? session.prestataires.map((p) => p.nom)
-    : session.assuresIndividuels.map((a) => a.nom);
+      : session.assuresIndividuels.map((a) => a.nom);
 
   if (vue === "reclamations") {
     return (
@@ -3988,8 +3974,8 @@ export default function App() {
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }`}</style>
 
       {/* SIDEBAR FLOOTTANTE & RETRACTABLE */}
-      <div 
-        className="flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out my-3 ml-3 rounded-2xl shadow-xl border border-[#1B4A34] z-30 justify-between p-3 sticky top-3 h-[calc(100vh-24px)]" 
+      <div
+        className="flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out my-3 ml-3 rounded-2xl shadow-xl border border-[#1B4A34] z-30 justify-between p-3 sticky top-3 h-[calc(100vh-24px)]"
         style={{ width: sidebarCollapsed ? 72 : 250, background: C.navy, color: "white" }}
       >
         <div className="space-y-4">
@@ -4005,7 +3991,7 @@ export default function App() {
                 </div>
               )}
             </div>
-            <button 
+            <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
               title={sidebarCollapsed ? "Afficher le menu" : "Masquer le menu"}
@@ -4016,9 +4002,9 @@ export default function App() {
 
           <nav className="space-y-1 max-h-[calc(100vh-180px)] overflow-y-auto pr-1">
             {nav.map((n) => (
-              <button 
-                key={n.id} 
-                onClick={() => setPage(n.id)} 
+              <button
+                key={n.id}
+                onClick={() => setPage(n.id)}
                 title={sidebarCollapsed ? n.label : undefined}
                 className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3 py-2.5'} rounded-xl relative transition-all cursor-pointer`}
                 style={{ background: page === n.id ? "rgba(198,153,46,0.15)" : "transparent", color: page === n.id ? C.gold : "#D7DCE6" }}
@@ -4085,10 +4071,14 @@ export default function App() {
 ================================================================= */
 function buildContrats() {
   return [
-    { id: 1, numero: "CTR-SP-2026-000482", type: "Familiale", client: "MUKENDI Jean-Paul", dateActivation: "01/07/2025", dateExpiration: "30/06/2027", statut: "Actif", plafondGlobal: 8000000, franchise: 0, exclusions: "Chirurgie esthétique, Cures thermales", beneficiaires: 5,
-      versions: [{ version: 1, date: "01/02/2026", auteur: "Système", note: "Création initiale du contrat" }] },
-    { id: 2, numero: "CTR-ENT-2026-778213", type: "Entreprise", client: "MININGCO SARL", dateActivation: "01/07/2025", dateExpiration: "30/06/2027", statut: "Actif", plafondGlobal: 25000000, franchise: 0, exclusions: "Actes non conventionnés", beneficiaires: 6,
-      versions: [{ version: 1, date: "01/01/2026", auteur: "Système", note: "Création initiale du contrat" }] },
+    {
+      id: 1, numero: "CTR-SP-2026-000482", type: "Familiale", client: "MUKENDI Jean-Paul", dateActivation: "01/07/2025", dateExpiration: "30/06/2027", statut: "Actif", plafondGlobal: 8000000, franchise: 0, exclusions: "Chirurgie esthétique, Cures thermales", beneficiaires: 5,
+      versions: [{ version: 1, date: "01/02/2026", auteur: "Système", note: "Création initiale du contrat" }]
+    },
+    {
+      id: 2, numero: "CTR-ENT-2026-778213", type: "Entreprise", client: "MININGCO SARL", dateActivation: "01/07/2025", dateExpiration: "30/06/2027", statut: "Actif", plafondGlobal: 25000000, franchise: 0, exclusions: "Actes non conventionnés", beneficiaires: 6,
+      versions: [{ version: 1, date: "01/01/2026", auteur: "Système", note: "Création initiale du contrat" }]
+    },
   ];
 }
 // Surprime santé — questionnaire médical déclaratif, applicable individuellement au souscripteur et à chaque ayant droit.
@@ -4123,66 +4113,96 @@ const MODELES_CONTRAT = {
   Entreprise: { plafondGlobal: 25000000, franchise: 0, exclusions: "Actes non conventionnés" },
 };
 const LISANGA_BAREME = [
-  { cat: "Soins de santé primaires (jusqu'à 5 épisodes/an, 50% dès le 6ᵉ épisode)", items: [
-    ["Consultation générale, examens courants (sang, selles, urines, frottis) et médicaments génériques", "90%", "10%", "Ex : paludisme simple 25$ → 22,5$ / 2,5$"],
-  ]},
-  { cat: "Consultations spécialisées", items: [
-    ["Médecine interne, Gynécologie, Pédiatrie, Chirurgie, Cardiologie, Ophtalmologie, Dentisterie, Dermatologie, Neurologie, Psychiatrie, Kinésithérapie, ORL", "90%", "10%", "Ex : cardiologie 30$ → 27$ / 3$"],
-  ]},
-  { cat: "Examens de laboratoire spécialisés", items: [
-    ["Urée, Créatinine, Cholestérol, Lipides, VDRL, LDL, Acide urique, T4, TSH, FSH, LH, PSA, Hémoculture, Uroculture, Coproculture, Ziehl", "60%", "40%", "Ex : cholestérol 30$ → 18$ / 12$"],
-  ]},
-  { cat: "Médicaments spécialisés", items: [
-    ["Médicaments hors génériques", "60%", "40%", "Ex : Augmentin 20cp 20$ → 12$ / 8$"],
-  ]},
-  { cat: "Kinésithérapie (5 séances/mois)", items: [
-    ["Séances de rééducation", "90%", "10%", "Ex : 50$ → 45$ / 5$"],
-  ]},
-  { cat: "Hospitalisation (3 fois/an, 50% dès la 4ᵉ fois)", items: [
-    ["Chambre commune ≤10 jours, tournée médecin généraliste/spécialiste, soins infirmiers, labo, médicaments", "90%", "10%", "Ex : paludisme grave 100$ → 90$ / 10$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie de routine (membres, colonne, abdomen, thorax, sinus)", "90%", "10%", "Ex : thorax 20$ → 18$ / 2$"],
-    ["Radiologie spécialisée (OED, lavement baryté, UIV)", "60%", "40%", "Ex : lavement baryté 150$ → 90$ / 60$"],
-    ["Échographie ordinaire (pelvienne, abdominale, masse)", "90%", "10%", "Ex : écho pelvienne 20$ → 18$ / 2$"],
-    ["Échographie spécialisée (Doppler)", "60%", "40%", "Ex : Doppler 100$ → 60$ / 40$"],
-    ["Mammographie, thyroïdienne, oculaire, vésico-prostatique, EEG, ECG, CT Scanner cérébral", "60%", "40%", "Ex : CT cérébral 180$ → 108$ / 72$"],
-  ]},
-  { cat: "Accidents de la route & urgences", items: [
-    ["Stabilisation, investigation (hors cause alcoolique/rixe)", "90%", "10%", ""],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Consultation prénatale (4 CPN, 1 écho, examens, médicaments)", "90%", "10%", ""],
-    ["Accouchement eutocique", "90%", "10%", "100$ → 90$ / 10$"],
-    ["Accouchement compliqué", "90%", "10%", "150$ → 135$ / 15$"],
-    ["Césarienne", "90%", "10%", "300$ → 270$ / 30$"],
-  ]},
-  { cat: "Services pédiatriques", items: [
-    ["Soins postnataux, urgences, soins intensifs, vaccination de routine, CPS, consultations", "90%", "10%", ""],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Consultation, douleur, extraction simple, amalgame, composite, détartrage, endodontie, plombage", "90%", "10%", ""],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, infection primaire, examens de routine, verres optiques, chirurgie œil unilatérale", "90%", "10%", ""],
-    ["Échographie oculaire, réfraction automatique", "60%", "40%", ""],
-    ["Monture de lunettes", "Prise en charge unique à vie de 20$", "—", ""],
-  ]},
-  { cat: "Pathologies chroniques", items: [
-    ["Hypertension, diabète, asthme, ulcère gastroduodénal, arthrite, épilepsie, angine de poitrine, counseling", "90%", "10%", ""],
-    ["Drépanocytose (crises uniquement)", "90%", "10%", ""],
-    ["Infarctus du myocarde (urgence uniquement)", "90%", "10%", ""],
-    ["Tuberculose", "Programme national", "—", ""],
-  ]},
-  { cat: "Chirurgies", items: [
-    ["Mineures (suture, circoncision, abcès, furoncle, ponction, pansement)", "90%", "10%", ""],
-    ["Intermédiaires (appendicectomie, cure herniaire, kystectomie, césarienne)", "90%", "10%", "Ex : appendicectomie 250$ → 225$ / 25$"],
-    ["Majeures (myomectomie, laparotomie, prostatectomie, amygdalectomie)", "50%", "50%", "Ex : myomectomie 700$ → 350$ / 350$"],
-  ]},
-  { cat: "Prise en charge du VIH", items: [
-    ["Dépistage et counseling", "90%", "10%", ""],
-    ["Traitement", "Programme national", "—", ""],
-  ]},
+  {
+    cat: "Soins de santé primaires (jusqu'à 5 épisodes/an, 50% dès le 6ᵉ épisode)", items: [
+      ["Consultation générale, examens courants (sang, selles, urines, frottis) et médicaments génériques", "90%", "10%", "Ex : paludisme simple 25$ → 22,5$ / 2,5$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées", items: [
+      ["Médecine interne, Gynécologie, Pédiatrie, Chirurgie, Cardiologie, Ophtalmologie, Dentisterie, Dermatologie, Neurologie, Psychiatrie, Kinésithérapie, ORL", "90%", "10%", "Ex : cardiologie 30$ → 27$ / 3$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire spécialisés", items: [
+      ["Urée, Créatinine, Cholestérol, Lipides, VDRL, LDL, Acide urique, T4, TSH, FSH, LH, PSA, Hémoculture, Uroculture, Coproculture, Ziehl", "60%", "40%", "Ex : cholestérol 30$ → 18$ / 12$"],
+    ]
+  },
+  {
+    cat: "Médicaments spécialisés", items: [
+      ["Médicaments hors génériques", "60%", "40%", "Ex : Augmentin 20cp 20$ → 12$ / 8$"],
+    ]
+  },
+  {
+    cat: "Kinésithérapie (5 séances/mois)", items: [
+      ["Séances de rééducation", "90%", "10%", "Ex : 50$ → 45$ / 5$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (3 fois/an, 50% dès la 4ᵉ fois)", items: [
+      ["Chambre commune ≤10 jours, tournée médecin généraliste/spécialiste, soins infirmiers, labo, médicaments", "90%", "10%", "Ex : paludisme grave 100$ → 90$ / 10$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie de routine (membres, colonne, abdomen, thorax, sinus)", "90%", "10%", "Ex : thorax 20$ → 18$ / 2$"],
+      ["Radiologie spécialisée (OED, lavement baryté, UIV)", "60%", "40%", "Ex : lavement baryté 150$ → 90$ / 60$"],
+      ["Échographie ordinaire (pelvienne, abdominale, masse)", "90%", "10%", "Ex : écho pelvienne 20$ → 18$ / 2$"],
+      ["Échographie spécialisée (Doppler)", "60%", "40%", "Ex : Doppler 100$ → 60$ / 40$"],
+      ["Mammographie, thyroïdienne, oculaire, vésico-prostatique, EEG, ECG, CT Scanner cérébral", "60%", "40%", "Ex : CT cérébral 180$ → 108$ / 72$"],
+    ]
+  },
+  {
+    cat: "Accidents de la route & urgences", items: [
+      ["Stabilisation, investigation (hors cause alcoolique/rixe)", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Consultation prénatale (4 CPN, 1 écho, examens, médicaments)", "90%", "10%", ""],
+      ["Accouchement eutocique", "90%", "10%", "100$ → 90$ / 10$"],
+      ["Accouchement compliqué", "90%", "10%", "150$ → 135$ / 15$"],
+      ["Césarienne", "90%", "10%", "300$ → 270$ / 30$"],
+    ]
+  },
+  {
+    cat: "Services pédiatriques", items: [
+      ["Soins postnataux, urgences, soins intensifs, vaccination de routine, CPS, consultations", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Consultation, douleur, extraction simple, amalgame, composite, détartrage, endodontie, plombage", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, infection primaire, examens de routine, verres optiques, chirurgie œil unilatérale", "90%", "10%", ""],
+      ["Échographie oculaire, réfraction automatique", "60%", "40%", ""],
+      ["Monture de lunettes", "Prise en charge unique à vie de 20$", "—", ""],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques", items: [
+      ["Hypertension, diabète, asthme, ulcère gastroduodénal, arthrite, épilepsie, angine de poitrine, counseling", "90%", "10%", ""],
+      ["Drépanocytose (crises uniquement)", "90%", "10%", ""],
+      ["Infarctus du myocarde (urgence uniquement)", "90%", "10%", ""],
+      ["Tuberculose", "Programme national", "—", ""],
+    ]
+  },
+  {
+    cat: "Chirurgies", items: [
+      ["Mineures (suture, circoncision, abcès, furoncle, ponction, pansement)", "90%", "10%", ""],
+      ["Intermédiaires (appendicectomie, cure herniaire, kystectomie, césarienne)", "90%", "10%", "Ex : appendicectomie 250$ → 225$ / 25$"],
+      ["Majeures (myomectomie, laparotomie, prostatectomie, amygdalectomie)", "50%", "50%", "Ex : myomectomie 700$ → 350$ / 350$"],
+    ]
+  },
+  {
+    cat: "Prise en charge du VIH", items: [
+      ["Dépistage et counseling", "90%", "10%", ""],
+      ["Traitement", "Programme national", "—", ""],
+    ]
+  },
   { cat: "Transfusion sanguine (1 unité)", items: [["Transfusion", "90%", "10%", ""]] },
   { cat: "Décès", items: [["Conservation et mise en bière (3 jours, hors formolisation)", "90%", "10%", "80$ → 72$ / 8$"]] },
 ];
@@ -4217,42 +4237,62 @@ const LISANGA_EXCLUSIONS = [
    limites de fréquence et spécialités, exemples chiffrés.
 ------------------------------------------------------------------- */
 const ESSENTIEL_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens courants et médicaments génériques", "80%", "20%", "Ex : paludisme simple 15$ → 12$ / 3$"],
-  ]},
-  { cat: "Consultations spécialisées (6 consultations/an)", items: [
-    ["Médecine interne, Gynécologie, Pédiatrie, Cardiologie, ORL, Dermatologie", "80%", "20%", "Ex : cardiologie 25$ → 20$ / 5$"],
-  ]},
-  { cat: "Examens de laboratoire", items: [
-    ["Analyses courantes (NFS, glycémie, selles, urines)", "80%", "20%", "Ex : bilan courant 15$ → 12$ / 3$"],
-    ["Analyses spécialisées (hormonaux, sérologies, marqueurs)", "50%", "50%", "Ex : bilan thyroïdien 25$ → 12,5$ / 12,5$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie et échographie de routine", "70%", "30%", "Ex : radio thorax 15$ → 10,5$ / 4,5$"],
-    ["Imagerie lourde (scanner, IRM)", "Non couvert", "100%", ""],
-  ]},
-  { cat: "Hospitalisation (chambre commune, 15 jours/an)", items: [
-    ["Séjour, soins infirmiers, médicaments, tournée médicale", "90%", "10%", "Ex : hospitalisation 100$ → 90$ / 10$"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Consultations prénatales (3 CPN) et accouchement voie basse", "80%", "20%", "Ex : accouchement 80$ → 64$ / 16$"],
-    ["Césarienne", "70%", "30%", "Ex : césarienne 300$ → 210$ / 90$"],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs (détartrage, plombage, extraction simple)", "50%", "50%", "Ex : détartrage 20$ → 10$ / 10$"],
-    ["Prothèses et actes lourds", "Non couvert", "100%", ""],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation et examens de routine", "70%", "30%", ""],
-    ["Monture et verres (1 prise en charge / 2 ans)", "40%", "60%", "Plafond 100 000 CDF"],
-  ]},
-  { cat: "Chirurgies", items: [
-    ["Mineures (suture, abcès, circoncision)", "80%", "20%", ""],
-    ["Majeures", "40%", "60%", "Ex : appendicectomie 250$ → 100$ / 150$"],
-  ]},
-  { cat: "Pathologies chroniques", items: [
-    ["Hypertension, diabète, asthme — suivi et médicaments", "80%", "20%", "Plafond mensuel médicaments : 30 000 CDF"],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens courants et médicaments génériques", "80%", "20%", "Ex : paludisme simple 15$ → 12$ / 3$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (6 consultations/an)", items: [
+      ["Médecine interne, Gynécologie, Pédiatrie, Cardiologie, ORL, Dermatologie", "80%", "20%", "Ex : cardiologie 25$ → 20$ / 5$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire", items: [
+      ["Analyses courantes (NFS, glycémie, selles, urines)", "80%", "20%", "Ex : bilan courant 15$ → 12$ / 3$"],
+      ["Analyses spécialisées (hormonaux, sérologies, marqueurs)", "50%", "50%", "Ex : bilan thyroïdien 25$ → 12,5$ / 12,5$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie et échographie de routine", "70%", "30%", "Ex : radio thorax 15$ → 10,5$ / 4,5$"],
+      ["Imagerie lourde (scanner, IRM)", "Non couvert", "100%", ""],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre commune, 15 jours/an)", items: [
+      ["Séjour, soins infirmiers, médicaments, tournée médicale", "90%", "10%", "Ex : hospitalisation 100$ → 90$ / 10$"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Consultations prénatales (3 CPN) et accouchement voie basse", "80%", "20%", "Ex : accouchement 80$ → 64$ / 16$"],
+      ["Césarienne", "70%", "30%", "Ex : césarienne 300$ → 210$ / 90$"],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs (détartrage, plombage, extraction simple)", "50%", "50%", "Ex : détartrage 20$ → 10$ / 10$"],
+      ["Prothèses et actes lourds", "Non couvert", "100%", ""],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation et examens de routine", "70%", "30%", ""],
+      ["Monture et verres (1 prise en charge / 2 ans)", "40%", "60%", "Plafond 100 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies", items: [
+      ["Mineures (suture, abcès, circoncision)", "80%", "20%", ""],
+      ["Majeures", "40%", "60%", "Ex : appendicectomie 250$ → 100$ / 150$"],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques", items: [
+      ["Hypertension, diabète, asthme — suivi et médicaments", "80%", "20%", "Plafond mensuel médicaments : 30 000 CDF"],
+    ]
+  },
 ];
 const ESSENTIEL_LIMITES = [
   "Consultations spécialisées : plafonnées à 6 par an, au-delà tarif plein",
@@ -4270,40 +4310,60 @@ const ESSENTIEL_EXCLUSIONS = [
 ];
 
 const CONFORT_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens courants et médicaments", "90%", "10%", "Ex : consultation 15$ → 13,5$ / 1,5$"],
-  ]},
-  { cat: "Consultations spécialisées (illimité)", items: [
-    ["Toutes spécialités : médecine interne, gynécologie, pédiatrie, cardiologie, ophtalmologie, dermatologie, neurologie, ORL, psychiatrie", "90%", "10%", "Ex : neurologie 35$ → 31,5$ / 3,5$"],
-  ]},
-  { cat: "Examens de laboratoire (courants et spécialisés)", items: [
-    ["Toutes analyses, y compris hormonales et sérologiques", "90%", "10%", "Ex : bilan complet 40$ → 36$ / 4$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie, échographie, scanner", "80%", "20%", "Ex : scanner 150$ → 120$ / 30$"],
-    ["IRM", "60%", "40%", "Ex : IRM 300$ → 180$ / 120$"],
-  ]},
-  { cat: "Hospitalisation (chambre à 2 lits, 30 jours/an)", items: [
-    ["Séjour complet, bloc opératoire, soins intensifs", "100%", "0%", "Ex : hospitalisation 400$ → 400$ / 0$"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Suivi prénatal illimité, accouchement, césarienne", "90%", "10%", "Ex : césarienne 300$ → 270$ / 30$"],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs et extractions", "80%", "20%", ""],
-    ["Prothèses et couronnes simples", "60%", "40%", "Ex : couronne 200$ → 120$ / 80$"],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, examens, chirurgie de la cataracte", "80%", "20%", ""],
-    ["Monture et verres (1 prise en charge / an)", "60%", "40%", "Plafond 300 000 CDF"],
-  ]},
-  { cat: "Chirurgies (mineures à majeures)", items: [
-    ["Toutes chirurgies conventionnées", "90%", "10%", "Ex : myomectomie 700$ → 630$ / 70$"],
-  ]},
-  { cat: "Pathologies chroniques (illimité)", items: [
-    ["Hypertension, diabète, asthme, arthrite — suivi et médicaments", "90%", "10%", ""],
-    ["Suivi spécialisé des maladies chroniques", "90%", "10%", ""],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens courants et médicaments", "90%", "10%", "Ex : consultation 15$ → 13,5$ / 1,5$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (illimité)", items: [
+      ["Toutes spécialités : médecine interne, gynécologie, pédiatrie, cardiologie, ophtalmologie, dermatologie, neurologie, ORL, psychiatrie", "90%", "10%", "Ex : neurologie 35$ → 31,5$ / 3,5$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire (courants et spécialisés)", items: [
+      ["Toutes analyses, y compris hormonales et sérologiques", "90%", "10%", "Ex : bilan complet 40$ → 36$ / 4$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie, échographie, scanner", "80%", "20%", "Ex : scanner 150$ → 120$ / 30$"],
+      ["IRM", "60%", "40%", "Ex : IRM 300$ → 180$ / 120$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre à 2 lits, 30 jours/an)", items: [
+      ["Séjour complet, bloc opératoire, soins intensifs", "100%", "0%", "Ex : hospitalisation 400$ → 400$ / 0$"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Suivi prénatal illimité, accouchement, césarienne", "90%", "10%", "Ex : césarienne 300$ → 270$ / 30$"],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs et extractions", "80%", "20%", ""],
+      ["Prothèses et couronnes simples", "60%", "40%", "Ex : couronne 200$ → 120$ / 80$"],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, examens, chirurgie de la cataracte", "80%", "20%", ""],
+      ["Monture et verres (1 prise en charge / an)", "60%", "40%", "Plafond 300 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies (mineures à majeures)", items: [
+      ["Toutes chirurgies conventionnées", "90%", "10%", "Ex : myomectomie 700$ → 630$ / 70$"],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques (illimité)", items: [
+      ["Hypertension, diabète, asthme, arthrite — suivi et médicaments", "90%", "10%", ""],
+      ["Suivi spécialisé des maladies chroniques", "90%", "10%", ""],
+    ]
+  },
 ];
 const CONFORT_LIMITES = [
   "Hospitalisation : chambre à 2 lits, 30 jours par an",
@@ -4320,41 +4380,61 @@ const CONFORT_EXCLUSIONS = [
 ];
 
 const PREMIUM_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens et médicaments", "100%", "0%", "Ex : consultation 15$ → 15$ / 0$"],
-  ]},
-  { cat: "Consultations spécialisées (illimité)", items: [
-    ["Toutes spécialités, y compris consultations hors réseau sur accord préalable", "100%", "0%", ""],
-  ]},
-  { cat: "Examens de laboratoire (tous, illimité)", items: [
-    ["Toutes analyses courantes et spécialisées", "100%", "0%", ""],
-  ]},
-  { cat: "Imagerie médicale (toutes, illimité)", items: [
-    ["Radiologie, échographie, scanner", "100%", "0%", ""],
-    ["IRM, PET-scan", "90%", "10%", "Ex : PET-scan 600$ → 540$ / 60$"],
-  ]},
-  { cat: "Hospitalisation (chambre privée, illimité)", items: [
-    ["Séjour, bloc opératoire, soins intensifs, chambre individuelle", "100%", "0%", ""],
-    ["Évacuation sanitaire internationale (si soin indisponible localement)", "100%", "0%", "Plafond 50 000 000 CDF/an"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Suivi prénatal complet, accouchement, césarienne, complications", "100%", "0%", ""],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs, prothèses, couronnes", "80%", "20%", ""],
-    ["Orthodontie (enfants et adultes)", "60%", "40%", "Plafond 1 500 000 CDF"],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, chirurgie réfractive et cataracte", "100%", "0%", ""],
-    ["Monture haut de gamme, verres, lentilles (1 prise en charge / an)", "100%", "0%", "Plafond 800 000 CDF"],
-  ]},
-  { cat: "Chirurgies (toutes, y compris reconstructrices)", items: [
-    ["Chirurgies mineures, majeures et reconstructrices post-traumatiques", "100%", "0%", ""],
-  ]},
-  { cat: "Pathologies chroniques et maladies graves", items: [
-    ["Hypertension, diabète, asthme — suivi et médicaments illimités", "100%", "0%", ""],
-    ["Dialyse, oncologie, maladies graves", "90%", "10%", "Accord préalable du médecin conseil"],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens et médicaments", "100%", "0%", "Ex : consultation 15$ → 15$ / 0$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (illimité)", items: [
+      ["Toutes spécialités, y compris consultations hors réseau sur accord préalable", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire (tous, illimité)", items: [
+      ["Toutes analyses courantes et spécialisées", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Imagerie médicale (toutes, illimité)", items: [
+      ["Radiologie, échographie, scanner", "100%", "0%", ""],
+      ["IRM, PET-scan", "90%", "10%", "Ex : PET-scan 600$ → 540$ / 60$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre privée, illimité)", items: [
+      ["Séjour, bloc opératoire, soins intensifs, chambre individuelle", "100%", "0%", ""],
+      ["Évacuation sanitaire internationale (si soin indisponible localement)", "100%", "0%", "Plafond 50 000 000 CDF/an"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Suivi prénatal complet, accouchement, césarienne, complications", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs, prothèses, couronnes", "80%", "20%", ""],
+      ["Orthodontie (enfants et adultes)", "60%", "40%", "Plafond 1 500 000 CDF"],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, chirurgie réfractive et cataracte", "100%", "0%", ""],
+      ["Monture haut de gamme, verres, lentilles (1 prise en charge / an)", "100%", "0%", "Plafond 800 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies (toutes, y compris reconstructrices)", items: [
+      ["Chirurgies mineures, majeures et reconstructrices post-traumatiques", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques et maladies graves", items: [
+      ["Hypertension, diabète, asthme — suivi et médicaments illimités", "100%", "0%", ""],
+      ["Dialyse, oncologie, maladies graves", "90%", "10%", "Accord préalable du médecin conseil"],
+    ]
+  },
 ];
 const PREMIUM_LIMITES = [
   "Évacuation sanitaire internationale plafonnée à 50 000 000 CDF par an",
@@ -4502,19 +4582,19 @@ function CreationContrat({ session, setSession, notify }) {
   const surprimeSouscripteur = calculerSurprime(form.conditionsSante, form.dateNaissance);
   const primeAnnuelle = form.type === "Entreprise"
     ? employesContrat.filter((e) => e.inclus).reduce((s, e) => {
-        const surpEmp = calculerSurprime(e.conditionsSante, e.dateNaissance);
-        const primeEmp = Math.round((formuleChoisiePourApercu?.primeBase || 0) * (1 + surpEmp.surprimeTotal / 100));
-        const primeAyants = (e.ayantsDroit || []).reduce((s2, a) => {
-          const surpAyant = calculerSurprime(a.conditionsSante, a.naissance);
-          return s2 + Math.round((formuleChoisiePourApercu?.primeParBenef || 0) * (1 + surpAyant.surprimeTotal / 100));
-        }, 0);
-        return s + primeEmp + primeAyants;
-      }, 0)
+      const surpEmp = calculerSurprime(e.conditionsSante, e.dateNaissance);
+      const primeEmp = Math.round((formuleChoisiePourApercu?.primeBase || 0) * (1 + surpEmp.surprimeTotal / 100));
+      const primeAyants = (e.ayantsDroit || []).reduce((s2, a) => {
+        const surpAyant = calculerSurprime(a.conditionsSante, a.naissance);
+        return s2 + Math.round((formuleChoisiePourApercu?.primeParBenef || 0) * (1 + surpAyant.surprimeTotal / 100));
+      }, 0);
+      return s + primeEmp + primeAyants;
+    }, 0)
     : Math.round((formuleChoisiePourApercu?.primeBase || 0) * (1 + surprimeSouscripteur.surprimeTotal / 100))
-      + beneficiaires.reduce((s, b) => {
-          const surp = calculerSurprime(b.conditionsSante, b.naissance);
-          return s + Math.round((formuleChoisiePourApercu?.primeParBenef || 0) * (1 + surp.surprimeTotal / 100));
-        }, 0);
+    + beneficiaires.reduce((s, b) => {
+      const surp = calculerSurprime(b.conditionsSante, b.naissance);
+      return s + Math.round((formuleChoisiePourApercu?.primeParBenef || 0) * (1 + surp.surprimeTotal / 100));
+    }, 0);
   const primeMensuelle = Math.round(primeAnnuelle / diviseurPeriodeApercu);
 
   const creer = () => {
@@ -4534,19 +4614,19 @@ function CreationContrat({ session, setSession, notify }) {
     const surprimeSouscripteur = calculerSurprime(form.conditionsSante, form.dateNaissance);
     const primeAnnuelle = form.type === "Entreprise"
       ? employesContrat.filter((e) => e.inclus).reduce((s, e) => {
-          const surpEmp = calculerSurprime(e.conditionsSante, e.dateNaissance);
-          const primeEmp = Math.round((formuleChoisie?.primeBase || 0) * (1 + surpEmp.surprimeTotal / 100));
-          const primeAyants = (e.ayantsDroit || []).reduce((s2, a) => {
-            const surpAyant = calculerSurprime(a.conditionsSante, a.naissance);
-            return s2 + Math.round((formuleChoisie?.primeParBenef || 0) * (1 + surpAyant.surprimeTotal / 100));
-          }, 0);
-          return s + primeEmp + primeAyants;
-        }, 0)
+        const surpEmp = calculerSurprime(e.conditionsSante, e.dateNaissance);
+        const primeEmp = Math.round((formuleChoisie?.primeBase || 0) * (1 + surpEmp.surprimeTotal / 100));
+        const primeAyants = (e.ayantsDroit || []).reduce((s2, a) => {
+          const surpAyant = calculerSurprime(a.conditionsSante, a.naissance);
+          return s2 + Math.round((formuleChoisie?.primeParBenef || 0) * (1 + surpAyant.surprimeTotal / 100));
+        }, 0);
+        return s + primeEmp + primeAyants;
+      }, 0)
       : Math.round((formuleChoisie?.primeBase || 0) * (1 + surprimeSouscripteur.surprimeTotal / 100))
-        + beneficiaires.reduce((s, b) => {
-            const surp = calculerSurprime(b.conditionsSante, b.naissance);
-            return s + Math.round((formuleChoisie?.primeParBenef || 0) * (1 + surp.surprimeTotal / 100));
-          }, 0);
+      + beneficiaires.reduce((s, b) => {
+        const surp = calculerSurprime(b.conditionsSante, b.naissance);
+        return s + Math.round((formuleChoisie?.primeParBenef || 0) * (1 + surp.surprimeTotal / 100));
+      }, 0);
     const primeMensuelle = Math.round(primeAnnuelle / diviseurPeriode);
     const garantiesFormule = () => Object.entries(formuleChoisie?.garanties || {}).map(([nom, plafond]) => ({ nom, plafond, tauxCouverture: formuleChoisie?.taux?.[nom] }));
 
@@ -4807,42 +4887,42 @@ function CreationContrat({ session, setSession, notify }) {
             <div className="flex items-center gap-3 mb-4">
               <label className="relative cursor-pointer flex-shrink-0">
                 <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 56, height: 56, background: C.ivory, border: `2px dashed ${form.photo ? C.green : C.line}` }}>
-              {form.photo ? <img src={form.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={20} color={C.navy2} />}
+                  {form.photo ? <img src={form.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={20} color={C.navy2} />}
+                </div>
+                <input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setForm({ ...form, photo: URL.createObjectURL(f) }); }} />
+              </label>
+              <span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>Photo du souscripteur (utilisée pour le QR code et la reconnaissance faciale sur l'app mobile)</span>
             </div>
-            <input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setForm({ ...form, photo: URL.createObjectURL(f) }); }} />
-          </label>
-          <span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>Photo du souscripteur (utilisée pour le QR code et la reconnaissance faciale sur l'app mobile)</span>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <Field label="Nom *"><input style={{ ...inputStyle, ...err(form.nom) }} value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} placeholder="MUKENDI" /></Field>
-          <Field label="Prénom *"><input style={{ ...inputStyle, ...err(form.prenom) }} value={form.prenom} onChange={(e) => setForm({ ...form, prenom: e.target.value })} placeholder="Jean-Paul" /></Field>
-          <Field label="Date de naissance *"><input type="date" style={{ ...inputStyle, ...err(form.dateNaissance) }} value={form.dateNaissance} onChange={(e) => setForm({ ...form, dateNaissance: e.target.value })} /></Field>
-          <Field label="Sexe"><select style={inputStyle} value={form.sexe} onChange={(e) => setForm({ ...form, sexe: e.target.value })}><option>Masculin</option><option>Féminin</option></select></Field>
-          <Field label="Téléphone *"><input style={{ ...inputStyle, ...err(form.telephone) }} value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+243 81 000 00 00" /></Field>
-          <Field label="Ville *"><select style={{ ...inputStyle, ...err(form.ville) }} value={form.ville} onChange={(e) => setForm({ ...form, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
-          <Field label="Email *"><input style={{ ...inputStyle, ...err(form.email) }} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="jp.mukendi@mail.cd" /></Field>
-          <Field label="Adresse"><input style={inputStyle} value={form.adresse} onChange={(e) => setForm({ ...form, adresse: e.target.value })} placeholder="Avenue Kasa-Vubu, Bandalungwa" /></Field>
-          <Field label="Profession"><input style={inputStyle} value={form.profession} onChange={(e) => setForm({ ...form, profession: e.target.value })} placeholder="Ingénieur" /></Field>
-          <Field label="Groupe sanguin"><select style={inputStyle} value={form.groupeSanguin} onChange={(e) => setForm({ ...form, groupeSanguin: e.target.value })}><option value="">Inconnu</option><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></Field>
-          <Field label="Type de pièce d'identité"><select style={inputStyle} value={form.typePiece} onChange={(e) => setForm({ ...form, typePiece: e.target.value })}><option>Carte d'électeur</option><option>Passeport</option><option>Carte d'identité</option><option>Permis de conduire</option></select></Field>
-          <Field label="N° de la pièce *"><input style={{ ...inputStyle, ...err(form.numeroPieceIdentite) }} value={form.numeroPieceIdentite} onChange={(e) => setForm({ ...form, numeroPieceIdentite: e.target.value })} placeholder="Ex : 12-234-567890" /></Field>
-          <div className="col-span-2"><Field label="Alertes médicales (allergies, etc.)"><input style={inputStyle} value={form.allergies} onChange={(e) => setForm({ ...form, allergies: e.target.value })} placeholder="Ex : Allergique Pénicilline" /></Field></div>
-          <div className="col-span-2">
-            <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.sub, textTransform: "uppercase", marginBottom: 5 }}>Questionnaire médical — conditions connues (souscripteur)</div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {CONDITIONS_SANTE.map((c) => (
-                <label key={c.id} className="flex items-center gap-1.5 rounded-lg px-2 py-1.5" style={{ background: (form.conditionsSante || []).includes(c.id) ? "#FBEAE8" : C.ivory }}>
-                  <input type="checkbox" checked={(form.conditionsSante || []).includes(c.id)} onChange={(e) => setForm({ ...form, conditionsSante: e.target.checked ? [...(form.conditionsSante || []), c.id] : form.conditionsSante.filter((id) => id !== c.id) })} />
-                  <span style={{ fontFamily: sans, fontSize: 10.5, color: C.ink }}>{c.label} (+{c.surprimePct}%)</span>
-                </label>
-              ))}
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <Field label="Nom *"><input style={{ ...inputStyle, ...err(form.nom) }} value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} placeholder="MUKENDI" /></Field>
+              <Field label="Prénom *"><input style={{ ...inputStyle, ...err(form.prenom) }} value={form.prenom} onChange={(e) => setForm({ ...form, prenom: e.target.value })} placeholder="Jean-Paul" /></Field>
+              <Field label="Date de naissance *"><input type="date" style={{ ...inputStyle, ...err(form.dateNaissance) }} value={form.dateNaissance} onChange={(e) => setForm({ ...form, dateNaissance: e.target.value })} /></Field>
+              <Field label="Sexe"><select style={inputStyle} value={form.sexe} onChange={(e) => setForm({ ...form, sexe: e.target.value })}><option>Masculin</option><option>Féminin</option></select></Field>
+              <Field label="Téléphone *"><input style={{ ...inputStyle, ...err(form.telephone) }} value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+243 81 000 00 00" /></Field>
+              <Field label="Ville *"><select style={{ ...inputStyle, ...err(form.ville) }} value={form.ville} onChange={(e) => setForm({ ...form, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
+              <Field label="Email *"><input style={{ ...inputStyle, ...err(form.email) }} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="jp.mukendi@mail.cd" /></Field>
+              <Field label="Adresse"><input style={inputStyle} value={form.adresse} onChange={(e) => setForm({ ...form, adresse: e.target.value })} placeholder="Avenue Kasa-Vubu, Bandalungwa" /></Field>
+              <Field label="Profession"><input style={inputStyle} value={form.profession} onChange={(e) => setForm({ ...form, profession: e.target.value })} placeholder="Ingénieur" /></Field>
+              <Field label="Groupe sanguin"><select style={inputStyle} value={form.groupeSanguin} onChange={(e) => setForm({ ...form, groupeSanguin: e.target.value })}><option value="">Inconnu</option><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></Field>
+              <Field label="Type de pièce d'identité"><select style={inputStyle} value={form.typePiece} onChange={(e) => setForm({ ...form, typePiece: e.target.value })}><option>Carte d'électeur</option><option>Passeport</option><option>Carte d'identité</option><option>Permis de conduire</option></select></Field>
+              <Field label="N° de la pièce *"><input style={{ ...inputStyle, ...err(form.numeroPieceIdentite) }} value={form.numeroPieceIdentite} onChange={(e) => setForm({ ...form, numeroPieceIdentite: e.target.value })} placeholder="Ex : 12-234-567890" /></Field>
+              <div className="col-span-2"><Field label="Alertes médicales (allergies, etc.)"><input style={inputStyle} value={form.allergies} onChange={(e) => setForm({ ...form, allergies: e.target.value })} placeholder="Ex : Allergique Pénicilline" /></Field></div>
+              <div className="col-span-2">
+                <div style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 700, color: C.sub, textTransform: "uppercase", marginBottom: 5 }}>Questionnaire médical — conditions connues (souscripteur)</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {CONDITIONS_SANTE.map((c) => (
+                    <label key={c.id} className="flex items-center gap-1.5 rounded-lg px-2 py-1.5" style={{ background: (form.conditionsSante || []).includes(c.id) ? "#FBEAE8" : C.ivory }}>
+                      <input type="checkbox" checked={(form.conditionsSante || []).includes(c.id)} onChange={(e) => setForm({ ...form, conditionsSante: e.target.checked ? [...(form.conditionsSante || []), c.id] : form.conditionsSante.filter((id) => id !== c.id) })} />
+                      <span style={{ fontFamily: sans, fontSize: 10.5, color: C.ink }}>{c.label} (+{c.surprimePct}%)</span>
+                    </label>
+                  ))}
+                </div>
+                {(form.conditionsSante?.length > 0 || calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge > 0) && (
+                  <div className="flex items-center gap-1.5 mt-2"><TrendingUp size={12} color={C.amber} /><span style={{ fontFamily: sans, fontSize: 10.5, color: C.amber, fontWeight: 700 }}>Surprime individuelle appliquée : +{calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeTotal}% sur la prime de base du souscripteur{calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge > 0 ? ` (dont +${calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge}% lié à l'âge)` : ""}.</span></div>
+                )}
+              </div>
+              <div className="col-span-2"><Field label="Déclaration de santé (détails libres, antécédents connus du souscripteur)"><textarea style={{ ...inputStyle, minHeight: 50, resize: "none" }} value={form.declarationSante} onChange={(e) => setForm({ ...form, declarationSante: e.target.value })} placeholder="Ex : Hypertension traitée depuis 2022" /></Field></div>
             </div>
-            {(form.conditionsSante?.length > 0 || calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge > 0) && (
-              <div className="flex items-center gap-1.5 mt-2"><TrendingUp size={12} color={C.amber} /><span style={{ fontFamily: sans, fontSize: 10.5, color: C.amber, fontWeight: 700 }}>Surprime individuelle appliquée : +{calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeTotal}% sur la prime de base du souscripteur{calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge > 0 ? ` (dont +${calculerSurprime(form.conditionsSante, form.dateNaissance).surprimeAge}% lié à l'âge)` : ""}.</span></div>
-            )}
-          </div>
-          <div className="col-span-2"><Field label="Déclaration de santé (détails libres, antécédents connus du souscripteur)"><textarea style={{ ...inputStyle, minHeight: 50, resize: "none" }} value={form.declarationSante} onChange={(e) => setForm({ ...form, declarationSante: e.target.value })} placeholder="Ex : Hypertension traitée depuis 2022" /></Field></div>
-        </div>
           </>
         )}
 
@@ -5359,50 +5439,68 @@ function Contrats({ session, setSession, notify }) {
 ================================================================= */
 function buildSinistres() {
   return [
-    { id: 1, numero: "SIN-2026-00147", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "PEC directe", montant: 45000, dateSoumission: "28/06/2026", documents: ["Facture Clinique Ngaliema.pdf", "Ordonnance.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 8, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "28/06/2026" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "29/06/2026" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "30/06/2026" },
-    ] },
+    {
+      id: 1, numero: "SIN-2026-00147", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "PEC directe", montant: 45000, dateSoumission: "28/06/2026", documents: ["Facture Clinique Ngaliema.pdf", "Ordonnance.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 8, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "28/06/2026" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "29/06/2026" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "30/06/2026" },
+      ]
+    },
     { id: 2, numero: "SIN-2026-00152", patient: "NGALULA Grâce", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 85000, dateSoumission: "06/07/2026", documents: ["Bon de prise en charge.pdf"], statut: "En attente", etape: "Agent", scoreFraude: 22, historique: [] },
-    { id: 3, numero: "SIN-2026-00149", patient: "KALALA Trésor", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 60000, dateSoumission: "20/06/2026", documents: ["Facture.pdf", "Prescription.pdf"], statut: "En cours de validation", etape: "Superviseur", scoreFraude: 15, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "21/06/2026" },
-    ] },
+    {
+      id: 3, numero: "SIN-2026-00149", patient: "KALALA Trésor", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 60000, dateSoumission: "20/06/2026", documents: ["Facture.pdf", "Prescription.pdf"], statut: "En cours de validation", etape: "Superviseur", scoreFraude: 15, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "21/06/2026" },
+      ]
+    },
     { id: 4, numero: "SIN-2026-00161", patient: "KABEYA Odette", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 340000, dateSoumission: "05/07/2026", documents: ["Facture.pdf"], statut: "En attente", etape: "Agent", scoreFraude: 87, historique: [] },
-    { id: 5, numero: "SIN-2025-00012", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "PEC directe", montant: 32000, dateSoumission: "14/08/2025", documents: ["Facture Clinique Ngaliema.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 5, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "14/08/2025" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "15/08/2025" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "18/08/2025" },
-    ] },
-    { id: 6, numero: "SIN-2025-00034", patient: "ILUNGA Prisca", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 78000, dateSoumission: "02/10/2025", documents: ["Facture.pdf", "Ordonnance.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 11, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "03/10/2025" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "05/10/2025" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "07/10/2025" },
-    ] },
-    { id: 7, numero: "SIN-2025-00058", patient: "KABEYA Odette", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 410000, dateSoumission: "19/11/2025", documents: ["Bon de prise en charge.pdf", "Compte-rendu opératoire.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 18, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "19/11/2025" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "21/11/2025" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "25/11/2025" },
-    ] },
-    { id: 8, numero: "SIN-2025-00071", patient: "KALALA Trésor", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 25000, dateSoumission: "12/12/2025", documents: ["Facture.pdf"], statut: "Rejeté", etape: "Terminé", scoreFraude: 64, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "12/12/2025" },
-      { etape: "Superviseur", statut: "Rejeté", auteur: "Odia Grace", date: "15/12/2025" },
-    ] },
-    { id: 9, numero: "SIN-2026-00089", patient: "NGALULA Grâce", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 52000, dateSoumission: "08/02/2026", documents: ["Bon de prise en charge.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 9, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "08/02/2026" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "10/02/2026" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "12/02/2026" },
-    ] },
-    { id: 10, numero: "SIN-2026-00104", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "Remboursement", montant: 18000, dateSoumission: "22/03/2026", documents: ["Facture pharmacie.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 4, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "22/03/2026" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "23/03/2026" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "25/03/2026" },
-    ] },
-    { id: 11, numero: "SIN-2026-00121", patient: "ILUNGA Prisca", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 96000, dateSoumission: "17/05/2026", documents: ["Bon de prise en charge.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 13, historique: [
-      { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "17/05/2026" },
-      { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "19/05/2026" },
-      { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "22/05/2026" },
-    ] },
+    {
+      id: 5, numero: "SIN-2025-00012", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "PEC directe", montant: 32000, dateSoumission: "14/08/2025", documents: ["Facture Clinique Ngaliema.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 5, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "14/08/2025" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "15/08/2025" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "18/08/2025" },
+      ]
+    },
+    {
+      id: 6, numero: "SIN-2025-00034", patient: "ILUNGA Prisca", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 78000, dateSoumission: "02/10/2025", documents: ["Facture.pdf", "Ordonnance.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 11, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "03/10/2025" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "05/10/2025" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "07/10/2025" },
+      ]
+    },
+    {
+      id: 7, numero: "SIN-2025-00058", patient: "KABEYA Odette", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 410000, dateSoumission: "19/11/2025", documents: ["Bon de prise en charge.pdf", "Compte-rendu opératoire.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 18, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "19/11/2025" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "21/11/2025" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "25/11/2025" },
+      ]
+    },
+    {
+      id: 8, numero: "SIN-2025-00071", patient: "KALALA Trésor", contrat: "CTR-ENT-2026-778213", type: "Remboursement", montant: 25000, dateSoumission: "12/12/2025", documents: ["Facture.pdf"], statut: "Rejeté", etape: "Terminé", scoreFraude: 64, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "12/12/2025" },
+        { etape: "Superviseur", statut: "Rejeté", auteur: "Odia Grace", date: "15/12/2025" },
+      ]
+    },
+    {
+      id: 9, numero: "SIN-2026-00089", patient: "NGALULA Grâce", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 52000, dateSoumission: "08/02/2026", documents: ["Bon de prise en charge.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 9, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "08/02/2026" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "10/02/2026" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "12/02/2026" },
+      ]
+    },
+    {
+      id: 10, numero: "SIN-2026-00104", patient: "MUKENDI Jean-Paul", contrat: "CTR-SP-2026-000482", type: "Remboursement", montant: 18000, dateSoumission: "22/03/2026", documents: ["Facture pharmacie.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 4, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "22/03/2026" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "23/03/2026" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "25/03/2026" },
+      ]
+    },
+    {
+      id: 11, numero: "SIN-2026-00121", patient: "ILUNGA Prisca", contrat: "CTR-ENT-2026-778213", type: "PEC directe", montant: 96000, dateSoumission: "17/05/2026", documents: ["Bon de prise en charge.pdf"], statut: "Approuvé", etape: "Terminé", scoreFraude: 13, historique: [
+        { etape: "Agent", statut: "Approuvé", auteur: "Kalombo Faustin", date: "17/05/2026" },
+        { etape: "Superviseur", statut: "Approuvé", auteur: "Odia Grace", date: "19/05/2026" },
+        { etape: "Finance", statut: "Approuvé", auteur: "Odia Grace", date: "22/05/2026" },
+      ]
+    },
   ];
 }
 

@@ -237,25 +237,134 @@ function SignUp({ onDone, onGoSignIn }) {
     setErreur(""); onDone(form);
   };
   return (
-    <div className="h-full flex flex-col justify-between px-6 pt-14 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div>
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex items-center justify-center rounded-2xl" style={{ width: 60, height: 60, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><Building2 size={26} color={C.gold} /></div>
-          <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: "white", letterSpacing: 1, marginTop: 12 }}>NEOGTEC HEALTHCARE — ENTREPRISE</div>
-          <div style={{ fontFamily: serif, fontSize: 19, color: "white", marginTop: 8 }}>Créer un compte gestionnaire</div>
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        <div>
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                <Building2 size={22} color={C.gold} />
+              </div>
+              <div>
+                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                  NeoGTec insur
+                </span>
+                <span className="text-xs text-[#B9C3D6] font-medium">Espace Entreprise & RH</span>
+              </div>
+            </div>
+            <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+              Créer un compte gestionnaire
+            </h2>
+            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+              Accédez à vos RH & Contrats Collectifs NeoGTec insur.
+            </p>
+          </div>
+
+          <div className="space-y-3.5 mb-6">
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                NOM DU RESPONSABLE RH
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.nom}
+                  onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                  placeholder="Nom du responsable RH"
+                />
+                <Building2 size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                EMAIL PROFESSIONNEL
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="rh@entreprise.com"
+                />
+                <Mail size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                TÉLÉPHONE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.telephone}
+                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  placeholder="+243 89 000 0000"
+                />
+                <Phone size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.motDePasse}
+                  onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+                  placeholder="Mot de passe (6 car. min.)"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                CONFIRMER LE MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.confirmation}
+                  onChange={(e) => setForm({ ...form, confirmation: e.target.value })}
+                  placeholder="Confirmer le mot de passe"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            {erreur && (
+              <div className="flex items-center gap-1.5 mt-2" style={{ color: "#FFB4B0" }}>
+                <AlertTriangle size={14} />
+                <span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full space-y-3">
+            <button
+              type="button"
+              onClick={valider}
+              className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer font-bold text-xs shadow-lg"
+              style={{ background: C.gold, color: C.navy }}
+            >
+              <UserPlus size={16} /> Créer le compte
+            </button>
+            <button
+              type="button"
+              onClick={onGoSignIn}
+              className="w-full text-center py-2 cursor-pointer hover:underline text-xs text-stone-300"
+            >
+              Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span>
+            </button>
+          </div>
         </div>
-        <div className="space-y-2.5">
-          <input style={inputStyle} value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} placeholder="Nom du responsable RH" />
-          <input style={inputStyle} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email professionnel" />
-          <input style={inputStyle} value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" />
-          <input style={inputStyle} type="password" value={form.motDePasse} onChange={(e) => setForm({ ...form, motDePasse: e.target.value })} placeholder="Mot de passe (6 caractères min.)" />
-          <input style={inputStyle} type="password" value={form.confirmation} onChange={(e) => setForm({ ...form, confirmation: e.target.value })} placeholder="Confirmer le mot de passe" />
-          {erreur && <div className="flex items-center gap-1.5" style={{ color: "#FFB4B0" }}><AlertTriangle size={12} /><span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span></div>}
-        </div>
-      </div>
-      <div className="w-full space-y-3">
-        <button onClick={valider} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-transform" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}><UserPlus size={16} /> Créer le compte</button>
-        <button onClick={onGoSignIn} className="w-full text-center py-2" style={{ fontFamily: sans, fontSize: 12.5, color: "white" }}>Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span></button>
       </div>
     </div>
   );
@@ -346,66 +455,29 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
   };
 
   return (
-    <div className="min-h-full w-full flex items-center justify-center p-4 sm:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div className="w-full max-w-4xl bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row overflow-hidden text-white">
-        
-        {/* Panneau Latéral Gauche (Aperçu Espace) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#06140B] via-[#0A1F13] to-[#0F2D1C] p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C6992E]/30 relative">
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        {!forgotMode ? (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
-                <Building2 size={26} color={C.gold} />
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                  <Building2 size={22} color={C.gold} />
+                </div>
+                <div>
+                  <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                    NeoGTec insur
+                  </span>
+                  <span className="text-xs text-[#B9C3D6] font-medium">Espace Entreprise & RH</span>
+                </div>
               </div>
-              <div>
-                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
-                  NeoGTec insur
-                </span>
-                <span className="text-xs text-[#B9C3D6] font-medium">Espace Entreprise & RH</span>
-              </div>
+              <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                Se connecter à Espace Entreprise
+              </h2>
+              <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                Accédez à vos RH & Contrats Collectifs NeoGTec insur.
+              </p>
             </div>
-
-            <h3 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="mb-4">
-              Authentification Espace Entreprise
-            </h3>
-
-            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", lineHeight: 1.6 }} className="mb-6">
-              Bénéficiez d'un processus de connexion sécurisé, rapide et conforme aux normes d'audit ARCA-RDC les plus strictes.
-            </p>
-
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Portail RH sécurisé</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Gestion de 5000 employés & ayants droit</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Factures Centrales & Cotisations</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] text-[#B9C3D6]">Espace Gestionnaire Conforme</span>
-            <span className="text-[10px] bg-[#C6992E]/20 text-[#C6992E] px-2.5 py-1 rounded-full border border-[#C6992E]/30 font-semibold">ARCA-RDC</span>
-          </div>
-        </div>
-
-        {/* Panneau Principal Droit (Formulaire & Mot de Passe Oublié) */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between bg-[#0A1F13]/80">
-          {!forgotMode ? (
-            <div>
-              <div className="mb-6">
-                <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
-                  Se connecter à Espace Entreprise
-                </h2>
-                <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
-                  Accédez à vos RH & Contrats Collectifs NeoGTec insur.
-                </p>
-              </div>
 
               {/* Bouton SSO Google Simulation */}
               <button
@@ -683,7 +755,6 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
@@ -1063,6 +1134,40 @@ function MessagerieEntreprise({ session, notify }) {
     <div className="px-5 space-y-2">
       <a href="tel:+243843961575"><Card className="p-3.5 flex items-center gap-3"><Phone size={16} color={C.navy2} /><div><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>Gestionnaire de compte</div><div style={{ fontFamily: mono, fontSize: 11, color: C.sub }}>+243 84 39 615 75</div></div></Card></a>
       <a href="https://wa.me/243843961575"><Card className="p-3.5 flex items-center gap-3"><MessageSquare size={16} color={C.green} /><div><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>WhatsApp Business</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>Réponse rapide</div></div></Card></a>
+
+      <SectionLabel>Règles du contrat</SectionLabel>
+      <Card className="p-3.5 mb-3">
+        <div className="flex items-center justify-between">
+          <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700 }}>Règles & options</div>
+          <div>
+            <button onClick={() => {
+              const nom = prompt('Nom de la règle (ex: Prise en charge optique)');
+              if (!nom) return;
+              const desc = prompt('Description (optionnel)') || '';
+              const nouvelle = { id: Date.now(), nom, description: desc };
+              setSession({ ...session, contractRules: [...(session.contractRules || []), nouvelle] });
+              notify('Règle ajoutée');
+            }} className="px-3 py-1 rounded-xl" style={{ background: C.navy, color: 'white', fontFamily: sans, fontSize: 12, fontWeight: 700 }}>Ajouter règle</button>
+          </div>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          {(session.contractRules || []).length === 0 ? (
+            <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>Aucune règle définie pour l'instant.</div>
+          ) : (
+            (session.contractRules || []).map((r) => (
+              <div key={r.id} className="flex items-center justify-between py-2" style={{ borderTop: `1px solid ${C.line}` }}>
+                <div>
+                  <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.ink }}>{r.nom}</div>
+                  <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{r.description}</div>
+                </div>
+                <div>
+                  <button onClick={() => { setSession({ ...session, contractRules: (session.contractRules || []).filter((x) => x.id !== r.id) }); notify('Règle supprimée'); }} className="px-2 py-1 rounded-full" style={{ border: `1px solid ${C.line}` }}>Supprimer</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </Card>
 
       <div className="flex gap-2 pt-2">
         <button onClick={() => setVue("messagerie")} className="flex-1 rounded-xl py-2" style={{ background: vue === "messagerie" ? C.navy : "white", color: vue === "messagerie" ? "white" : C.ink, border: `1px solid ${vue === "messagerie" ? C.navy : C.line}`, fontFamily: sans, fontSize: 11.5, fontWeight: 700 }}>Messagerie</button>
@@ -1622,7 +1727,14 @@ function Employes({ session, setSession, notify, go, initialAction }) {
         <div className="px-5">
           <Card className="p-4 flex items-center gap-3">
             <div className="rounded-full overflow-hidden flex-shrink-0" style={{ width: 56, height: 56 }}><img src={e.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-            <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 14, fontWeight: 700, color: C.ink }}>{e.nom}</div><div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{e.poste}</div><div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub }}>{e.matricule}</div></div>
+            <div className="flex-1">
+              <div style={{ fontFamily: sans, fontSize: 14, fontWeight: 700, color: C.ink }}>{e.nom}</div>
+              <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{e.poste}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
+                <div style={{ fontFamily: mono, fontSize: 10.5, color: C.sub }}>{e.matricule}</div>
+                <button onClick={() => { const newId = prompt("Modifier le matricule de l'employé", e.matricule); if (newId) { setSession({ ...session, employes: session.employes.map((x) => x.id === e.id ? { ...x, matricule: newId } : x) }); notify('Matricule mis à jour'); } }} className="px-2 py-1 rounded-full text-xs" style={{ border: `1px solid ${C.line}`, background: 'white' }}>Modifier ID</button>
+              </div>
+            </div>
             <StatusPill statut={e.statut} />
           </Card>
 
@@ -2050,7 +2162,19 @@ function OnboardingEntreprise({ onFinish, onCancel }) {
         <>
           <div className="px-5 space-y-3">
             <Field label="Raison sociale"><input style={inputStyle} value={infos.nom} onChange={(e) => setInfos({ ...infos, nom: e.target.value })} placeholder="MININGCO SARL" /></Field>
-            <Field label="Secteur d'activité"><input style={inputStyle} value={infos.secteur} onChange={(e) => setInfos({ ...infos, secteur: e.target.value })} placeholder="Mines et industries extractives" /></Field>
+            <Field label="Secteur d'activité">
+              <select style={inputStyle} value={infos.secteur} onChange={(e) => setInfos({ ...infos, secteur: e.target.value })}>
+                <option value="">Choisir le secteur</option>
+                <option>Mines et industries extractives</option>
+                <option>Services</option>
+                <option>Industrie</option>
+                <option>Santé</option>
+                <option>Éducation</option>
+                <option>Tech / IT</option>
+                <option>Commerce</option>
+                <option>Autre</option>
+              </select>
+            </Field>
             <Field label="RCCM"><input style={inputStyle} value={infos.rccm} onChange={(e) => setInfos({ ...infos, rccm: e.target.value })} placeholder="CD/KIN/RCCM/..." /></Field>
             <Field label="Adresse du siège"><input style={inputStyle} value={infos.adresse} onChange={(e) => setInfos({ ...infos, adresse: e.target.value })} placeholder="Boulevard Lumumba, Kinshasa" /></Field>
             <Field label="Ville"><select style={inputStyle} value={infos.ville} onChange={(e) => setInfos({ ...infos, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
@@ -2229,6 +2353,7 @@ export default function App() {
     { id: "employes", label: "Employés", icon: Users },
     { id: "derogations", label: "Dérogations", icon: FileText },
     { id: "finance", label: "Finance", icon: Wallet },
+    { id: "contrat", label: "Polices d'assurance", icon: ShieldCheck },
     { id: "plus", label: "Plus", icon: Settings },
   ];
   const derogEnAttente = session?.derogations?.filter((d) => d.statut === "En attente").length || 0;
@@ -2236,10 +2361,10 @@ export default function App() {
   return (
     <div className="w-full flex-1 flex flex-col md:flex-row h-screen max-h-screen overflow-hidden" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
-      
+
       {/* Desktop Navigation Sidebar */}
       {view === "app" && (
-        <aside 
+        <aside
           className="hidden md:flex flex-col border border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between p-3 my-3 ml-3 rounded-2xl shadow-xl z-20 transition-all duration-300 ease-in-out sticky top-3 h-[calc(100vh-24px)]"
           style={{ width: sidebarCollapsed ? 72 : 256 }}
         >
@@ -2276,11 +2401,10 @@ export default function App() {
                     key={t.id}
                     onClick={() => go(t.id)}
                     title={sidebarCollapsed ? t.label : undefined}
-                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
-                        : 'text-stone-300 hover:bg-white/5 hover:text-white'
-                    }`}
+                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${isActive
+                      ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
+                      : 'text-stone-300 hover:bg-white/5 hover:text-white'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon size={18} className={isActive ? 'text-[#C6992E]' : 'text-stone-400'} />
@@ -2315,24 +2439,7 @@ export default function App() {
 
       {/* Main App Container */}
       <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80 h-full">
-        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-20 flex-shrink-0 sticky top-0" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
-          <div className="flex items-center gap-3">
-            <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC ENTREPRISE</span>
-            {view === "app" && session?.entreprise?.nom && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#142644]/10 text-[#142644]">
-                {session.entreprise.nom}
-              </span>
-            )}
-          </div>
-          {view === "app" && (
-            <div className="flex items-center gap-3">
-              <button onClick={() => go("plus")} className="relative p-1.5 rounded-lg hover:bg-stone-200/60 transition-all cursor-pointer">
-                <Bell size={18} color={C.navy} />
-                {derogEnAttente > 0 && <span className="absolute rounded-full" style={{ top: 2, right: 2, width: 8, height: 8, background: C.red }} />}
-              </button>
-            </div>
-          )}
-        </div>
+
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 max-w-7xl w-full mx-auto">
           {view === "signup" && <SignUp onDone={(data) => { setSignupData(data); setView("signin"); }} onGoSignIn={() => setView("signin")} />}

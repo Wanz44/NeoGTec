@@ -41,66 +41,96 @@ const CATEGORIES = ["Consultations & Pharmacie", "Hospitalisation", "Dentaire", 
    Cotisation 65$/personne/an — unité d'adhésion : la famille/le ménage
 ------------------------------------------------------------------ */
 const LISANGA_BAREME = [
-  { cat: "Soins de santé primaires (jusqu'à 5 épisodes/an, 50% dès le 6ᵉ épisode)", items: [
-    ["Consultation générale, examens courants (sang, selles, urines, frottis) et médicaments génériques", "90%", "10%", "Ex : paludisme simple 25$ → 22,5$ / 2,5$"],
-  ]},
-  { cat: "Consultations spécialisées", items: [
-    ["Médecine interne, Gynécologie, Pédiatrie, Chirurgie, Cardiologie, Ophtalmologie, Dentisterie, Dermatologie, Neurologie, Psychiatrie, Kinésithérapie, ORL", "90%", "10%", "Ex : cardiologie 30$ → 27$ / 3$"],
-  ]},
-  { cat: "Examens de laboratoire spécialisés", items: [
-    ["Urée, Créatinine, Cholestérol, Lipides, VDRL, LDL, Acide urique, T4, TSH, FSH, LH, PSA, Hémoculture, Uroculture, Coproculture, Ziehl", "60%", "40%", "Ex : cholestérol 30$ → 18$ / 12$"],
-  ]},
-  { cat: "Médicaments spécialisés", items: [
-    ["Médicaments hors génériques", "60%", "40%", "Ex : Augmentin 20cp 20$ → 12$ / 8$"],
-  ]},
-  { cat: "Kinésithérapie (5 séances/mois)", items: [
-    ["Séances de rééducation", "90%", "10%", "Ex : 50$ → 45$ / 5$"],
-  ]},
-  { cat: "Hospitalisation (3 fois/an, 50% dès la 4ᵉ fois)", items: [
-    ["Chambre commune ≤10 jours, tournée médecin généraliste/spécialiste, soins infirmiers, labo, médicaments", "90%", "10%", "Ex : paludisme grave 100$ → 90$ / 10$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie de routine (membres, colonne, abdomen, thorax, sinus)", "90%", "10%", "Ex : thorax 20$ → 18$ / 2$"],
-    ["Radiologie spécialisée (OED, lavement baryté, UIV)", "60%", "40%", "Ex : lavement baryté 150$ → 90$ / 60$"],
-    ["Échographie ordinaire (pelvienne, abdominale, masse)", "90%", "10%", "Ex : écho pelvienne 20$ → 18$ / 2$"],
-    ["Échographie spécialisée (Doppler)", "60%", "40%", "Ex : Doppler 100$ → 60$ / 40$"],
-    ["Mammographie, thyroïdienne, oculaire, vésico-prostatique, EEG, ECG, CT Scanner cérébral", "60%", "40%", "Ex : CT cérébral 180$ → 108$ / 72$"],
-  ]},
-  { cat: "Accidents de la route & urgences", items: [
-    ["Stabilisation, investigation (hors cause alcoolique/rixe)", "90%", "10%", ""],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Consultation prénatale (4 CPN, 1 écho, examens, médicaments)", "90%", "10%", ""],
-    ["Accouchement eutocique", "90%", "10%", "100$ → 90$ / 10$"],
-    ["Accouchement compliqué", "90%", "10%", "150$ → 135$ / 15$"],
-    ["Césarienne", "90%", "10%", "300$ → 270$ / 30$"],
-  ]},
-  { cat: "Services pédiatriques", items: [
-    ["Soins postnataux, urgences, soins intensifs, vaccination de routine, CPS, consultations", "90%", "10%", ""],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Consultation, douleur, extraction simple, amalgame, composite, détartrage, endodontie, plombage", "90%", "10%", ""],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, infection primaire, examens de routine, verres optiques, chirurgie œil unilatérale", "90%", "10%", ""],
-    ["Échographie oculaire, réfraction automatique", "60%", "40%", ""],
-    ["Monture de lunettes", "Prise en charge unique à vie de 20$", "—", ""],
-  ]},
-  { cat: "Pathologies chroniques", items: [
-    ["Hypertension, diabète, asthme, ulcère gastroduodénal, arthrite, épilepsie, angine de poitrine, counseling", "90%", "10%", ""],
-    ["Drépanocytose (crises uniquement)", "90%", "10%", ""],
-    ["Infarctus du myocarde (urgence uniquement)", "90%", "10%", ""],
-    ["Tuberculose", "Programme national", "—", ""],
-  ]},
-  { cat: "Chirurgies", items: [
-    ["Mineures (suture, circoncision, abcès, furoncle, ponction, pansement)", "90%", "10%", ""],
-    ["Intermédiaires (appendicectomie, cure herniaire, kystectomie, césarienne)", "90%", "10%", "Ex : appendicectomie 250$ → 225$ / 25$"],
-    ["Majeures (myomectomie, laparotomie, prostatectomie, amygdalectomie)", "50%", "50%", "Ex : myomectomie 700$ → 350$ / 350$"],
-  ]},
-  { cat: "Prise en charge du VIH", items: [
-    ["Dépistage et counseling", "90%", "10%", ""],
-    ["Traitement", "Programme national", "—", ""],
-  ]},
+  {
+    cat: "Soins de santé primaires (jusqu'à 5 épisodes/an, 50% dès le 6ᵉ épisode)", items: [
+      ["Consultation générale, examens courants (sang, selles, urines, frottis) et médicaments génériques", "90%", "10%", "Ex : paludisme simple 25$ → 22,5$ / 2,5$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées", items: [
+      ["Médecine interne, Gynécologie, Pédiatrie, Chirurgie, Cardiologie, Ophtalmologie, Dentisterie, Dermatologie, Neurologie, Psychiatrie, Kinésithérapie, ORL", "90%", "10%", "Ex : cardiologie 30$ → 27$ / 3$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire spécialisés", items: [
+      ["Urée, Créatinine, Cholestérol, Lipides, VDRL, LDL, Acide urique, T4, TSH, FSH, LH, PSA, Hémoculture, Uroculture, Coproculture, Ziehl", "60%", "40%", "Ex : cholestérol 30$ → 18$ / 12$"],
+    ]
+  },
+  {
+    cat: "Médicaments spécialisés", items: [
+      ["Médicaments hors génériques", "60%", "40%", "Ex : Augmentin 20cp 20$ → 12$ / 8$"],
+    ]
+  },
+  {
+    cat: "Kinésithérapie (5 séances/mois)", items: [
+      ["Séances de rééducation", "90%", "10%", "Ex : 50$ → 45$ / 5$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (3 fois/an, 50% dès la 4ᵉ fois)", items: [
+      ["Chambre commune ≤10 jours, tournée médecin généraliste/spécialiste, soins infirmiers, labo, médicaments", "90%", "10%", "Ex : paludisme grave 100$ → 90$ / 10$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie de routine (membres, colonne, abdomen, thorax, sinus)", "90%", "10%", "Ex : thorax 20$ → 18$ / 2$"],
+      ["Radiologie spécialisée (OED, lavement baryté, UIV)", "60%", "40%", "Ex : lavement baryté 150$ → 90$ / 60$"],
+      ["Échographie ordinaire (pelvienne, abdominale, masse)", "90%", "10%", "Ex : écho pelvienne 20$ → 18$ / 2$"],
+      ["Échographie spécialisée (Doppler)", "60%", "40%", "Ex : Doppler 100$ → 60$ / 40$"],
+      ["Mammographie, thyroïdienne, oculaire, vésico-prostatique, EEG, ECG, CT Scanner cérébral", "60%", "40%", "Ex : CT cérébral 180$ → 108$ / 72$"],
+    ]
+  },
+  {
+    cat: "Accidents de la route & urgences", items: [
+      ["Stabilisation, investigation (hors cause alcoolique/rixe)", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Consultation prénatale (4 CPN, 1 écho, examens, médicaments)", "90%", "10%", ""],
+      ["Accouchement eutocique", "90%", "10%", "100$ → 90$ / 10$"],
+      ["Accouchement compliqué", "90%", "10%", "150$ → 135$ / 15$"],
+      ["Césarienne", "90%", "10%", "300$ → 270$ / 30$"],
+    ]
+  },
+  {
+    cat: "Services pédiatriques", items: [
+      ["Soins postnataux, urgences, soins intensifs, vaccination de routine, CPS, consultations", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Consultation, douleur, extraction simple, amalgame, composite, détartrage, endodontie, plombage", "90%", "10%", ""],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, infection primaire, examens de routine, verres optiques, chirurgie œil unilatérale", "90%", "10%", ""],
+      ["Échographie oculaire, réfraction automatique", "60%", "40%", ""],
+      ["Monture de lunettes", "Prise en charge unique à vie de 20$", "—", ""],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques", items: [
+      ["Hypertension, diabète, asthme, ulcère gastroduodénal, arthrite, épilepsie, angine de poitrine, counseling", "90%", "10%", ""],
+      ["Drépanocytose (crises uniquement)", "90%", "10%", ""],
+      ["Infarctus du myocarde (urgence uniquement)", "90%", "10%", ""],
+      ["Tuberculose", "Programme national", "—", ""],
+    ]
+  },
+  {
+    cat: "Chirurgies", items: [
+      ["Mineures (suture, circoncision, abcès, furoncle, ponction, pansement)", "90%", "10%", ""],
+      ["Intermédiaires (appendicectomie, cure herniaire, kystectomie, césarienne)", "90%", "10%", "Ex : appendicectomie 250$ → 225$ / 25$"],
+      ["Majeures (myomectomie, laparotomie, prostatectomie, amygdalectomie)", "50%", "50%", "Ex : myomectomie 700$ → 350$ / 350$"],
+    ]
+  },
+  {
+    cat: "Prise en charge du VIH", items: [
+      ["Dépistage et counseling", "90%", "10%", ""],
+      ["Traitement", "Programme national", "—", ""],
+    ]
+  },
   { cat: "Transfusion sanguine (1 unité)", items: [["Transfusion", "90%", "10%", ""]] },
   { cat: "Décès", items: [["Conservation et mise en bière (3 jours, hors formolisation)", "90%", "10%", "80$ → 72$ / 8$"]] },
 ];
@@ -135,42 +165,62 @@ const LISANGA_EXCLUSIONS = [
    limites de fréquence et spécialités, exemples chiffrés.
 ------------------------------------------------------------------- */
 const ESSENTIEL_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens courants et médicaments génériques", "80%", "20%", "Ex : paludisme simple 15$ → 12$ / 3$"],
-  ]},
-  { cat: "Consultations spécialisées (6 consultations/an)", items: [
-    ["Médecine interne, Gynécologie, Pédiatrie, Cardiologie, ORL, Dermatologie", "80%", "20%", "Ex : cardiologie 25$ → 20$ / 5$"],
-  ]},
-  { cat: "Examens de laboratoire", items: [
-    ["Analyses courantes (NFS, glycémie, selles, urines)", "80%", "20%", "Ex : bilan courant 15$ → 12$ / 3$"],
-    ["Analyses spécialisées (hormonaux, sérologies, marqueurs)", "50%", "50%", "Ex : bilan thyroïdien 25$ → 12,5$ / 12,5$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie et échographie de routine", "70%", "30%", "Ex : radio thorax 15$ → 10,5$ / 4,5$"],
-    ["Imagerie lourde (scanner, IRM)", "Non couvert", "100%", ""],
-  ]},
-  { cat: "Hospitalisation (chambre commune, 15 jours/an)", items: [
-    ["Séjour, soins infirmiers, médicaments, tournée médicale", "90%", "10%", "Ex : hospitalisation 100$ → 90$ / 10$"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Consultations prénatales (3 CPN) et accouchement voie basse", "80%", "20%", "Ex : accouchement 80$ → 64$ / 16$"],
-    ["Césarienne", "70%", "30%", "Ex : césarienne 300$ → 210$ / 90$"],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs (détartrage, plombage, extraction simple)", "50%", "50%", "Ex : détartrage 20$ → 10$ / 10$"],
-    ["Prothèses et actes lourds", "Non couvert", "100%", ""],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation et examens de routine", "70%", "30%", ""],
-    ["Monture et verres (1 prise en charge / 2 ans)", "40%", "60%", "Plafond 100 000 CDF"],
-  ]},
-  { cat: "Chirurgies", items: [
-    ["Mineures (suture, abcès, circoncision)", "80%", "20%", ""],
-    ["Majeures", "40%", "60%", "Ex : appendicectomie 250$ → 100$ / 150$"],
-  ]},
-  { cat: "Pathologies chroniques", items: [
-    ["Hypertension, diabète, asthme — suivi et médicaments", "80%", "20%", "Plafond mensuel médicaments : 30 000 CDF"],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens courants et médicaments génériques", "80%", "20%", "Ex : paludisme simple 15$ → 12$ / 3$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (6 consultations/an)", items: [
+      ["Médecine interne, Gynécologie, Pédiatrie, Cardiologie, ORL, Dermatologie", "80%", "20%", "Ex : cardiologie 25$ → 20$ / 5$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire", items: [
+      ["Analyses courantes (NFS, glycémie, selles, urines)", "80%", "20%", "Ex : bilan courant 15$ → 12$ / 3$"],
+      ["Analyses spécialisées (hormonaux, sérologies, marqueurs)", "50%", "50%", "Ex : bilan thyroïdien 25$ → 12,5$ / 12,5$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie et échographie de routine", "70%", "30%", "Ex : radio thorax 15$ → 10,5$ / 4,5$"],
+      ["Imagerie lourde (scanner, IRM)", "Non couvert", "100%", ""],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre commune, 15 jours/an)", items: [
+      ["Séjour, soins infirmiers, médicaments, tournée médicale", "90%", "10%", "Ex : hospitalisation 100$ → 90$ / 10$"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Consultations prénatales (3 CPN) et accouchement voie basse", "80%", "20%", "Ex : accouchement 80$ → 64$ / 16$"],
+      ["Césarienne", "70%", "30%", "Ex : césarienne 300$ → 210$ / 90$"],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs (détartrage, plombage, extraction simple)", "50%", "50%", "Ex : détartrage 20$ → 10$ / 10$"],
+      ["Prothèses et actes lourds", "Non couvert", "100%", ""],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation et examens de routine", "70%", "30%", ""],
+      ["Monture et verres (1 prise en charge / 2 ans)", "40%", "60%", "Plafond 100 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies", items: [
+      ["Mineures (suture, abcès, circoncision)", "80%", "20%", ""],
+      ["Majeures", "40%", "60%", "Ex : appendicectomie 250$ → 100$ / 150$"],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques", items: [
+      ["Hypertension, diabète, asthme — suivi et médicaments", "80%", "20%", "Plafond mensuel médicaments : 30 000 CDF"],
+    ]
+  },
 ];
 const ESSENTIEL_LIMITES = [
   "Consultations spécialisées : plafonnées à 6 par an, au-delà tarif plein",
@@ -188,40 +238,60 @@ const ESSENTIEL_EXCLUSIONS = [
 ];
 
 const CONFORT_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens courants et médicaments", "90%", "10%", "Ex : consultation 15$ → 13,5$ / 1,5$"],
-  ]},
-  { cat: "Consultations spécialisées (illimité)", items: [
-    ["Toutes spécialités : médecine interne, gynécologie, pédiatrie, cardiologie, ophtalmologie, dermatologie, neurologie, ORL, psychiatrie", "90%", "10%", "Ex : neurologie 35$ → 31,5$ / 3,5$"],
-  ]},
-  { cat: "Examens de laboratoire (courants et spécialisés)", items: [
-    ["Toutes analyses, y compris hormonales et sérologiques", "90%", "10%", "Ex : bilan complet 40$ → 36$ / 4$"],
-  ]},
-  { cat: "Imagerie médicale", items: [
-    ["Radiologie, échographie, scanner", "80%", "20%", "Ex : scanner 150$ → 120$ / 30$"],
-    ["IRM", "60%", "40%", "Ex : IRM 300$ → 180$ / 120$"],
-  ]},
-  { cat: "Hospitalisation (chambre à 2 lits, 30 jours/an)", items: [
-    ["Séjour complet, bloc opératoire, soins intensifs", "100%", "0%", "Ex : hospitalisation 400$ → 400$ / 0$"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Suivi prénatal illimité, accouchement, césarienne", "90%", "10%", "Ex : césarienne 300$ → 270$ / 30$"],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs et extractions", "80%", "20%", ""],
-    ["Prothèses et couronnes simples", "60%", "40%", "Ex : couronne 200$ → 120$ / 80$"],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, examens, chirurgie de la cataracte", "80%", "20%", ""],
-    ["Monture et verres (1 prise en charge / an)", "60%", "40%", "Plafond 300 000 CDF"],
-  ]},
-  { cat: "Chirurgies (mineures à majeures)", items: [
-    ["Toutes chirurgies conventionnées", "90%", "10%", "Ex : myomectomie 700$ → 630$ / 70$"],
-  ]},
-  { cat: "Pathologies chroniques (illimité)", items: [
-    ["Hypertension, diabète, asthme, arthrite — suivi et médicaments", "90%", "10%", ""],
-    ["Suivi spécialisé des maladies chroniques", "90%", "10%", ""],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens courants et médicaments", "90%", "10%", "Ex : consultation 15$ → 13,5$ / 1,5$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (illimité)", items: [
+      ["Toutes spécialités : médecine interne, gynécologie, pédiatrie, cardiologie, ophtalmologie, dermatologie, neurologie, ORL, psychiatrie", "90%", "10%", "Ex : neurologie 35$ → 31,5$ / 3,5$"],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire (courants et spécialisés)", items: [
+      ["Toutes analyses, y compris hormonales et sérologiques", "90%", "10%", "Ex : bilan complet 40$ → 36$ / 4$"],
+    ]
+  },
+  {
+    cat: "Imagerie médicale", items: [
+      ["Radiologie, échographie, scanner", "80%", "20%", "Ex : scanner 150$ → 120$ / 30$"],
+      ["IRM", "60%", "40%", "Ex : IRM 300$ → 180$ / 120$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre à 2 lits, 30 jours/an)", items: [
+      ["Séjour complet, bloc opératoire, soins intensifs", "100%", "0%", "Ex : hospitalisation 400$ → 400$ / 0$"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Suivi prénatal illimité, accouchement, césarienne", "90%", "10%", "Ex : césarienne 300$ → 270$ / 30$"],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs et extractions", "80%", "20%", ""],
+      ["Prothèses et couronnes simples", "60%", "40%", "Ex : couronne 200$ → 120$ / 80$"],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, examens, chirurgie de la cataracte", "80%", "20%", ""],
+      ["Monture et verres (1 prise en charge / an)", "60%", "40%", "Plafond 300 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies (mineures à majeures)", items: [
+      ["Toutes chirurgies conventionnées", "90%", "10%", "Ex : myomectomie 700$ → 630$ / 70$"],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques (illimité)", items: [
+      ["Hypertension, diabète, asthme, arthrite — suivi et médicaments", "90%", "10%", ""],
+      ["Suivi spécialisé des maladies chroniques", "90%", "10%", ""],
+    ]
+  },
 ];
 const CONFORT_LIMITES = [
   "Hospitalisation : chambre à 2 lits, 30 jours par an",
@@ -238,41 +308,61 @@ const CONFORT_EXCLUSIONS = [
 ];
 
 const PREMIUM_BAREME = [
-  { cat: "Soins de santé primaires (illimité)", items: [
-    ["Consultation générale, examens et médicaments", "100%", "0%", "Ex : consultation 15$ → 15$ / 0$"],
-  ]},
-  { cat: "Consultations spécialisées (illimité)", items: [
-    ["Toutes spécialités, y compris consultations hors réseau sur accord préalable", "100%", "0%", ""],
-  ]},
-  { cat: "Examens de laboratoire (tous, illimité)", items: [
-    ["Toutes analyses courantes et spécialisées", "100%", "0%", ""],
-  ]},
-  { cat: "Imagerie médicale (toutes, illimité)", items: [
-    ["Radiologie, échographie, scanner", "100%", "0%", ""],
-    ["IRM, PET-scan", "90%", "10%", "Ex : PET-scan 600$ → 540$ / 60$"],
-  ]},
-  { cat: "Hospitalisation (chambre privée, illimité)", items: [
-    ["Séjour, bloc opératoire, soins intensifs, chambre individuelle", "100%", "0%", ""],
-    ["Évacuation sanitaire internationale (si soin indisponible localement)", "100%", "0%", "Plafond 50 000 000 CDF/an"],
-  ]},
-  { cat: "Grossesse et maternité", items: [
-    ["Suivi prénatal complet, accouchement, césarienne, complications", "100%", "0%", ""],
-  ]},
-  { cat: "Soins dentaires", items: [
-    ["Soins conservateurs, prothèses, couronnes", "80%", "20%", ""],
-    ["Orthodontie (enfants et adultes)", "60%", "40%", "Plafond 1 500 000 CDF"],
-  ]},
-  { cat: "Soins ophtalmologiques", items: [
-    ["Consultation, chirurgie réfractive et cataracte", "100%", "0%", ""],
-    ["Monture haut de gamme, verres, lentilles (1 prise en charge / an)", "100%", "0%", "Plafond 800 000 CDF"],
-  ]},
-  { cat: "Chirurgies (toutes, y compris reconstructrices)", items: [
-    ["Chirurgies mineures, majeures et reconstructrices post-traumatiques", "100%", "0%", ""],
-  ]},
-  { cat: "Pathologies chroniques et maladies graves", items: [
-    ["Hypertension, diabète, asthme — suivi et médicaments illimités", "100%", "0%", ""],
-    ["Dialyse, oncologie, maladies graves", "90%", "10%", "Accord préalable du médecin conseil"],
-  ]},
+  {
+    cat: "Soins de santé primaires (illimité)", items: [
+      ["Consultation générale, examens et médicaments", "100%", "0%", "Ex : consultation 15$ → 15$ / 0$"],
+    ]
+  },
+  {
+    cat: "Consultations spécialisées (illimité)", items: [
+      ["Toutes spécialités, y compris consultations hors réseau sur accord préalable", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Examens de laboratoire (tous, illimité)", items: [
+      ["Toutes analyses courantes et spécialisées", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Imagerie médicale (toutes, illimité)", items: [
+      ["Radiologie, échographie, scanner", "100%", "0%", ""],
+      ["IRM, PET-scan", "90%", "10%", "Ex : PET-scan 600$ → 540$ / 60$"],
+    ]
+  },
+  {
+    cat: "Hospitalisation (chambre privée, illimité)", items: [
+      ["Séjour, bloc opératoire, soins intensifs, chambre individuelle", "100%", "0%", ""],
+      ["Évacuation sanitaire internationale (si soin indisponible localement)", "100%", "0%", "Plafond 50 000 000 CDF/an"],
+    ]
+  },
+  {
+    cat: "Grossesse et maternité", items: [
+      ["Suivi prénatal complet, accouchement, césarienne, complications", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Soins dentaires", items: [
+      ["Soins conservateurs, prothèses, couronnes", "80%", "20%", ""],
+      ["Orthodontie (enfants et adultes)", "60%", "40%", "Plafond 1 500 000 CDF"],
+    ]
+  },
+  {
+    cat: "Soins ophtalmologiques", items: [
+      ["Consultation, chirurgie réfractive et cataracte", "100%", "0%", ""],
+      ["Monture haut de gamme, verres, lentilles (1 prise en charge / an)", "100%", "0%", "Plafond 800 000 CDF"],
+    ]
+  },
+  {
+    cat: "Chirurgies (toutes, y compris reconstructrices)", items: [
+      ["Chirurgies mineures, majeures et reconstructrices post-traumatiques", "100%", "0%", ""],
+    ]
+  },
+  {
+    cat: "Pathologies chroniques et maladies graves", items: [
+      ["Hypertension, diabète, asthme — suivi et médicaments illimités", "100%", "0%", ""],
+      ["Dialyse, oncologie, maladies graves", "90%", "10%", "Accord préalable du médecin conseil"],
+    ]
+  },
 ];
 const PREMIUM_LIMITES = [
   "Évacuation sanitaire internationale plafonnée à 50 000 000 CDF par an",
@@ -320,57 +410,65 @@ const FORMULES = [
 ];
 
 const LISANGA_RESEAU = [
-  { cat: 'Réseau des hôpitaux', items: [
-    { nom: 'RIVIERA CLINIC', commune: 'BANDALUNGWA', avenue: 'AV.NSENGE N°5116', quartier: 'MAKELELE' },
-    { nom: 'CM LA PATIENCE', commune: 'BANDALUNGWA', avenue: 'AV INGA REF, COMMUNE', quartier: 'KIMBONDO' },
-    { nom: 'CH LA BORNE', commune: 'NGALIEMA', avenue: 'AV MARINE 28, AUX ENCEINTES DU CH LA BORNE', quartier: 'UPN' },
-    { nom: 'CH  BOLINGANI', commune: 'NGALIEMA', avenue: 'AV  SONGE,24363', quartier: 'MUSEY' },
-    { nom: 'CLINIQUE DES ANGES', commune: 'NGALIEMA', avenue: 'ROUTE DE MATADI N°5351', quartier: 'BINZA OZONE' },
-    { nom: 'YADAH CLINIC', commune: 'GOMBE', avenue: 'REVOLUTION 11', quartier: 'GOMBE' },
-    { nom: 'CLINIC CAROLINE', commune: 'GOMBE', avenue: 'AV KAUKA', quartier: 'DERIERE ROYALE' },
-    { nom: 'CH MUTUALISTE', commune: 'KASAVUBU', avenue: 'IKELEMBA,52', quartier: 'ANCIEN COMBATTANT' },
-    { nom: 'POLYCLINIQUE LIGHT', commune: 'KIMBANSEKE', avenue: 'BLV LUMUMBA', quartier: 'Q3 ARRET VODACOM' },
-    { nom: 'CLINIQUE IK', commune: 'KINTAMBO', avenue: 'AV KWANGO N°3', quartier: 'MAGASIN-KINTAMBO' },
-    { nom: 'CM GOMBELE', commune: 'LEMBA', avenue: 'AV IKUKU N°8 Réf New-lys', quartier: 'RIGHINI' },
-    { nom: 'HOPITAL SAINT GABRIEL', commune: 'LEMBA', avenue: 'AV KILIDJA 6095/9', quartier: 'GOMBELE/LEMBA TERMUNUS' },
-    { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: '15 EME RUE-LIMETE' },
-    { nom: 'CLINIC PROMEDIS/LIMETE', commune: 'LIMETE', avenue: '10 èm RUE N° 22D', quartier: 'INDUSTRIEL' },
-    { nom: 'MOYI MWA TONGO', commune: 'LIMETE', avenue: '4EME RUE INDUSTRIEL', quartier: 'LIMETE' },
-    { nom: 'CH BIEN ETRE', commune: 'LIMETE', avenue: 'AV CONGO 8', quartier: 'SALONGO' },
-    { nom: 'CENTRE DE MEDECINE SPECIALISEE DE LIMETE', commune: 'LIMETE', avenue: '10EME RUE DALLIAS 582', quartier: 'LIMETE RESIDENTIEL' },
-    { nom: 'CH MA PROVIDENCE', commune: 'KALAMU', avenue: 'LOTAS 1029', quartier: 'NZAMBA AVOCAT' },
-    { nom: 'CLINIQUE DES ANGES VIP', commune: 'LINGWALA', avenue: 'Crois des AV Costa et Mushi', quartier: 'BEAU VENT' },
-    { nom: 'BIOPHARM 2', commune: 'LINGWALA', avenue: 'AV KATO', quartier: 'HUILERIE' },
-    { nom: 'CH EMILIA', commune: 'MATETE', avenue: 'KUNDA 1 N°16', quartier: 'KUNDA 1' },
-    { nom: 'CLINIC PROMEDIS/ NGALIEMA', commune: 'NGALIEMA', avenue: 'AV MAKUTU N°2', quartier: 'BINZA OZONE' },
-    { nom: 'CLINIQUE SAPHIR', commune: 'KINTAMBO', avenue: 'AV TRANSVERSALE 2', quartier: 'JOLIE PARC' },
-    { nom: 'CH BONNE FOI', commune: 'NSELE', avenue: 'AV MBULU 44', quartier: 'MPASA I' },
-    { nom: 'SAINT LUC DE DAIPAIN', commune: 'N\'SELE', avenue: 'DAIPAIN', quartier: 'DAIPAIN' },
-    { nom: 'CH MARIA ANTHONIA DE PARIS', commune: 'N\'SELE', avenue: 'AV COLONEL NZADI 1', quartier: 'NGAMABA/MPASA' },
-    { nom: 'CLINIC PROMEDIS/ N\'SELE', commune: 'N\'SELE', avenue: 'AV KAKENZA N°2', quartier: 'COPELA-PLAZA' },
-    { nom: 'CLINIQUE OASIS DE VIE', commune: 'BARUMBU', avenue: '6051 KABAMBARE', quartier: 'BEAU MARCHE-NDOLO' },
-    { nom: 'CH DAMFER', commune: 'N\'SELE', avenue: 'AV MAKELELE 107', quartier: 'MPASA I' },
-    { nom: 'RENE DES HAES', commune: 'MONT NGAFULA', avenue: 'AV LUZIZILA 18', quartier: 'KIMWENZA-MISSION' },
-    { nom: 'CH SAINT GILD', commune: 'MONT NGAFULA', avenue: 'AV MONASTERE KINSAHSA-KINDELE', quartier: 'KINDELE' },
-    { nom: 'CS ET MATERNITE SAINT VINCENT DE PAUL', commune: 'MONT NGAFULA', avenue: 'AV LEMBI 5  Q/MUSHI/MBUDI', quartier: 'MBUDI' },
-    { nom: 'PROMEDIS CITE VERTE', commune: 'MONT NGAFULA', avenue: '12 EME RUE VLLA 3', quartier: 'CITE VERTE' },
-  ]},
-  { cat: 'Structures de BDOM', items: [
-    { nom: 'CS  NTOMBWA YA  MARIA', commune: 'MASINA', avenue: 'LOLA  II,4', quartier: 'MASINA SANS FIL' },
-    { nom: 'CH  LISUNGI', commune: 'MONT NGAFULA', avenue: 'ROUTE DU LAC DE MA VALLEE', quartier: 'MPUMBU' },
-    { nom: 'CS  MATER DEI', commune: 'MONT NGAFULA', avenue: 'ROUTE DE MATADI', quartier: 'KIMBONDO' },
-  ]},
-  { cat: 'Structures hyperspécialisées', items: [
-    { nom: 'CLINIQUE DENTAIRE LA CANINE', commune: 'GOMBE', avenue: 'AV DE LA JUSTICE 44', quartier: 'GOMBE' },
-    { nom: 'CDM PHTALMOLOGIQUE ET DENTAIRE', commune: 'GOMBE', avenue: 'AV MONGALA 10 REF MIDEMA', quartier: 'GOMBE' },
-    { nom: 'HJ HOSPITALS/EXAMENS SPECIALISES', commune: 'LIMETE', avenue: '1ERE RUE, INDISTRIEL', quartier: '1ERE RUE INDISTRIEL' },
-  ]},
-  { cat: 'Structures en cas de transfert', items: [
-    { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: 'MOTEL FIKIN' },
-    { nom: 'CLINIQUE BONDEKO', commune: 'LIMETE', avenue: 'AV YOLO N°7259', quartier: 'LIMETE-RESIDENTIEL' },
-    { nom: 'HGR/PEDIATRIE  KALEMBELEMBE', commune: 'LINGWALA', avenue: 'AV  KALEMBELEMBE', quartier: 'NGONDALOKOMBE' },
-    { nom: 'CH  MONKOLE', commune: 'MT NGAFULA', avenue: 'AV MONKOLE', quartier: '' },
-  ]},
+  {
+    cat: 'Réseau des hôpitaux', items: [
+      { nom: 'RIVIERA CLINIC', commune: 'BANDALUNGWA', avenue: 'AV.NSENGE N°5116', quartier: 'MAKELELE' },
+      { nom: 'CM LA PATIENCE', commune: 'BANDALUNGWA', avenue: 'AV INGA REF, COMMUNE', quartier: 'KIMBONDO' },
+      { nom: 'CH LA BORNE', commune: 'NGALIEMA', avenue: 'AV MARINE 28, AUX ENCEINTES DU CH LA BORNE', quartier: 'UPN' },
+      { nom: 'CH  BOLINGANI', commune: 'NGALIEMA', avenue: 'AV  SONGE,24363', quartier: 'MUSEY' },
+      { nom: 'CLINIQUE DES ANGES', commune: 'NGALIEMA', avenue: 'ROUTE DE MATADI N°5351', quartier: 'BINZA OZONE' },
+      { nom: 'YADAH CLINIC', commune: 'GOMBE', avenue: 'REVOLUTION 11', quartier: 'GOMBE' },
+      { nom: 'CLINIC CAROLINE', commune: 'GOMBE', avenue: 'AV KAUKA', quartier: 'DERIERE ROYALE' },
+      { nom: 'CH MUTUALISTE', commune: 'KASAVUBU', avenue: 'IKELEMBA,52', quartier: 'ANCIEN COMBATTANT' },
+      { nom: 'POLYCLINIQUE LIGHT', commune: 'KIMBANSEKE', avenue: 'BLV LUMUMBA', quartier: 'Q3 ARRET VODACOM' },
+      { nom: 'CLINIQUE IK', commune: 'KINTAMBO', avenue: 'AV KWANGO N°3', quartier: 'MAGASIN-KINTAMBO' },
+      { nom: 'CM GOMBELE', commune: 'LEMBA', avenue: 'AV IKUKU N°8 Réf New-lys', quartier: 'RIGHINI' },
+      { nom: 'HOPITAL SAINT GABRIEL', commune: 'LEMBA', avenue: 'AV KILIDJA 6095/9', quartier: 'GOMBELE/LEMBA TERMUNUS' },
+      { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: '15 EME RUE-LIMETE' },
+      { nom: 'CLINIC PROMEDIS/LIMETE', commune: 'LIMETE', avenue: '10 èm RUE N° 22D', quartier: 'INDUSTRIEL' },
+      { nom: 'MOYI MWA TONGO', commune: 'LIMETE', avenue: '4EME RUE INDUSTRIEL', quartier: 'LIMETE' },
+      { nom: 'CH BIEN ETRE', commune: 'LIMETE', avenue: 'AV CONGO 8', quartier: 'SALONGO' },
+      { nom: 'CENTRE DE MEDECINE SPECIALISEE DE LIMETE', commune: 'LIMETE', avenue: '10EME RUE DALLIAS 582', quartier: 'LIMETE RESIDENTIEL' },
+      { nom: 'CH MA PROVIDENCE', commune: 'KALAMU', avenue: 'LOTAS 1029', quartier: 'NZAMBA AVOCAT' },
+      { nom: 'CLINIQUE DES ANGES VIP', commune: 'LINGWALA', avenue: 'Crois des AV Costa et Mushi', quartier: 'BEAU VENT' },
+      { nom: 'BIOPHARM 2', commune: 'LINGWALA', avenue: 'AV KATO', quartier: 'HUILERIE' },
+      { nom: 'CH EMILIA', commune: 'MATETE', avenue: 'KUNDA 1 N°16', quartier: 'KUNDA 1' },
+      { nom: 'CLINIC PROMEDIS/ NGALIEMA', commune: 'NGALIEMA', avenue: 'AV MAKUTU N°2', quartier: 'BINZA OZONE' },
+      { nom: 'CLINIQUE SAPHIR', commune: 'KINTAMBO', avenue: 'AV TRANSVERSALE 2', quartier: 'JOLIE PARC' },
+      { nom: 'CH BONNE FOI', commune: 'NSELE', avenue: 'AV MBULU 44', quartier: 'MPASA I' },
+      { nom: 'SAINT LUC DE DAIPAIN', commune: 'N\'SELE', avenue: 'DAIPAIN', quartier: 'DAIPAIN' },
+      { nom: 'CH MARIA ANTHONIA DE PARIS', commune: 'N\'SELE', avenue: 'AV COLONEL NZADI 1', quartier: 'NGAMABA/MPASA' },
+      { nom: 'CLINIC PROMEDIS/ N\'SELE', commune: 'N\'SELE', avenue: 'AV KAKENZA N°2', quartier: 'COPELA-PLAZA' },
+      { nom: 'CLINIQUE OASIS DE VIE', commune: 'BARUMBU', avenue: '6051 KABAMBARE', quartier: 'BEAU MARCHE-NDOLO' },
+      { nom: 'CH DAMFER', commune: 'N\'SELE', avenue: 'AV MAKELELE 107', quartier: 'MPASA I' },
+      { nom: 'RENE DES HAES', commune: 'MONT NGAFULA', avenue: 'AV LUZIZILA 18', quartier: 'KIMWENZA-MISSION' },
+      { nom: 'CH SAINT GILD', commune: 'MONT NGAFULA', avenue: 'AV MONASTERE KINSAHSA-KINDELE', quartier: 'KINDELE' },
+      { nom: 'CS ET MATERNITE SAINT VINCENT DE PAUL', commune: 'MONT NGAFULA', avenue: 'AV LEMBI 5  Q/MUSHI/MBUDI', quartier: 'MBUDI' },
+      { nom: 'PROMEDIS CITE VERTE', commune: 'MONT NGAFULA', avenue: '12 EME RUE VLLA 3', quartier: 'CITE VERTE' },
+    ]
+  },
+  {
+    cat: 'Structures de BDOM', items: [
+      { nom: 'CS  NTOMBWA YA  MARIA', commune: 'MASINA', avenue: 'LOLA  II,4', quartier: 'MASINA SANS FIL' },
+      { nom: 'CH  LISUNGI', commune: 'MONT NGAFULA', avenue: 'ROUTE DU LAC DE MA VALLEE', quartier: 'MPUMBU' },
+      { nom: 'CS  MATER DEI', commune: 'MONT NGAFULA', avenue: 'ROUTE DE MATADI', quartier: 'KIMBONDO' },
+    ]
+  },
+  {
+    cat: 'Structures hyperspécialisées', items: [
+      { nom: 'CLINIQUE DENTAIRE LA CANINE', commune: 'GOMBE', avenue: 'AV DE LA JUSTICE 44', quartier: 'GOMBE' },
+      { nom: 'CDM PHTALMOLOGIQUE ET DENTAIRE', commune: 'GOMBE', avenue: 'AV MONGALA 10 REF MIDEMA', quartier: 'GOMBE' },
+      { nom: 'HJ HOSPITALS/EXAMENS SPECIALISES', commune: 'LIMETE', avenue: '1ERE RUE, INDISTRIEL', quartier: '1ERE RUE INDISTRIEL' },
+    ]
+  },
+  {
+    cat: 'Structures en cas de transfert', items: [
+      { nom: 'HGR SAINT JOSEPH', commune: 'LIMETE', avenue: 'BlV LUMUMBA 15 EME RUE', quartier: 'MOTEL FIKIN' },
+      { nom: 'CLINIQUE BONDEKO', commune: 'LIMETE', avenue: 'AV YOLO N°7259', quartier: 'LIMETE-RESIDENTIEL' },
+      { nom: 'HGR/PEDIATRIE  KALEMBELEMBE', commune: 'LINGWALA', avenue: 'AV  KALEMBELEMBE', quartier: 'NGONDALOKOMBE' },
+      { nom: 'CH  MONKOLE', commune: 'MT NGAFULA', avenue: 'AV MONKOLE', quartier: '' },
+    ]
+  },
 ];
 
 
@@ -903,6 +1001,97 @@ function SignaturePad({ onChange }) {
   );
 }
 
+/* ------------------------------------------------------------------
+   Composant partagé: Formulaire d'identité + gestion famille
+   Utilisé par Onboarding (souscription) et Devis (simulation)
+------------------------------------------------------------------- */
+function SubscriberForm({ identite, setIdentite, identitePhoto, setIdentitePhoto, famille, setFamille, addBenef, setAddBenef, addFamille, removeFamille }) {
+  const hasConjoint = famille.some((f) => f.lien === "Conjoint");
+  return (
+    <>
+      <div className="px-5 space-y-3">
+        <div className="flex justify-center mb-1">
+          <label className="relative cursor-pointer">
+            <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 76, height: 76, background: C.ivory, border: `2px dashed ${identitePhoto ? C.green : C.red}` }}>
+              {identitePhoto ? <img src={identitePhoto} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={26} color={C.navy2} />}
+            </div>
+            <div className="flex items-center justify-center rounded-full absolute" style={{ width: 24, height: 24, background: C.navy, bottom: -2, right: -2, border: "2px solid white" }}><Camera size={11} color="white" /></div>
+            <input type="file" accept="image/*" capture="user" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setIdentitePhoto(URL.createObjectURL(f)); }} />
+          </label>
+        </div>
+        <div style={{ fontFamily: sans, fontSize: 10.5, color: identitePhoto ? C.sub : C.red, textAlign: "center", marginBottom: 6 }}>{identitePhoto ? "Photo ajoutée" : "Photo recommandée (utilisée aussi pour la reconnaissance faciale)"}</div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Nom *"><input style={inputStyle} value={identite.nom} onChange={(e) => setIdentite({ ...identite, nom: e.target.value })} placeholder="Nom" /></Field>
+          <Field label="Prénom *"><input style={inputStyle} value={identite.prenom} onChange={(e) => setIdentite({ ...identite, prenom: e.target.value })} placeholder="Prénom" /></Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Date de naissance *"><input style={inputStyle} type="date" value={identite.naissance} onChange={(e) => setIdentite({ ...identite, naissance: e.target.value })} /></Field>
+          <Field label="Sexe"><select style={inputStyle} value={identite.sexe} onChange={(e) => setIdentite({ ...identite, sexe: e.target.value })}><option>Masculin</option><option>Féminin</option></select></Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Profession"><input style={inputStyle} value={identite.profession} onChange={(e) => setIdentite({ ...identite, profession: e.target.value })} placeholder="Profession" /></Field>
+          <Field label="Groupe sanguin"><select style={inputStyle} value={identite.groupeSanguin} onChange={(e) => setIdentite({ ...identite, groupeSanguin: e.target.value })}><option value="">Inconnu</option><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></Field>
+        </div>
+        <Field label="Alertes médicales (allergies, etc.)"><input style={inputStyle} value={identite.allergies} onChange={(e) => setIdentite({ ...identite, allergies: e.target.value })} placeholder="Ex : Allergique Pénicilline" /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Téléphone *"><input style={inputStyle} value={identite.telephone} onChange={(e) => setIdentite({ ...identite, telephone: e.target.value })} placeholder="+243 81 000 00 00" /></Field>
+          <Field label="Ville *"><select style={inputStyle} value={identite.ville} onChange={(e) => setIdentite({ ...identite, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
+        </div>
+        <Field label="Email"><input style={inputStyle} type="email" value={identite.email} onChange={(e) => setIdentite({ ...identite, email: e.target.value })} placeholder="email@domaine.cd" /></Field>
+        <Field label="Adresse"><input style={inputStyle} value={identite.adresse} onChange={(e) => setIdentite({ ...identite, adresse: e.target.value })} placeholder="Adresse" /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Type de pièce d'identité"><select style={inputStyle} value={identite.typePiece} onChange={(e) => setIdentite({ ...identite, typePiece: e.target.value })}><option>Carte d'électeur</option><option>Passeport</option><option>Carte d'identité</option><option>Permis de conduire</option></select></Field>
+          <Field label="N° de la pièce *"><input style={inputStyle} value={identite.numeroPieceIdentite} onChange={(e) => setIdentite({ ...identite, numeroPieceIdentite: e.target.value })} placeholder="N° de pièce" /></Field>
+        </div>
+        <Field label="Déclaration de santé (antécédents connus)"><textarea style={{ ...inputStyle, minHeight: 50, resize: "none" }} value={identite.declarationSante} onChange={(e) => setIdentite({ ...identite, declarationSante: e.target.value })} placeholder="Ex : Aucun antécédent notable" /></Field>
+
+        <div className="mt-4">
+          <div style={{ fontFamily: sans, fontSize: 12, color: C.sub, marginBottom: 10 }}>Ajoutez les membres de votre famille à couvrir (optionnel).</div>
+          {famille.length > 0 && (
+            <div className="space-y-2 mb-3">
+              {famille.map((f) => (
+                <Card key={f.id} className="p-3 flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-full overflow-hidden flex-shrink-0" style={{ width: 30, height: 30, background: C.ivory }}>
+                    {f.photo ? <img src={f.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : (f.lien === "Conjoint" ? <Heart size={14} color={C.navy2} /> : <Baby size={14} color={C.navy2} />)}
+                  </div>
+                  <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, color: C.ink }}>{f.nom}</div><div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{f.lien} · {f.naissance}</div></div>
+                  <button onClick={() => removeFamille(f.id)}><Trash2 size={15} color={C.red} /></button>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <Card className="p-4 space-y-3">
+            <div style={{ fontFamily: sans, fontSize: 12, fontWeight: 700, color: C.navy }}>Ajouter un bénéficiaire</div>
+            <div className="flex items-center gap-3">
+              <label className="relative cursor-pointer flex-shrink-0">
+                <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 44, height: 44, background: C.ivory, border: `1.5px dashed ${addBenef.photo ? C.green : C.red}` }}>
+                  {addBenef.photo ? <img src={addBenef.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={16} color={C.navy2} />}
+                </div>
+                <input type="file" accept="image/*" capture="user" hidden onChange={(e) => { const file = e.target.files?.[0]; if (file) setAddBenef({ ...addBenef, photo: URL.createObjectURL(file) }); }} />
+              </label>
+              <span style={{ fontFamily: sans, fontSize: 10.5, color: addBenef.photo ? C.sub : C.red }}>Photo recommandée</span>
+            </div>
+            <Field label="Lien de parenté"><select style={inputStyle} value={addBenef.lien} onChange={(e) => setAddBenef({ ...addBenef, lien: e.target.value })}><option>Conjoint</option><option>Enfant</option><option>Autre</option></select></Field>
+            <Field label="Nom complet"><input style={inputStyle} value={addBenef.nom} onChange={(e) => setAddBenef({ ...addBenef, nom: e.target.value })} placeholder="Nom et prénom" /></Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Date de naissance"><input style={inputStyle} type="date" value={addBenef.naissance} onChange={(e) => setAddBenef({ ...addBenef, naissance: e.target.value })} /></Field>
+              <Field label="Sexe"><select style={inputStyle} value={addBenef.sexe} onChange={(e) => setAddBenef({ ...addBenef, sexe: e.target.value })}><option>Féminin</option><option>Masculin</option></select></Field>
+            </div>
+            <Field label="Lieu de naissance"><input style={inputStyle} value={addBenef.lieuNaissance} onChange={(e) => setAddBenef({ ...addBenef, lieuNaissance: e.target.value })} placeholder="Lieu" /></Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Téléphone (pour son accès)"><input style={inputStyle} value={addBenef.telephone} onChange={(e) => setAddBenef({ ...addBenef, telephone: e.target.value })} placeholder="Téléphone" /></Field>
+              <Field label="Groupe sanguin"><select style={inputStyle} value={addBenef.groupeSanguin} onChange={(e) => setAddBenef({ ...addBenef, groupeSanguin: e.target.value })}><option value="">Inconnu</option><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></Field>
+            </div>
+            <Field label="Adresse"><input style={inputStyle} value={addBenef.adresse} onChange={(e) => setAddBenef({ ...addBenef, adresse: e.target.value })} placeholder="Même adresse que le souscripteur si vide" /></Field>
+            <button onClick={addFamille} disabled={!addBenef.nom || !addBenef.naissance} className="w-full rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${(!addBenef.nom || !addBenef.naissance) ? C.line : C.navy}`, color: (!addBenef.nom || !addBenef.naissance) ? C.sub : C.navy, fontFamily: sans, fontWeight: 700, fontSize: 12.5 }}><UserPlus size={14} /> Ajouter</button>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+}
+
 const STEP_TITLES = ["Formule", "Identité", "Famille", "Documents", "Biométrie", "Prime", "Paiement", "Signature"];
 
 function ProgressBar({ step }) {
@@ -940,6 +1129,7 @@ function Onboarding({ onFinish, onCancel, initial }) {
   const [facesRegistered, setFacesRegistered] = useState({});
   const [paiement, setPaiement] = useState({ methode: "mobile", telephone: "" });
   const [payStatus, setPayStatus] = useState("idle");
+  const [validationStatus, setValidationStatus] = useState("idle");
   const [signature, setSignature] = useState("");
   const [signatureDrawn, setSignatureDrawn] = useState(false);
   const [signatureImg, setSignatureImg] = useState("");
@@ -967,6 +1157,11 @@ function Onboarding({ onFinish, onCancel, initial }) {
   const addFamille = () => { if (!addBenef.nom || !addBenef.naissance || !addBenef.photo) return; setFamille([...famille, { ...addBenef, id: Date.now() }]); setAddBenef({ lien: "Conjoint", nom: "", naissance: "", photo: "", sexe: "Féminin", lieuNaissance: "", telephone: "", adresse: "", groupeSanguin: "" }); };
   const removeFamille = (id) => setFamille(famille.filter((f) => f.id !== id));
   const payer = () => { setPayStatus("loading"); setTimeout(() => setPayStatus("done"), 1300); };
+  const submitForValidation = () => {
+    if (validationStatus !== "idle") return;
+    setValidationStatus("pending");
+    setTimeout(() => setValidationStatus("approved"), 1600);
+  };
 
   const signer = () => {
     if (!accepte || !signature.trim()) return;
@@ -1091,46 +1286,22 @@ function Onboarding({ onFinish, onCancel, initial }) {
         </>
       )}
 
-      {/* STEP 1 — IDENTITÉ */}
+      {/* STEP 1 — IDENTITÉ + FAMILLE (UNIFIÉ via SubscriberForm) */}
       {step === 1 && (
         <>
-          <div className="px-5 space-y-3">
-            <div className="flex justify-center mb-1">
-              <label className="relative cursor-pointer">
-                <div className="flex items-center justify-center rounded-full overflow-hidden" style={{ width: 76, height: 76, background: C.ivory, border: `2px dashed ${identitePhoto ? C.green : C.red}` }}>
-                  {identitePhoto ? <img src={identitePhoto} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Camera size={26} color={C.navy2} />}
-                </div>
-                <div className="flex items-center justify-center rounded-full absolute" style={{ width: 24, height: 24, background: C.navy, bottom: -2, right: -2, border: "2px solid white" }}><Camera size={11} color="white" /></div>
-                <input type="file" accept="image/*" capture="user" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) setIdentitePhoto(URL.createObjectURL(f)); }} />
-              </label>
-            </div>
-            <div style={{ fontFamily: sans, fontSize: 10.5, color: identitePhoto ? C.sub : C.red, textAlign: "center", marginBottom: 6 }}>{identitePhoto ? "Photo ajoutée" : "Photo obligatoire (utilisée aussi pour la reconnaissance faciale)"}</div>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Nom *"><input style={inputStyle} value={identite.nom} onChange={(e) => setIdentite({ ...identite, nom: e.target.value })} placeholder="MUKENDI" /></Field>
-              <Field label="Prénom *"><input style={inputStyle} value={identite.prenom} onChange={(e) => setIdentite({ ...identite, prenom: e.target.value })} placeholder="Jean-Paul" /></Field>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Date de naissance *"><input style={inputStyle} type="date" value={identite.naissance} onChange={(e) => setIdentite({ ...identite, naissance: e.target.value })} /></Field>
-              <Field label="Sexe"><select style={inputStyle} value={identite.sexe} onChange={(e) => setIdentite({ ...identite, sexe: e.target.value })}><option>Masculin</option><option>Féminin</option></select></Field>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Profession"><input style={inputStyle} value={identite.profession} onChange={(e) => setIdentite({ ...identite, profession: e.target.value })} placeholder="Ingénieur" /></Field>
-              <Field label="Groupe sanguin"><select style={inputStyle} value={identite.groupeSanguin} onChange={(e) => setIdentite({ ...identite, groupeSanguin: e.target.value })}><option value="">Inconnu</option><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></Field>
-            </div>
-            <Field label="Alertes médicales (allergies, etc.)"><input style={inputStyle} value={identite.allergies} onChange={(e) => setIdentite({ ...identite, allergies: e.target.value })} placeholder="Ex : Allergique Pénicilline" /></Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Téléphone *"><input style={inputStyle} value={identite.telephone} onChange={(e) => setIdentite({ ...identite, telephone: e.target.value })} placeholder="+243 81 000 00 00" /></Field>
-              <Field label="Ville *"><select style={inputStyle} value={identite.ville} onChange={(e) => setIdentite({ ...identite, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
-            </div>
-            <Field label="Email"><input style={inputStyle} type="email" value={identite.email} onChange={(e) => setIdentite({ ...identite, email: e.target.value })} placeholder="jp.mukendi@mail.cd" /></Field>
-            <Field label="Adresse"><input style={inputStyle} value={identite.adresse} onChange={(e) => setIdentite({ ...identite, adresse: e.target.value })} placeholder="Avenue Kasa-Vubu, Bandalungwa" /></Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Type de pièce d'identité"><select style={inputStyle} value={identite.typePiece} onChange={(e) => setIdentite({ ...identite, typePiece: e.target.value })}><option>Carte d'électeur</option><option>Passeport</option><option>Carte d'identité</option><option>Permis de conduire</option></select></Field>
-              <Field label="N° de la pièce *"><input style={inputStyle} value={identite.numeroPieceIdentite} onChange={(e) => setIdentite({ ...identite, numeroPieceIdentite: e.target.value })} placeholder="Ex : 12-234-567890" /></Field>
-            </div>
-            <Field label="Déclaration de santé (antécédents connus)"><textarea style={{ ...inputStyle, minHeight: 50, resize: "none" }} value={identite.declarationSante} onChange={(e) => setIdentite({ ...identite, declarationSante: e.target.value })} placeholder="Ex : Aucun antécédent notable, ou précisez (hypertension, diabète…)" /></Field>
-          </div>
-          <WizardNav onBack={() => setStep(0)} onNext={() => setStep(2)} disabled={!identite.nom || !identite.prenom || !identite.naissance || !identite.telephone || !identite.ville || !identite.numeroPieceIdentite || !identitePhoto} />
+          <SubscriberForm
+            identite={identite}
+            setIdentite={setIdentite}
+            identitePhoto={identitePhoto}
+            setIdentitePhoto={setIdentitePhoto}
+            famille={famille}
+            setFamille={setFamille}
+            addBenef={addBenef}
+            setAddBenef={setAddBenef}
+            addFamille={addFamille}
+            removeFamille={removeFamille}
+          />
+          <WizardNav onBack={() => setStep(0)} onNext={() => setStep(3)} disabled={!identite.nom || !identite.prenom || !identite.naissance || !identite.telephone || !identite.ville || !identite.numeroPieceIdentite || !identitePhoto} />
         </>
       )}
 
@@ -1260,20 +1431,30 @@ function Onboarding({ onFinish, onCancel, initial }) {
         <>
           <div className="px-5">
             <div style={{ fontFamily: sans, fontSize: 12, color: C.sub, marginBottom: 10 }}>Réglez votre quote-part de <b style={{ color: C.ink }}>{fmt(partSalarie)}</b> pour activer le contrat.</div>
-            {payStatus !== "done" && (
-              <>
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  {[["mobile", "Mobile Money", Smartphone], ["carte", "Carte bancaire", CreditCard], ["virement", "Virement", Landmark]].map(([id, label, Icon]) => (
-                    <button key={id} onClick={() => setPaiement({ ...paiement, methode: id })}>
-                      <Card className="p-3 flex flex-col items-center gap-1.5" style={{ border: paiement.methode === id ? `2px solid ${C.gold}` : `1px solid ${C.line}` }}><Icon size={18} color={C.navy2} /><span style={{ fontFamily: sans, fontSize: 10, fontWeight: 600, color: C.ink, textAlign: "center" }}>{label}</span></Card>
-                    </button>
-                  ))}
+            {validationStatus !== "approved" && (
+              <Card className="p-4 mb-3" style={{ background: validationStatus === "pending" ? C.goldSoft : C.ivory, border: "none" }}>
+                <div style={{ fontFamily: sans, fontSize: 12, color: C.ink, marginBottom: 10 }}>
+                  {validationStatus === "pending"
+                    ? "Validation administrative en cours — votre dossier est en review avant paiement."
+                    : "Votre dossier doit être validé par le service administratif avant d'accéder au paiement."}
                 </div>
-                {paiement.methode === "mobile" && <Field label="Numéro Mobile Money"><input style={inputStyle} value={paiement.telephone} onChange={(e) => setPaiement({ ...paiement, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" /></Field>}
-                {payStatus === "idle" && <button onClick={payer} className="w-full rounded-xl py-3 mt-3 flex items-center justify-center gap-2" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 13.5 }}>Payer {fmt(partSalarie)}</button>}
-                {payStatus === "loading" && <Card className="p-6 mt-3 flex flex-col items-center gap-2"><Loader2 size={24} color={C.navy} className="animate-spin" /><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Confirmation du paiement…</span></Card>}
-              </>
+                <button onClick={submitForValidation} disabled={validationStatus !== "idle"} className="w-full rounded-xl py-3 flex items-center justify-center gap-2" style={{ background: validationStatus === "pending" ? C.navy : C.gold, color: validationStatus === "pending" ? "white" : C.navy, fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}>
+                  {validationStatus === "pending" ? "Validation en cours…" : "Soumettre pour validation administrative"}
+                </button>
+              </Card>
             )}
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              {[['mobile', 'Mobile Money', Smartphone], ['carte', 'Carte bancaire', CreditCard], ['virement', 'Virement', Landmark]].map(([id, label, Icon]) => (
+                <button key={id} onClick={() => setPaiement({ ...paiement, methode: id })}>
+                  <Card className="p-3 flex flex-col items-center gap-1.5" style={{ border: paiement.methode === id ? `2px solid ${C.gold}` : `1px solid ${C.line}` }}><Icon size={18} color={C.navy2} /><span style={{ fontFamily: sans, fontSize: 10, fontWeight: 600, color: C.ink, textAlign: "center" }}>{label}</span></Card>
+                </button>
+              ))}
+            </div>
+            {paiement.methode === "mobile" && <Field label="Numéro Mobile Money"><input style={inputStyle} value={paiement.telephone} onChange={(e) => setPaiement({ ...paiement, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" /></Field>}
+            {payStatus === "idle" && <button onClick={payer} disabled={validationStatus !== "approved"} className="w-full rounded-xl py-3 mt-3 flex items-center justify-center gap-2" style={{ background: validationStatus !== "approved" ? "#C9CDD6" : C.gold, color: validationStatus !== "approved" ? C.sub : C.navy, fontFamily: sans, fontWeight: 800, fontSize: 13.5 }}>{validationStatus !== "approved" ? "Paiement disponible après validation" : `Payer ${fmt(partSalarie)}`}</button>}
+            {payStatus === "loading" && <Card className="p-6 mt-3 flex flex-col items-center gap-2"><Loader2 size={24} color={C.navy} className="animate-spin" /><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Confirmation du paiement…</span></Card>}
+            {validationStatus !== "approved" && validationStatus !== "pending" && <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 10 }}>La validation administrative garantit que les pièces fournies sont conformes avant règlement.</div>}
+            {validationStatus === "approved" && payStatus === "idle" && <div style={{ fontFamily: sans, fontSize: 10.5, color: C.green, marginTop: 10 }}>Dossier validé — vous pouvez maintenant procéder au paiement.</div>}
             {payStatus === "done" && (
               <Card className="p-5 flex flex-col items-center gap-2 text-center">
                 <div className="flex items-center justify-center rounded-full" style={{ width: 44, height: 44, background: C.greenSoft }}><Check size={20} color={C.green} /></div>
@@ -1317,7 +1498,7 @@ function Onboarding({ onFinish, onCancel, initial }) {
 ================================================================= */
 function Devis({ onBack, onSouscrire, notify }) {
   const [step, setStep] = useState(0);
-  const [profil, setProfil] = useState({ nom: "", prenom: "", ville: "Kinshasa", profession: "", email: "", telephone: "", age: "", antecedents: [] });
+  const [profil, setProfil] = useState({ nom: "", prenom: "", naissance: "", sexe: "Masculin", ville: "Kinshasa", profession: "", email: "", telephone: "", adresse: "", typePiece: "Carte d'électeur", numeroPieceIdentite: "", groupeSanguin: "", allergies: "", declarationSante: "", antecedents: [] });
   const [famille, setFamille] = useState([]);
   const [addBenef, setAddBenef] = useState({ lien: "Conjoint", nom: "", naissance: "" });
   const [formuleChoisie, setFormuleChoisie] = useState(null);
@@ -1327,7 +1508,11 @@ function Devis({ onBack, onSouscrire, notify }) {
   const addFamille = () => { if (!addBenef.nom || !addBenef.naissance) return; setFamille([...famille, { ...addBenef, id: Date.now() }]); setAddBenef({ lien: "Conjoint", nom: "", naissance: "" }); };
   const removeFamille = (id) => setFamille(famille.filter((f) => f.id !== id));
   const totalBenef = famille.length;
-  const majorationPct = computeMajorationSante(profil.age, profil.antecedents);
+  const ageFromBirth = (d) => {
+    if (!d) return 0; const b = new Date(d); const diff = Date.now() - b.getTime(); return Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+  };
+  const ageComputed = ageFromBirth(profil.naissance);
+  const majorationPct = computeMajorationSante(ageComputed, profil.antecedents);
 
   const choisirFormule = (f) => {
     const num = Math.floor(100000 + Math.random() * 900000);
@@ -1348,7 +1533,7 @@ function Devis({ onBack, onSouscrire, notify }) {
       ``,
       `SOUSCRIPTEUR PRESSENTI`,
       `Nom : ${profil.prenom} ${profil.nom}`,
-      `Profession : ${profil.profession || "—"}   Âge : ${profil.age || "—"}`,
+      `Profession : ${profil.profession || "—"}   Âge : ${ageComputed || "—"}`,
       `Ville : ${profil.ville}   Antécédents médicaux : ${profil.antecedents.length ? profil.antecedents.join(", ") : "Aucun"}`,
       `Contact : ${profil.telephone || "—"} / ${profil.email || "—"}`,
       ``,
@@ -1397,35 +1582,34 @@ function Devis({ onBack, onSouscrire, notify }) {
         </div>
       )}
 
-      {/* STEP 0 — PROFIL */}
+      {/* STEP 0 — PROFIL (unifié via SubscriberForm) */}
       {step === 0 && (
         <>
-          <div className="px-5 space-y-3 mt-2">
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Nom"><input style={inputStyle} value={profil.nom} onChange={(e) => setProfil({ ...profil, nom: e.target.value })} placeholder="MUKENDI" /></Field>
-              <Field label="Prénom"><input style={inputStyle} value={profil.prenom} onChange={(e) => setProfil({ ...profil, prenom: e.target.value })} placeholder="Jean-Paul" /></Field>
+          <SubscriberForm
+            identite={profil}
+            setIdentite={setProfil}
+            identitePhoto={null}
+            setIdentitePhoto={() => { }}
+            famille={famille}
+            setFamille={setFamille}
+            addBenef={addBenef}
+            setAddBenef={setAddBenef}
+            addFamille={addFamille}
+            removeFamille={removeFamille}
+          />
+
+          <Field label="Antécédents médicaux (impacte le tarif)">
+            <div className="flex flex-wrap gap-1.5">
+              {ANTECEDENTS_DEVIS.map((a) => {
+                const checked = profil.antecedents.includes(a);
+                return (
+                  <button key={a} type="button" onClick={() => setProfil({ ...profil, antecedents: checked ? profil.antecedents.filter((x) => x !== a) : [...profil.antecedents, a] })} className="rounded-full px-2.5 py-1.5" style={{ background: checked ? C.navy : C.ivory, color: checked ? "white" : C.ink, fontFamily: sans, fontSize: 11, fontWeight: 700 }}>{a}</button>
+                );
+              })}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Âge"><input style={inputStyle} value={profil.age} onChange={(e) => setProfil({ ...profil, age: e.target.value.replace(/\D/g, "") })} placeholder="41" /></Field>
-              <Field label="Profession"><input style={inputStyle} value={profil.profession} onChange={(e) => setProfil({ ...profil, profession: e.target.value })} placeholder="Ingénieur" /></Field>
-            </div>
-            <Field label="Antécédents médicaux (impacte le tarif)">
-              <div className="flex flex-wrap gap-1.5">
-                {ANTECEDENTS_DEVIS.map((a) => {
-                  const checked = profil.antecedents.includes(a);
-                  return (
-                    <button key={a} type="button" onClick={() => setProfil({ ...profil, antecedents: checked ? profil.antecedents.filter((x) => x !== a) : [...profil.antecedents, a] })} className="rounded-full px-2.5 py-1.5" style={{ background: checked ? C.navy : C.ivory, color: checked ? "white" : C.ink, fontFamily: sans, fontSize: 11, fontWeight: 700 }}>{a}</button>
-                  );
-                })}
-              </div>
-              <div style={{ fontFamily: sans, fontSize: 10, color: C.sub, marginTop: 4 }}>Aucun antécédent sélectionné = tarif standard.</div>
-            </Field>
-            <Field label="Ville"><select style={inputStyle} value={profil.ville} onChange={(e) => setProfil({ ...profil, ville: e.target.value })}><option>Kinshasa</option><option>Lubumbashi</option><option>Goma</option></select></Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Téléphone"><input style={inputStyle} value={profil.telephone} onChange={(e) => setProfil({ ...profil, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" /></Field>
-              <Field label="Email"><input style={inputStyle} value={profil.email} onChange={(e) => setProfil({ ...profil, email: e.target.value })} placeholder="jp.mukendi@mail.cd" /></Field>
-            </div>
-          </div>
+            <div style={{ fontFamily: sans, fontSize: 10, color: C.sub, marginTop: 4 }}>Aucun antécédent sélectionné = tarif standard.</div>
+          </Field>
+
           <WizardNav onNext={() => setStep(1)} disabled={!profil.nom || !profil.prenom} />
         </>
       )}
@@ -1508,7 +1692,7 @@ function Devis({ onBack, onSouscrire, notify }) {
           <SectionLabel>Souscripteur pressenti</SectionLabel>
           <Card className="p-4">
             <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{profil.prenom} {profil.nom}</div>
-            <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{profil.profession || "—"} {profil.age && `· ${profil.age} ans`}</div>
+            <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{profil.profession || "—"} {ageComputed ? `· ${ageComputed} ans` : ""}</div>
             <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>{profil.ville}</div>
             {profil.antecedents.length > 0 && <div style={{ fontFamily: sans, fontSize: 11, color: C.amber, marginTop: 4 }}>Antécédents déclarés : {profil.antecedents.join(", ")}</div>}
           </Card>
@@ -1591,25 +1775,134 @@ function SignUp({ onDone, onGoSignIn }) {
     onDone(form);
   };
   return (
-    <div className="h-full flex flex-col justify-between px-6 pt-14 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div>
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex items-center justify-center rounded-2xl" style={{ width: 60, height: 60, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><ShieldCheck size={28} color={C.gold} /></div>
-          <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 14, color: "white", letterSpacing: 1, marginTop: 12 }}>NEOGTEC HEALTHCARE</div>
-          <div style={{ fontFamily: serif, fontSize: 20, color: "white", marginTop: 8 }}>Créer mon compte</div>
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        <div>
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                <ShieldCheck size={22} color={C.gold} />
+              </div>
+              <div>
+                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                  NeoGTec insur
+                </span>
+                <span className="text-xs text-[#B9C3D6] font-medium">Espace Assuré & Ayants Droit</span>
+              </div>
+            </div>
+            <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+              Créer mon compte Assuré
+            </h2>
+            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+              Accédez à vos garanties, cartes de santé et demandes de remboursement.
+            </p>
+          </div>
+
+          <div className="space-y-3.5 mb-6">
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                NOM COMPLET
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.nom}
+                  onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                  placeholder="Jean-Paul Mukendi"
+                />
+                <ShieldCheck size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                ADRESSE EMAIL
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="jean.paul@email.com"
+                />
+                <Mail size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                NUMÉRO DE TÉLÉPHONE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.telephone}
+                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  placeholder="+243 81 000 0000"
+                />
+                <Phone size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.motDePasse}
+                  onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+                  placeholder="Mot de passe (6 car. min.)"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                CONFIRMER LE MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.confirmation}
+                  onChange={(e) => setForm({ ...form, confirmation: e.target.value })}
+                  placeholder="Confirmer le mot de passe"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            {erreur && (
+              <div className="flex items-center gap-1.5 mt-2" style={{ color: "#FFB4B0" }}>
+                <AlertCircle size={14} />
+                <span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full space-y-3">
+            <button
+              type="button"
+              onClick={valider}
+              className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer font-bold text-xs shadow-lg"
+              style={{ background: C.gold, color: C.navy }}
+            >
+              <UserPlus size={16} /> Créer mon compte
+            </button>
+            <button
+              type="button"
+              onClick={onGoSignIn}
+              className="w-full text-center py-2 cursor-pointer hover:underline text-xs text-stone-300"
+            >
+              Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span>
+            </button>
+          </div>
         </div>
-        <div className="space-y-2.5">
-          <input style={inputStyle} value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} placeholder="Nom complet" />
-          <input style={inputStyle} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
-          <input style={inputStyle} value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" />
-          <input style={inputStyle} type="password" value={form.motDePasse} onChange={(e) => setForm({ ...form, motDePasse: e.target.value })} placeholder="Mot de passe (6 caractères min.)" />
-          <input style={inputStyle} type="password" value={form.confirmation} onChange={(e) => setForm({ ...form, confirmation: e.target.value })} placeholder="Confirmer le mot de passe" />
-          {erreur && <div className="flex items-center gap-1.5" style={{ color: "#FFB4B0" }}><AlertCircle size={12} /><span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span></div>}
-        </div>
-      </div>
-      <div className="w-full space-y-3">
-        <button onClick={valider} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-transform" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}><UserPlus size={16} /> Créer mon compte</button>
-        <button onClick={onGoSignIn} className="w-full text-center py-2" style={{ fontFamily: sans, fontSize: 12.5, color: "white" }}>Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span></button>
       </div>
     </div>
   );
@@ -1721,66 +2014,29 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
   };
 
   return (
-    <div className="min-h-full w-full flex items-center justify-center p-4 sm:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div className="w-full max-w-4xl bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row overflow-hidden text-white">
-        
-        {/* Panneau Latéral Gauche (Aperçu Espace) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#06140B] via-[#0A1F13] to-[#0F2D1C] p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C6992E]/30 relative">
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        {!forgotMode ? (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
-                <ShieldCheck size={26} color={C.gold} />
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                  <ShieldCheck size={22} color={C.gold} />
+                </div>
+                <div>
+                  <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                    NeoGTec insur
+                  </span>
+                  <span className="text-xs text-[#B9C3D6] font-medium">Espace Assuré & Ayants Droit</span>
+                </div>
               </div>
-              <div>
-                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
-                  NeoGTec insur
-                </span>
-                <span className="text-xs text-[#B9C3D6] font-medium">Espace Assuré & Ayants Droit</span>
-              </div>
+              <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                Se connecter à l'Espace Assuré
+              </h2>
+              <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                Accédez à vos garanties, cartes de santé et demandes de remboursement.
+              </p>
             </div>
-
-            <h3 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="mb-4">
-              Authentification Espace Assuré
-            </h3>
-
-            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", lineHeight: 1.6 }} className="mb-6">
-              Bénéficiez d'un processus de connexion sécurisé, rapide et conforme aux normes d'audit ARCA-RDC les plus strictes.
-            </p>
-
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Carte Santé Numérique & QR Code</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Demande de Prise en Charge 24/7</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Suivi des Ayants Droit & Plafonds</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] text-[#B9C3D6]">Sécurité Chiffrée 256-bit</span>
-            <span className="text-[10px] bg-[#C6992E]/20 text-[#C6992E] px-2.5 py-1 rounded-full border border-[#C6992E]/30 font-semibold">ARCA-RDC</span>
-          </div>
-        </div>
-
-        {/* Panneau Principal Droit (Formulaire & Mot de Passe Oublié) */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between bg-[#0A1F13]/80">
-          {!forgotMode ? (
-            <div>
-              <div className="mb-6">
-                <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
-                  Se connecter à l'Espace Assuré
-                </h2>
-                <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
-                  Accédez à vos garanties, cartes de santé et demandes de remboursement.
-                </p>
-              </div>
 
               {/* Bouton SSO Google Simulation */}
               <button
@@ -2058,7 +2314,6 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
@@ -2087,7 +2342,7 @@ function Welcome({ onSubscribe, onDemo, onDevis }) {
 /* =================================================================
    ACCUEIL
 ================================================================= */
-function Accueil({ go, notify, session, onRestart }) {
+function Accueil({ go, notify, session, setSession, onRestart }) {
   const totalPlafond = session.garanties.reduce((s, g) => s + g.plafond, 0);
   const totalConso = session.garanties.reduce((s, g) => s + g.consomme, 0);
   const pct = totalPlafond ? Math.round((totalConso / totalPlafond) * 100) : 0;
@@ -2095,6 +2350,8 @@ function Accueil({ go, notify, session, onRestart }) {
   const dueEcheance = (session.paiements || []).find((p) => p.statut === "Dû");
   const prochainRdv = (session.rdv || [])[0];
   const [messagePrevention, setMessagePrevention] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [faceModalOpen, setFaceModalOpen] = useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -2107,7 +2364,8 @@ function Accueil({ go, notify, session, onRestart }) {
   const actions = [
     { label: "Prendre rendez-vous", icon: CalendarCheck, go: () => go("sinistres", "rdv"), bg: "#EEF1F8" },
     { label: "Prestataires proches", icon: Navigation, go: () => go("sinistres", "prest"), bg: "#F7EFE3" },
-    { label: "Mon dossier médical", icon: ClipboardList, go: () => go("dossier"), bg: "#F2EDF6" },
+    { label: "Déposer un remboursement", icon: ClipboardList, go: () => go("sinistres", "remb"), bg: "#F2EDF6" },
+    { label: "Ma carte santé", icon: CreditCard, go: () => go("carte"), bg: "#E8F6FF" },
     { label: "Simuler un devis", icon: Calculator, go: () => go("devis"), bg: "#EFF3EA" },
     { label: "Payer mes cotisations", icon: Wallet, go: () => go("paiement"), bg: "#FBEAE8" },
     { label: "Console d'affiliation", icon: UserCog, go: () => go("affiliation"), bg: "#E9F1F3" },
@@ -2117,11 +2375,73 @@ function Accueil({ go, notify, session, onRestart }) {
   return (
     <div className="pb-6">
       <div className="px-5 pt-2 pb-4 flex items-center justify-between">
-        <div><div style={{ fontFamily: sans, fontSize: 13, color: C.sub }}>Bonjour,</div><div style={{ fontFamily: serif, fontSize: 22, color: C.navy, fontWeight: 700 }}>{session.assure.nom}</div>{session.compteReel && <div className="flex items-center gap-1 mt-0.5"><ShieldCheck size={11} color={C.green} /><span style={{ fontFamily: sans, fontSize: 9.5, color: C.green, fontWeight: 700 }}>Connecté avec vos identifiants — {session.roleConnexion}</span></div>}</div>
-        <button onClick={onRestart} className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5" style={{ border: `1px solid ${C.line}` }} title="Retour à l'écran de démarrage">
-          <RefreshCw size={12} color={C.sub} /><span style={{ fontFamily: sans, fontSize: 10, color: C.sub, fontWeight: 600 }}>Début</span>
-        </button>
+        <div>
+          <div style={{ fontFamily: sans, fontSize: 13, color: C.sub }}>Bonjour,</div>
+          <div style={{ fontFamily: serif, fontSize: 22, color: C.navy, fontWeight: 700 }}>{session.assure.nom}</div>
+          {session.compteReel && <div className="flex items-center gap-1 mt-0.5"><ShieldCheck size={11} color={C.green} /><span style={{ fontFamily: sans, fontSize: 9.5, color: C.green, fontWeight: 700 }}>Connecté — {session.roleConnexion}</span></div>}
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={() => go("notifications")} title="Alertes / Notifications" className="rounded-full p-2" style={{ border: `1px solid ${C.line}`, background: "white" }}>
+            <Bell size={16} color={C.navy} />
+          </button>
+          <button onClick={() => go("settings")} title="Paramètres" className="rounded-full p-2" style={{ border: `1px solid ${C.line}`, background: "white" }}>
+            <Settings size={16} color={C.navy} />
+          </button>
+          <button onClick={() => setShowProfile(true)} title="Voir / modifier la photo" className="rounded-full overflow-hidden" style={{ width: 44, height: 44, border: `1px solid ${C.line}`, padding: 0 }}>
+            <img src={(session.beneficiaires && session.beneficiaires[0] && session.beneficiaires[0].photo) || "https://i.pravatar.cc/200"} alt="Photo profil" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </button>
+        </div>
       </div>
+
+      {showProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.5)" }}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+            <div className="flex items-center justify-between mb-4">
+              <div style={{ fontFamily: serif, fontSize: 18, color: C.navy, fontWeight: 700 }}>Photo de profil</div>
+              <button onClick={() => setShowProfile(false)} className="text-sm" style={{ color: C.sub }}><X size={18} /></button>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <div style={{ width: 120, height: 120, borderRadius: 999, overflow: "hidden" }}>
+                <img src={(session.beneficiaires && session.beneficiaires[0] && session.beneficiaires[0].photo) || "https://i.pravatar.cc/200"} alt="Profil" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{session.assure.nom}</div>
+              <div style={{ width: "100%" }}>
+                <label className="w-full flex items-center justify-center rounded-xl p-3" style={{ background: C.navy, color: "white", cursor: "pointer" }}>
+                  Modifier la photo
+                  <input type="file" accept="image/*" hidden onChange={(e) => {
+                    const f = e.target.files?.[0]; if (!f) return; const url = URL.createObjectURL(f);
+                    setSession({
+                      ...session,
+                      beneficiaires: (session.beneficiaires || []).map((b, idx) => idx === 0 ? { ...b, photo: url } : b),
+                    });
+                    setShowProfile(false);
+                  }} />
+                </label>
+                <div className="w-full mt-2">
+                  <button onClick={() => setFaceModalOpen(true)} className="w-full rounded-xl p-3 border text-sm font-bold" style={{ background: "#fff" }}>
+                    <Camera size={14} /> Prendre une photo avec la caméra
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <RealCameraFaceModal
+        isOpen={faceModalOpen}
+        onClose={() => setFaceModalOpen(false)}
+        onVerified={(img) => {
+          if (img) {
+            setSession({
+              ...session,
+              beneficiaires: (session.beneficiaires || []).map((b, idx) => idx === 0 ? { ...b, photo: img } : b),
+            });
+            setShowProfile(false);
+            setFaceModalOpen(false);
+            notify("Photo de profil enregistrée");
+          }
+        }}
+      />
       {(alertes.length > 0 || dueEcheance) && (
         <div className="px-5 mb-3 space-y-2">
           {alertes.length > 0 && <Card className="p-3 flex items-center gap-2" style={{ background: "#FBEAE8", border: `1px solid ${C.amber}` }}><AlertTriangle size={14} color={C.amber} /><span style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{alertes.map((a) => a.nom).join(", ")} — plafond bientôt atteint</span></Card>}
@@ -2452,6 +2772,16 @@ function Police({ notify, session, setSession, go }) {
             <Accordion title="Exclusions et limitations" right={<AlertCircle size={14} color={C.red} />}>
               <ul className="pt-3 space-y-2">{EXCLUSIONS.map((e, i) => <li key={i} className="flex gap-2" style={{ fontFamily: sans, fontSize: 12.5, color: C.ink }}><span style={{ color: C.red }}>–</span>{e}</li>)}</ul>
             </Accordion>
+
+            <div className="px-5 mt-3">
+              <Card className="p-4 flex items-center justify-between gap-3">
+                <div>
+                  <div style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>Ma carte santé et mes ayants droit</div>
+                  <div style={{ fontFamily: sans, fontSize: 11, color: C.sub, marginTop: 4 }}>Accédez à votre carte numérique, à vos QR codes et à l'accès des bénéficiaires en un clic.</div>
+                </div>
+                <button onClick={() => go("carte")} className="rounded-xl py-2.5 px-4" style={{ background: C.navy, color: "white", fontFamily: sans, fontWeight: 700, fontSize: 12 }}>Voir ma carte</button>
+              </Card>
+            </div>
             <Accordion title="Liste des soins pris en charge" right={<ListChecks size={14} color={C.green} />}>
               <div className="pt-3">
                 {SOINS_COUVERTS.map((s, i) => (
@@ -2653,6 +2983,12 @@ function Paiement({ session, setSession, notify, go }) {
               {methode && (
                 <button onClick={payer} className="w-full rounded-xl py-3.5 mt-4 flex items-center justify-center gap-2" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 13.5 }}>Payer {fmt(due.montant)}</button>
               )}
+              {due && payStatus === "idle" && (
+                <button onClick={() => {
+                  downloadText(`Facture_${due.id}.txt`, `Facture NeoGTec HealthCare\nRéférence : ${due.id}\nDate d'échéance : ${due.date}\nMontant : ${fmt(due.montant)}\nMéthode : ${due.methode || "À définir"}\nStatut : ${due.statut}\nAssuré : ${session.assure.nom}`);
+                  notify("Facture téléchargée");
+                }} className="w-full rounded-xl py-3.5 mt-3 border border-dashed" style={{ background: "white", color: C.navy, fontFamily: sans, fontWeight: 700, fontSize: 13.5 }}>Télécharger la facture</button>
+              )}
             </>
           )
         )}
@@ -2722,7 +3058,10 @@ function Paiement({ session, setSession, notify, go }) {
                     <div className="flex items-center gap-2"><span style={{ fontFamily: mono, fontSize: 13, fontWeight: 700, color: C.ink }}>{fmt(p.montant)}</span><StatusPill statut={p.statut} /></div>
                     <div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub, marginTop: 2 }}>{p.date} · {p.methode} · {p.reference}</div>
                   </div>
-                  {p.statut === "Réussi" && <button onClick={() => { downloadText(`Recu_${p.reference}.txt`, `Reçu de paiement\nRéférence : ${p.reference}\nDate : ${p.date}\nMontant : ${fmt(p.montant)}\nMéthode : ${p.methode}\nAssuré : ${session.assure.nom}`); notify("Reçu téléchargé"); }} className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 30, height: 30, background: C.ivory }}><FileDown size={13} color={C.navy2} /></button>}
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => { downloadText(`Facture_${p.reference}.txt`, `Facture NeoGTec HealthCare\nRéférence : ${p.reference}\nDate : ${p.date}\nMontant : ${fmt(p.montant)}\nMéthode : ${p.methode}\nStatut : ${p.statut}\nAssuré : ${session.assure.nom}`); notify("Facture téléchargée"); }} className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 30, height: 30, background: C.ivory }}><Download size={13} color={C.navy2} /></button>
+                    {p.statut === "Réussi" && <button onClick={() => { downloadText(`Recu_${p.reference}.txt`, `Reçu de paiement\nRéférence : ${p.reference}\nDate : ${p.date}\nMontant : ${fmt(p.montant)}\nMéthode : ${p.methode}\nAssuré : ${session.assure.nom}`); notify("Reçu téléchargé"); }} className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 30, height: 30, background: C.ivory }}><FileDown size={13} color={C.navy2} /></button>}
+                  </div>
                 </Card>
               ))}
               {histoFiltre.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun paiement pour ce filtre.</span></Card>}
@@ -2759,6 +3098,11 @@ function MesContrats({ session, onBack, onSouscrireNouveau, onActiver }) {
               <span style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>Prime annuelle</span>
               <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 700, color: C.gold }}>{fmt(c.prime)}</span>
             </div>
+            <button onClick={() => {
+              const contenu = `CONTRAT D'ASSURANCE NEOGTEC\nPolice : ${c.police}\nContrat : ${c.contrat}\nFormule : ${c.formule.nom}\nValidité : ${c.validite}\nPrime annuelle : ${fmt(c.prime)}\nAssuré : ${session.assure.nom}`;
+              downloadText(`Contrat_${c.police}.txt`, contenu);
+              notify("Contrat téléchargé");
+            }} className="w-full rounded-lg py-2 mt-3 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}><Download size={13} /> Télécharger le contrat</button>
             {!c.actif && <button onClick={() => onActiver(i - 1)} className="w-full rounded-lg py-2 mt-3 flex items-center justify-center gap-1.5" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><Link2 size={13} /> Basculer sur ce contrat</button>}
           </Card>
         ))}
@@ -3050,13 +3394,25 @@ function RealCameraFaceModal({ isOpen, onClose, onVerified }) {
     };
   }, [isOpen]);
 
+  const capturePhoto = () => {
+    if (!videoRef.current) return null;
+    const v = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = v.videoWidth || 640;
+    canvas.height = v.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg');
+  };
+
   const verifyFace = () => {
     setAnalyzing(true);
     setTimeout(() => {
       setAnalyzing(false);
       setMatched(true);
+      const img = capturePhoto();
       setTimeout(() => {
-        onVerified?.();
+        onVerified?.(img);
         onClose();
       }, 1000);
     }, 1500);
@@ -3700,25 +4056,25 @@ function Sinistres({ notify, session, setSession, sub, setSub, go }) {
                 .slice()
                 .sort((a, b) => prestTri === "proximite" ? a.distanceKm - b.distanceKm : a.tarif.length - b.tarif.length)
                 .map((p) => (
-                <Card key={p.id} className="p-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center rounded-lg flex-shrink-0" style={{ width: 40, height: 40, background: C.ivory }}>{p.type.includes("Pharmacie") ? <Pill size={17} color={C.navy2} /> : <Building2 size={17} color={C.navy2} />}</div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1.5"><span style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{p.nom}</span>{p.nouveauSurLeReseau && <span style={{ fontFamily: sans, fontSize: 8.5, fontWeight: 700, color: C.green, background: C.greenSoft, padding: "1px 5px", borderRadius: 999 }}>NOUVEAU</span>}</div>
-                      <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{p.type} · {p.ville}</div>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <span style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, color: C.gold, background: C.goldSoft, padding: "1px 6px", borderRadius: 999 }}>{p.tarif} conventionné</span>
-                        {p.ouvert24h && <span style={{ fontFamily: sans, fontSize: 9.5, fontWeight: 700, color: C.green, background: C.greenSoft, padding: "1px 6px", borderRadius: 999 }}>Ouvert 24h/24</span>}
+                  <Card key={p.id} className="p-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center rounded-lg flex-shrink-0" style={{ width: 40, height: 40, background: C.ivory }}>{p.type.includes("Pharmacie") ? <Pill size={17} color={C.navy2} /> : <Building2 size={17} color={C.navy2} />}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-1.5"><span style={{ fontFamily: sans, fontSize: 13, fontWeight: 700, color: C.ink }}>{p.nom}</span>{p.nouveauSurLeReseau && <span style={{ fontFamily: sans, fontSize: 8.5, fontWeight: 700, color: C.green, background: C.greenSoft, padding: "1px 5px", borderRadius: 999 }}>NOUVEAU</span>}</div>
+                        <div style={{ fontFamily: sans, fontSize: 11, color: C.sub }}>{p.type} · {p.ville}</div>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span style={{ fontFamily: mono, fontSize: 10, fontWeight: 700, color: C.gold, background: C.goldSoft, padding: "1px 6px", borderRadius: 999 }}>{p.tarif} conventionné</span>
+                          {p.ouvert24h && <span style={{ fontFamily: sans, fontSize: 9.5, fontWeight: 700, color: C.green, background: C.greenSoft, padding: "1px 6px", borderRadius: 999 }}>Ouvert 24h/24</span>}
+                        </div>
                       </div>
+                      <div className="text-right flex-shrink-0"><div style={{ fontFamily: mono, fontSize: 13, fontWeight: 700, color: C.navy }}>{p.distanceKm} km</div></div>
                     </div>
-                    <div className="text-right flex-shrink-0"><div style={{ fontFamily: mono, fontSize: 13, fontWeight: 700, color: C.navy }}>{p.distanceKm} km</div></div>
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <button onClick={() => notify(`Itinéraire vers ${p.nom} ouvert`)} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}><Route size={13} /> Itinéraire</button>
-                    <button onClick={() => { setSub("rdv"); setRdvForm({ ...rdvForm, type: "Présentiel", cible: p.nom }); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ background: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}><CalendarCheck size={13} /> Prendre RDV</button>
-                  </div>
-                </Card>
-              ))}
+                    <div className="flex gap-2 mt-3">
+                      <button onClick={() => notify(`Itinéraire vers ${p.nom} ouvert`)} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ border: `1px solid ${C.line}`, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: C.ink }}><Route size={13} /> Itinéraire</button>
+                      <button onClick={() => { setSub("rdv"); setRdvForm({ ...rdvForm, type: "Présentiel", cible: p.nom }); }} className="flex-1 rounded-lg py-2 flex items-center justify-center gap-1.5" style={{ background: C.navy, fontFamily: sans, fontSize: 11.5, fontWeight: 700, color: "white" }}><CalendarCheck size={13} /> Prendre RDV</button>
+                    </div>
+                  </Card>
+                ))}
             </div>
           </>
         )}
@@ -4218,34 +4574,34 @@ function Assistance({ notify, session, go }) {
         <ReclamationsAssure session={session} notify={notify} />
       ) : (
         <>
-      <div className="px-5 flex items-center justify-between mb-2">
-        <SectionLabel>Messagerie interne (avec l'assureur)</SectionLabel>
-      </div>
-      <div className="px-5 flex gap-2 mb-3">
-        <button onClick={synchroniser} disabled={syncing} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}>{syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Synchroniser</button>
-        <button onClick={() => setComposeOuvert(!composeOuvert)} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><MessageCircle size={13} /> Nouveau message</button>
-      </div>
+          <div className="px-5 flex items-center justify-between mb-2">
+            <SectionLabel>Messagerie interne (avec l'assureur)</SectionLabel>
+          </div>
+          <div className="px-5 flex gap-2 mb-3">
+            <button onClick={synchroniser} disabled={syncing} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}>{syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Synchroniser</button>
+            <button onClick={() => setComposeOuvert(!composeOuvert)} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><MessageCircle size={13} /> Nouveau message</button>
+          </div>
 
-      {composeOuvert && (
-        <div className="px-5 mb-3">
-          <Card className="p-3.5 space-y-2" style={{ background: C.ivory, border: "none" }}>
-            <input style={inputStyle} value={nouveauSujet} onChange={(e) => setNouveauSujet(e.target.value)} placeholder="Objet (ex : Question sur un remboursement)" />
-            <textarea style={{ ...inputStyle, minHeight: 70, resize: "none" }} value={nouveauTexte} onChange={(e) => setNouveauTexte(e.target.value)} placeholder="Votre message…" />
-            <button onClick={demarrerConversation} disabled={!nouveauSujet.trim() || !nouveauTexte.trim()} className="w-full rounded-lg py-2.5" style={{ background: (!nouveauSujet.trim() || !nouveauTexte.trim()) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontSize: 12.5, fontWeight: 700 }}>Envoyer à l'assureur</button>
-          </Card>
-        </div>
-      )}
+          {composeOuvert && (
+            <div className="px-5 mb-3">
+              <Card className="p-3.5 space-y-2" style={{ background: C.ivory, border: "none" }}>
+                <input style={inputStyle} value={nouveauSujet} onChange={(e) => setNouveauSujet(e.target.value)} placeholder="Objet (ex : Question sur un remboursement)" />
+                <textarea style={{ ...inputStyle, minHeight: 70, resize: "none" }} value={nouveauTexte} onChange={(e) => setNouveauTexte(e.target.value)} placeholder="Votre message…" />
+                <button onClick={demarrerConversation} disabled={!nouveauSujet.trim() || !nouveauTexte.trim()} className="w-full rounded-lg py-2.5" style={{ background: (!nouveauSujet.trim() || !nouveauTexte.trim()) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontSize: 12.5, fontWeight: 700 }}>Envoyer à l'assureur</button>
+              </Card>
+            </div>
+          )}
 
-      <div className="px-5 space-y-2">
-        {conversations.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun message pour l'instant. Écrivez directement à l'assureur — plus besoin d'email.</span></Card>}
-        {conversations.map((c) => (
-          <Card key={c.id} onClick={() => setSelected(c.id)} className="p-3.5 flex items-center gap-3 cursor-pointer">
-            <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 38, height: 38, background: C.ivory }}><MessageCircle size={17} color={C.navy2} /></div>
-            <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{c.sujet}</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{c.messages[c.messages.length - 1]?.texte.slice(0, 40)}…</div></div>
-            <StatusPill statut={c.statut} />
-          </Card>
-        ))}
-      </div>
+          <div className="px-5 space-y-2">
+            {conversations.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun message pour l'instant. Écrivez directement à l'assureur — plus besoin d'email.</span></Card>}
+            {conversations.map((c) => (
+              <Card key={c.id} onClick={() => setSelected(c.id)} className="p-3.5 flex items-center gap-3 cursor-pointer">
+                <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 38, height: 38, background: C.ivory }}><MessageCircle size={17} color={C.navy2} /></div>
+                <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{c.sujet}</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{c.messages[c.messages.length - 1]?.texte.slice(0, 40)}…</div></div>
+                <StatusPill statut={c.statut} />
+              </Card>
+            ))}
+          </div>
         </>
       )}
     </div>
@@ -4377,35 +4733,35 @@ export default function App() {
     }
   }, [session, view]);
 
-  const startApp = (s) => { 
-    setSession(s); 
-    setView("app"); 
-    setTab("accueil"); 
-    setDevisPrefill(null); 
+  const startApp = (s) => {
+    setSession(s);
+    setView("app");
+    setTab("accueil");
+    setDevisPrefill(null);
     try {
       localStorage.setItem("neogtec_active_session_assure", JSON.stringify(s));
-    } catch (e) {}
-    notify("Bienvenue dans votre espace assuré"); 
+    } catch (e) { }
+    notify("Bienvenue dans votre espace assuré");
   };
   const passerALaSouscription = (data) => { setDevisPrefill(data); setOnboardingMode("compte"); setView("onboarding"); };
-  const logout = () => { 
+  const logout = () => {
     try {
       localStorage.removeItem("neogtec_active_session_assure");
-    } catch (e) {}
-    setSession(null); 
-    setSubScreen(null); 
-    setTab("accueil"); 
-    setView("signin"); 
+    } catch (e) { }
+    setSession(null);
+    setSubScreen(null);
+    setTab("accueil");
+    setView("signin");
   };
-  const restartFromScratch = () => { 
+  const restartFromScratch = () => {
     try {
       localStorage.removeItem("neogtec_active_session_assure");
-    } catch (e) {}
-    setSession(null); 
-    setSubScreen(null); 
-    setTab("accueil"); 
-    setSignupData(null); 
-    setView("signup"); 
+    } catch (e) { }
+    setSession(null);
+    setSubScreen(null);
+    setTab("accueil");
+    setSignupData(null);
+    setView("signup");
   };
 
   const ajouterContrat = (nouveau) => {
@@ -4428,7 +4784,7 @@ export default function App() {
   };
 
   const go = (target, sub) => {
-    if (["dossier", "devis", "notifications", "profil", "contrats", "affiliation"].includes(target)) { setSubScreen(target); return; }
+    if (["dossier", "devis", "notifications", "profil", "settings", "contrats", "affiliation"].includes(target)) { setSubScreen(target === "settings" ? "profil" : target); return; }
     setSubScreen(null);
     setTab(target);
     if (target === "sinistres" && sub) setSinistresSub(sub);
@@ -4449,7 +4805,7 @@ export default function App() {
   return (
     <div className="w-full flex-1 flex flex-col md:flex-row h-screen max-h-screen overflow-hidden" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
-      
+
       {/* Desktop Floating Collapsible Navigation Sidebar */}
       {view === "app" && (
         <aside className={`hidden md:flex flex-col border border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between z-20 shadow-xl rounded-2xl my-2 ml-2 transition-all duration-300 h-[calc(100vh-16px)] sticky top-2 ${sidebarCollapsed ? 'w-20 p-2.5' : 'w-64 p-4'}`}>
@@ -4491,11 +4847,10 @@ export default function App() {
                     key={t.id}
                     onClick={() => go(t.id)}
                     title={sidebarCollapsed ? t.label : undefined}
-                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
-                        : 'text-stone-300 hover:bg-white/5 hover:text-white'
-                    }`}
+                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'gap-3 px-3.5 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${isActive
+                      ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
+                      : 'text-stone-300 hover:bg-white/5 hover:text-white'
+                      }`}
                   >
                     <Icon size={18} className={isActive ? 'text-[#C6992E]' : 'text-stone-400'} />
                     {!sidebarCollapsed && <span>{t.label}</span>}
@@ -4528,22 +4883,7 @@ export default function App() {
 
       {/* Main App Container */}
       <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80 h-full">
-        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-20 flex-shrink-0 sticky top-0" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
-          <div className="flex items-center gap-3">
-            <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC ASSURÉ</span>
-            {view === "app" && session?.nom && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#142644]/10 text-[#142644]">
-                {session.nom}
-              </span>
-            )}
-          </div>
-          {view === "app" && (
-            <div className="flex items-center gap-3">
-              <button onClick={() => go("notifications")} className="relative p-1.5 rounded-lg hover:bg-stone-200 transition-all cursor-pointer"><Bell size={18} color={C.navy} />{unread > 0 ? <span className="absolute rounded-full" style={{ top: 2, right: 2, width: 8, height: 8, background: C.red }}></span> : null}</button>
-              <button onClick={() => go("profil")} className="p-1.5 rounded-lg hover:bg-stone-200 transition-all cursor-pointer"><Settings size={18} color={C.navy} /></button>
-            </div>
-          )}
-        </div>
+
 
         {view === "app" && !subScreen && !vuePrincipale && (
           <div className="px-5 pt-3 pb-1">
@@ -4566,7 +4906,7 @@ export default function App() {
           {view === "app" && subScreen === "profil" && <ProfilParams session={session} setSession={setSession} onBack={() => setSubScreen(null)} onLogout={logout} notify={notify} />}
           {view === "app" && subScreen === "contrats" && <MesContrats session={session} onBack={() => setSubScreen(null)} onSouscrireNouveau={() => { setOnboardingMode("contrat"); setView("onboarding"); }} onActiver={activerContrat} />}
           {view === "app" && subScreen === "affiliation" && <ConsoleAffiliation session={session} setSession={setSession} onBack={() => setSubScreen(null)} notify={notify} />}
-          {view === "app" && !subScreen && tab === "accueil" && <Accueil go={go} notify={notify} session={session} onRestart={restartFromScratch} />}
+          {view === "app" && !subScreen && tab === "accueil" && <Accueil go={go} notify={notify} session={session} setSession={setSession} onRestart={restartFromScratch} />}
           {view === "app" && !subScreen && tab === "police" && <Police notify={notify} session={session} setSession={setSession} go={go} />}
           {view === "app" && !subScreen && tab === "carte" && <CarteFlip session={session} setSession={setSession} notify={notify} go={go} />}
           {view === "app" && !subScreen && tab === "sinistres" && <Sinistres notify={notify} session={session} setSession={setSession} sub={sinistresSub} setSub={setSinistresSub} go={go} />}

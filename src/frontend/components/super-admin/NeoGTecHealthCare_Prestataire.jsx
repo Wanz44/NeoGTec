@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { LocalDB } from "../../lib/localDatabase";
 import {
   ScanLine, ScanFace, QrCode, Camera, Stethoscope, FileText, Wallet, Receipt, Bell,
@@ -236,10 +236,14 @@ function buildPatientDemo() {
   };
 }
 const AUTRES_PATIENTS = [
-  { nom: "NGALULA Grâce", carte: "MC-EMP-0005-00", police: "MC-EMP-0005", contrat: "CTR-ENT-2026-778213", souscripteur: "MININGCO SARL (Entreprise)", formule: "Essentiel", taux: 70, photo: "https://i.pravatar.cc/200?img=32", statutPolice: "Actif", validite: "01/01/2026 — 31/12/2026",
-    garanties: [{ nom: "Consultations & Pharmacie", plafond: 900000, consomme: 860000 }, { nom: "Hospitalisation", plafond: 4000000, consomme: 0 }, { nom: "Dentaire", plafond: 200000, consomme: 0 }, { nom: "Optique", plafond: 150000, consomme: 0 }, { nom: "Maternité", plafond: 1000000, consomme: 0 }] },
-  { nom: "KABEYA Odette", carte: "MC-EMP-0002-00", police: "MC-EMP-0002", contrat: "CTR-ENT-2026-778213", souscripteur: "MININGCO SARL (Entreprise)", formule: "Confort", taux: 90, photo: "https://i.pravatar.cc/200?img=45", statutPolice: "Suspendu", validite: "01/01/2026 — 31/12/2026",
-    garanties: [{ nom: "Consultations & Pharmacie", plafond: 1800000, consomme: 1750000 }, { nom: "Hospitalisation", plafond: 8000000, consomme: 0 }, { nom: "Dentaire", plafond: 500000, consomme: 0 }, { nom: "Optique", plafond: 300000, consomme: 0 }, { nom: "Maternité", plafond: 2500000, consomme: 0 }] },
+  {
+    nom: "NGALULA Grâce", carte: "MC-EMP-0005-00", police: "MC-EMP-0005", contrat: "CTR-ENT-2026-778213", souscripteur: "MININGCO SARL (Entreprise)", formule: "Essentiel", taux: 70, photo: "https://i.pravatar.cc/200?img=32", statutPolice: "Actif", validite: "01/01/2026 — 31/12/2026",
+    garanties: [{ nom: "Consultations & Pharmacie", plafond: 900000, consomme: 860000 }, { nom: "Hospitalisation", plafond: 4000000, consomme: 0 }, { nom: "Dentaire", plafond: 200000, consomme: 0 }, { nom: "Optique", plafond: 150000, consomme: 0 }, { nom: "Maternité", plafond: 1000000, consomme: 0 }]
+  },
+  {
+    nom: "KABEYA Odette", carte: "MC-EMP-0002-00", police: "MC-EMP-0002", contrat: "CTR-ENT-2026-778213", souscripteur: "MININGCO SARL (Entreprise)", formule: "Confort", taux: 90, photo: "https://i.pravatar.cc/200?img=45", statutPolice: "Suspendu", validite: "01/01/2026 — 31/12/2026",
+    garanties: [{ nom: "Consultations & Pharmacie", plafond: 1800000, consomme: 1750000 }, { nom: "Hospitalisation", plafond: 8000000, consomme: 0 }, { nom: "Dentaire", plafond: 500000, consomme: 0 }, { nom: "Optique", plafond: 300000, consomme: 0 }, { nom: "Maternité", plafond: 2500000, consomme: 0 }]
+  },
 ];
 
 function buildSoins() {
@@ -283,58 +287,64 @@ function buildReglements() {
 function buildPatientsAffilies() {
   const p1 = buildPatientDemo();
   return [
-    { ...p1, telemedecine: 2, dossier: {
-      constantesVitales: { tension: "12/8", frequenceCardiaque: "76 bpm", temperature: "36,7 °C", saturation: "98%", taille: "178 cm", poids: "76 kg", imc: "24,0", groupeSanguin: "O+", dateRelevé: "28/06/2026" },
-      allergies: ["Pénicilline (réaction cutanée)", "Arachides"],
-      maladiesChroniques: ["Hypertension artérielle légère (suivi depuis 2022)"],
-      traitementsEnCours: [{ nom: "Amlodipine 5 mg", posologie: "1 comprimé/jour, le matin", depuis: "2022" }],
-      antecedentsChirurgicaux: [{ intervention: "Appendicectomie", date: "2010", etablissement: "Hôpital Provincial de Kinshasa" }],
-      antecedentsFamiliaux: ["Diabète de type 2 (père)", "Hypertension artérielle (mère)"],
-      visites: [
-        {
-          date: "28/06/2026", motif: "Douleurs abdominales", diagnostic: "Gastrite", prescripteur: "Dr. Kalonji — Clinique Ngaliema",
-          examens: [
-            { nom: "Glycémie à jeun", resultat: "0,92 g/L", reference: "0,70 – 1,10 g/L", statut: "Normal" },
-            { nom: "Cholestérol total", resultat: "2,10 g/L", reference: "< 2,00 g/L", statut: "Élevé" },
-          ],
-          imagerie: [{ type: "Échographie abdominale", conclusion: "Gastrite sans complication", etablissement: "Clinique Ngaliema" }],
-          ordonnance: { medicaments: ["Amlodipine 5 mg — 1/jour, le matin", "Oméprazole 20 mg — 2/jour pendant 10 jours"], statut: "Active" },
-          vaccinations: [],
-          documents: [
-            { nom: "Ordonnance_Amlodipine.pdf", type: "Ordonnance" },
-            { nom: "Compte_rendu_echographie.pdf", type: "Compte-rendu" },
-            { nom: "Resultats_bilan_sanguin.pdf", type: "Analyse" },
-          ],
-        },
-        {
-          date: "02/06/2026", motif: "Contrôle de routine", diagnostic: "RAS", prescripteur: "Dr. Mbuyi — Centre Monkole",
-          examens: [], imagerie: [],
-          ordonnance: { medicaments: ["Paracétamol 1g — si douleur"], statut: "Expirée" },
-          vaccinations: [], documents: [],
-        },
-        {
-          date: "03/03/2021", motif: "Vaccination", diagnostic: null, prescripteur: "Centre de santé conventionné",
-          examens: [], imagerie: [], ordonnance: null, vaccinations: [{ nom: "Hépatite B" }], documents: [],
-        },
-        {
-          date: "14/01/2020", motif: "Vaccination", diagnostic: null, prescripteur: "Centre de santé conventionné",
-          examens: [], imagerie: [], ordonnance: null, vaccinations: [{ nom: "Fièvre jaune" }], documents: [],
-        },
-      ],
-      notes: [{ id: 1, date: "28/06/2026", auteur: "Dr. Kalonji Mbuyi", texte: "Patient stable, contrôle dans 2 semaines." }],
-    } },
-    { ...AUTRES_PATIENTS[0], telemedecine: 0, dossier: {
-      constantesVitales: {},
-      allergies: [], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [],
-      visites: [{ date: "05/07/2026", motif: "Fièvre persistante", diagnostic: "Paludisme", prescripteur: "Dr. Kalonji Mbuyi", examens: [], imagerie: [], ordonnance: { medicaments: ["Artéméther-Luméfantrine — cure complète"], statut: "Active" }, vaccinations: [], documents: [] }],
-      notes: [],
-    } },
-    { ...AUTRES_PATIENTS[1], telemedecine: 1, dossier: {
-      constantesVitales: {},
-      allergies: ["Arachides"], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [],
-      visites: [],
-      notes: [],
-    } },
+    {
+      ...p1, telemedecine: 2, dossier: {
+        constantesVitales: { tension: "12/8", frequenceCardiaque: "76 bpm", temperature: "36,7 °C", saturation: "98%", taille: "178 cm", poids: "76 kg", imc: "24,0", groupeSanguin: "O+", dateRelevé: "28/06/2026" },
+        allergies: ["Pénicilline (réaction cutanée)", "Arachides"],
+        maladiesChroniques: ["Hypertension artérielle légère (suivi depuis 2022)"],
+        traitementsEnCours: [{ nom: "Amlodipine 5 mg", posologie: "1 comprimé/jour, le matin", depuis: "2022" }],
+        antecedentsChirurgicaux: [{ intervention: "Appendicectomie", date: "2010", etablissement: "Hôpital Provincial de Kinshasa" }],
+        antecedentsFamiliaux: ["Diabète de type 2 (père)", "Hypertension artérielle (mère)"],
+        visites: [
+          {
+            date: "28/06/2026", motif: "Douleurs abdominales", diagnostic: "Gastrite", prescripteur: "Dr. Kalonji — Clinique Ngaliema",
+            examens: [
+              { nom: "Glycémie à jeun", resultat: "0,92 g/L", reference: "0,70 – 1,10 g/L", statut: "Normal" },
+              { nom: "Cholestérol total", resultat: "2,10 g/L", reference: "< 2,00 g/L", statut: "Élevé" },
+            ],
+            imagerie: [{ type: "Échographie abdominale", conclusion: "Gastrite sans complication", etablissement: "Clinique Ngaliema" }],
+            ordonnance: { medicaments: ["Amlodipine 5 mg — 1/jour, le matin", "Oméprazole 20 mg — 2/jour pendant 10 jours"], statut: "Active" },
+            vaccinations: [],
+            documents: [
+              { nom: "Ordonnance_Amlodipine.pdf", type: "Ordonnance" },
+              { nom: "Compte_rendu_echographie.pdf", type: "Compte-rendu" },
+              { nom: "Resultats_bilan_sanguin.pdf", type: "Analyse" },
+            ],
+          },
+          {
+            date: "02/06/2026", motif: "Contrôle de routine", diagnostic: "RAS", prescripteur: "Dr. Mbuyi — Centre Monkole",
+            examens: [], imagerie: [],
+            ordonnance: { medicaments: ["Paracétamol 1g — si douleur"], statut: "Expirée" },
+            vaccinations: [], documents: [],
+          },
+          {
+            date: "03/03/2021", motif: "Vaccination", diagnostic: null, prescripteur: "Centre de santé conventionné",
+            examens: [], imagerie: [], ordonnance: null, vaccinations: [{ nom: "Hépatite B" }], documents: [],
+          },
+          {
+            date: "14/01/2020", motif: "Vaccination", diagnostic: null, prescripteur: "Centre de santé conventionné",
+            examens: [], imagerie: [], ordonnance: null, vaccinations: [{ nom: "Fièvre jaune" }], documents: [],
+          },
+        ],
+        notes: [{ id: 1, date: "28/06/2026", auteur: "Dr. Kalonji Mbuyi", texte: "Patient stable, contrôle dans 2 semaines." }],
+      }
+    },
+    {
+      ...AUTRES_PATIENTS[0], telemedecine: 0, dossier: {
+        constantesVitales: {},
+        allergies: [], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [],
+        visites: [{ date: "05/07/2026", motif: "Fièvre persistante", diagnostic: "Paludisme", prescripteur: "Dr. Kalonji Mbuyi", examens: [], imagerie: [], ordonnance: { medicaments: ["Artéméther-Luméfantrine — cure complète"], statut: "Active" }, vaccinations: [], documents: [] }],
+        notes: [],
+      }
+    },
+    {
+      ...AUTRES_PATIENTS[1], telemedecine: 1, dossier: {
+        constantesVitales: {},
+        allergies: ["Arachides"], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [],
+        visites: [],
+        notes: [],
+      }
+    },
   ];
 }
 
@@ -376,15 +386,19 @@ function buildStockPharmacie() {
 /* Messagerie — médecin conseil (validations "bon") */
 function buildConversations() {
   return [
-    { id: 1, sujet: "Validation bon — NGALULA Grâce", contexte: "Dérogation urgence chirurgicale 85 000 CDF", statut: "En cours", messages: [
-      { id: 1, auteur: "Dr. Kalonji Mbuyi", moi: true, texte: "Bonjour Docteur, je sollicite une validation rapide pour une appendicite en urgence, plafond patient épuisé.", date: "09:02" },
-      { id: 2, auteur: "Médecin conseil NeoGTec", moi: false, texte: "Reçu. Pouvez-vous confirmer le diagnostic et joindre le compte-rendu ?", date: "09:06" },
-      { id: 3, auteur: "Dr. Kalonji Mbuyi", moi: true, texte: "Diagnostic confirmé par échographie. Compte-rendu en pièce jointe du dossier patient.", date: "09:09" },
-    ] },
-    { id: 2, sujet: "Question tarif — Bloc opératoire", contexte: "Code HOSP-002", statut: "Résolu", messages: [
-      { id: 1, auteur: "Mireille Katanga", moi: true, texte: "Le tarif négocié HOSP-002 a-t-il changé ce trimestre ?", date: "Hier 14:10" },
-      { id: 2, auteur: "Médecin conseil NeoGTec", moi: false, texte: "Non, il reste à 400 000 CDF jusqu'à fin d'année.", date: "Hier 14:22" },
-    ] },
+    {
+      id: 1, sujet: "Validation bon — NGALULA Grâce", contexte: "Dérogation urgence chirurgicale 85 000 CDF", statut: "En cours", messages: [
+        { id: 1, auteur: "Dr. Kalonji Mbuyi", moi: true, texte: "Bonjour Docteur, je sollicite une validation rapide pour une appendicite en urgence, plafond patient épuisé.", date: "09:02" },
+        { id: 2, auteur: "Médecin conseil NeoGTec", moi: false, texte: "Reçu. Pouvez-vous confirmer le diagnostic et joindre le compte-rendu ?", date: "09:06" },
+        { id: 3, auteur: "Dr. Kalonji Mbuyi", moi: true, texte: "Diagnostic confirmé par échographie. Compte-rendu en pièce jointe du dossier patient.", date: "09:09" },
+      ]
+    },
+    {
+      id: 2, sujet: "Question tarif — Bloc opératoire", contexte: "Code HOSP-002", statut: "Résolu", messages: [
+        { id: 1, auteur: "Mireille Katanga", moi: true, texte: "Le tarif négocié HOSP-002 a-t-il changé ce trimestre ?", date: "Hier 14:10" },
+        { id: 2, auteur: "Médecin conseil NeoGTec", moi: false, texte: "Non, il reste à 400 000 CDF jusqu'à fin d'année.", date: "Hier 14:22" },
+      ]
+    },
   ];
 }
 
@@ -888,25 +902,134 @@ function SignUp({ onDone, onGoSignIn }) {
     onDone(form);
   };
   return (
-    <div className="h-full flex flex-col justify-between px-6 pt-14 pb-8" style={{ background: `linear-gradient(180deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div>
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex items-center justify-center rounded-2xl" style={{ width: 60, height: 60, background: "rgba(198,153,46,0.15)", border: `1px solid ${C.gold}` }}><Stethoscope size={26} color={C.gold} /></div>
-          <div style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: "white", letterSpacing: 1, marginTop: 12 }}>NEOGTEC HEALTHCARE — PRESTATAIRE</div>
-          <div style={{ fontFamily: serif, fontSize: 19, color: "white", marginTop: 8 }}>Créer un compte établissement</div>
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        <div>
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                <Stethoscope size={22} color={C.gold} />
+              </div>
+              <div>
+                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                  NeoGTec insur
+                </span>
+                <span className="text-xs text-[#B9C3D6] font-medium">Espace Prestataire & Réseau de Soins</span>
+              </div>
+            </div>
+            <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+              Créer un compte établissement
+            </h2>
+            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+              Inscrivez votre hôpital, clinique ou centre médical sur le réseau NeoGTec.
+            </p>
+          </div>
+
+          <div className="space-y-3.5 mb-6">
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                NOM DU RESPONSABLE / GESTIONNAIRE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.nom}
+                  onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                  placeholder="Dr. Marc Tshilombo"
+                />
+                <Stethoscope size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                EMAIL PROFESSIONNEL ÉTABLISSEMENT
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="contact@hopital.cd"
+                />
+                <Mail size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                NUMÉRO DE TÉLÉPHONE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  value={form.telephone}
+                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  placeholder="+243 8X XXX XXXX"
+                />
+                <Phone size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.motDePasse}
+                  onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+                  placeholder="Mot de passe (6 car. min.)"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, color: C.gold }} className="block mb-1">
+                CONFIRMER LE MOT DE PASSE
+              </label>
+              <div className="relative">
+                <input
+                  style={{ width: "100%", padding: "12px 14px 12px 38px", borderRadius: 12, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(198,153,46,0.3)", color: "white", fontFamily: sans, fontSize: 13, outline: "none" }}
+                  type="password"
+                  value={form.confirmation}
+                  onChange={(e) => setForm({ ...form, confirmation: e.target.value })}
+                  placeholder="Confirmer le mot de passe"
+                />
+                <Lock size={15} className="absolute left-3 top-3.5 text-[#B9C3D6]" />
+              </div>
+            </div>
+
+            {erreur && (
+              <div className="flex items-center gap-1.5 mt-2" style={{ color: "#FFB4B0" }}>
+                <AlertTriangle size={14} />
+                <span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full space-y-3">
+            <button
+              type="button"
+              onClick={valider}
+              className="w-full rounded-2xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer font-bold text-xs shadow-lg"
+              style={{ background: C.gold, color: C.navy }}
+            >
+              <UserPlus size={16} /> Créer le compte
+            </button>
+            <button
+              type="button"
+              onClick={onGoSignIn}
+              className="w-full text-center py-2 cursor-pointer hover:underline text-xs text-stone-300"
+            >
+              Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span>
+            </button>
+          </div>
         </div>
-        <div className="space-y-2.5">
-          <input style={inputStyle} value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} placeholder="Nom du responsable / gestionnaire" />
-          <input style={inputStyle} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email professionnel" />
-          <input style={inputStyle} value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+243 8X XXX XXXX" />
-          <input style={inputStyle} type="password" value={form.motDePasse} onChange={(e) => setForm({ ...form, motDePasse: e.target.value })} placeholder="Mot de passe (6 caractères min.)" />
-          <input style={inputStyle} type="password" value={form.confirmation} onChange={(e) => setForm({ ...form, confirmation: e.target.value })} placeholder="Confirmer le mot de passe" />
-          {erreur && <div className="flex items-center gap-1.5" style={{ color: "#FFB4B0" }}><AlertTriangle size={12} /><span style={{ fontFamily: sans, fontSize: 11 }}>{erreur}</span></div>}
-        </div>
-      </div>
-      <div className="w-full space-y-3">
-        <button onClick={valider} className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 active:scale-95 transition-transform" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 14 }}><UserPlus size={16} /> Créer le compte</button>
-        <button onClick={onGoSignIn} className="w-full text-center py-2" style={{ fontFamily: sans, fontSize: 12.5, color: "white" }}>Déjà un compte ? <span style={{ color: C.gold, fontWeight: 700 }}>Se connecter</span></button>
       </div>
     </div>
   );
@@ -929,7 +1052,7 @@ async function trouverCompteReelPrestataire(identifiant, motDePasse) {
         estResponsable: true
       };
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const comptes = await chargerCanalPartage(CLE_COMPTES_PARTAGES);
   for (const compte of comptes) {
@@ -1022,66 +1145,29 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
   };
 
   return (
-    <div className="min-h-full w-full flex items-center justify-center p-4 sm:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)` }}>
-      <div className="w-full max-w-4xl bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col md:flex-row overflow-hidden text-white">
-        
-        {/* Panneau Latéral Gauche (Aperçu Espace) */}
-        <div className="w-full md:w-5/12 bg-gradient-to-br from-[#06140B] via-[#0A1F13] to-[#0F2D1C] p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C6992E]/30 relative">
+    <div className="flex items-center justify-center min-h-screen p-4 md:p-8" style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 55%, #0F1C33 100%)`, fontFamily: sans }}>
+      <div className="w-full max-w-lg bg-[#0D2818]/95 border border-[#C6992E]/40 rounded-3xl shadow-2xl backdrop-blur-xl p-6 sm:p-8 overflow-hidden text-white">
+        {!forgotMode ? (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
-                <Stethoscope size={26} color={C.gold} />
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#C6992E]/20 border border-[#C6992E] flex items-center justify-center text-[#C6992E] shadow-inner">
+                  <Stethoscope size={22} color={C.gold} />
+                </div>
+                <div>
+                  <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
+                    NeoGTec insur
+                  </span>
+                  <span className="text-xs text-[#B9C3D6] font-medium">Portail Prestataires de Santé</span>
+                </div>
               </div>
-              <div>
-                <span style={{ fontFamily: sans, fontWeight: 800, fontSize: 13, color: C.gold, letterSpacing: 1.5, textTransform: "uppercase" }} className="block">
-                  NeoGTec insur
-                </span>
-                <span className="text-xs text-[#B9C3D6] font-medium">Portail Prestataires de Santé</span>
-              </div>
+              <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
+                Se connecter à Espace Prestataire
+              </h2>
+              <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
+                Connectez votre établissement de santé à l'écosystème NeoGTec insur.
+              </p>
             </div>
-
-            <h3 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700, lineHeight: 1.3 }} className="mb-4">
-              Authentification Prestataire
-            </h3>
-
-            <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", lineHeight: 1.6 }} className="mb-6">
-              Bénéficiez d'un processus de connexion sécurisé, rapide et conforme aux normes d'audit ARCA-RDC les plus strictes.
-            </p>
-
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Vérification Biométrique & QR Code</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Demandes de Prise en Charge (PEC) 1-Clic</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 size={16} className="text-[#C6992E] shrink-0 mt-0.5" />
-                <span className="text-xs text-[#E7E2D6]">Bordereaux de Facturation & Règlements</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] text-[#B9C3D6]">Réseau Agréé Hôpitaux & Cliniques</span>
-            <span className="text-[10px] bg-[#C6992E]/20 text-[#C6992E] px-2.5 py-1 rounded-full border border-[#C6992E]/30 font-semibold">ARCA-RDC</span>
-          </div>
-        </div>
-
-        {/* Panneau Principal Droit (Formulaire & Mot de Passe Oublié) */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between bg-[#0A1F13]/80">
-          {!forgotMode ? (
-            <div>
-              <div className="mb-6">
-                <h2 style={{ fontFamily: serif, fontSize: 22, color: "white", fontWeight: 700 }}>
-                  Se connecter à Espace Prestataire
-                </h2>
-                <p style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 4 }}>
-                  Connectez votre établissement de santé à l'écosystème NeoGTec insur.
-                </p>
-              </div>
 
               {/* Bouton SSO Google Simulation */}
               <button
@@ -1359,7 +1445,6 @@ function SignIn({ prefill, onDone, onGoSignUp }) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
@@ -1515,6 +1600,108 @@ function OnboardingEtablissement({ onFinish, onCancel }) {
 /* =================================================================
    SCANNER — identification du patient (QR code / reconnaissance faciale)
 ================================================================= */
+function RealCameraFaceModal({ isOpen, onClose, onVerified }) {
+  const videoRef = useRef(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [matched, setMatched] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let stream = null;
+    if (isOpen) {
+      setError(null);
+      setMatched(false);
+      setAnalyzing(false);
+      navigator.mediaDevices?.getUserMedia?.({ video: { facingMode: "user" } })
+        .then((s) => {
+          stream = s;
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+          }
+        })
+        .catch((err) => {
+          console.error("Camera error:", err);
+          setError("Impossible d'accéder à la caméra frontale.");
+        });
+    }
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [isOpen]);
+
+  const capturePhoto = () => {
+    if (!videoRef.current) return null;
+    const v = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = v.videoWidth || 640;
+    canvas.height = v.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg');
+  };
+
+  const verifyFace = () => {
+    setAnalyzing(true);
+    setTimeout(() => {
+      setAnalyzing(false);
+      setMatched(true);
+      const img = capturePhoto();
+      setTimeout(() => {
+        onVerified?.(img);
+        onClose();
+      }, 1000);
+    }, 1500);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-stone-100 cursor-pointer">
+          <X size={18} />
+        </button>
+        <div className="text-center mb-4">
+          <div className="text-lg font-bold text-[#0D2818]">Reconnaissance Faciale Temps Réel</div>
+          <div className="text-xs text-stone-500">Centrez votre visage dans l'ovale de détection</div>
+        </div>
+
+        {error ? (
+          <div className="p-4 bg-rose-50 text-rose-700 text-xs rounded-xl mb-4 text-center">{error}</div>
+        ) : (
+          <div className="relative rounded-xl overflow-hidden bg-black mb-4 h-64 flex items-center justify-center">
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className={`w-40 h-52 border-2 ${matched ? 'border-emerald-500 bg-emerald-500/10' : analyzing ? 'border-amber-400' : 'border-white/80'} border-dashed rounded-[50%] transition-all`} />
+            </div>
+            {matched && (
+              <div className="absolute bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                <CheckCircle2 size={16} /> Identité Vérifiée (99.8%)
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-xs font-bold cursor-pointer">
+            Fermer
+          </button>
+          <button
+            onClick={verifyFace}
+            disabled={analyzing || matched}
+            className="flex-1 py-2.5 rounded-xl bg-[#0D2818] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            {analyzing ? <Loader2 size={14} className="animate-spin" /> : <ScanFace size={14} />}
+            {analyzing ? "Analyse faciale..." : "Scanner le Visage"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function Scanner({ session, notify, go, setPatientActif }) {
   const [mode, setMode] = useState("qr");
   const [scanStep, setScanStep] = useState("idle"); // idle | loading | result
@@ -1541,16 +1728,53 @@ function Scanner({ session, notify, go, setPatientActif }) {
   const scanner = (p) => {
     setScanStep("loading");
     setTimeout(() => {
-      setPatient(p);
+      setPatient({ ...p, verification: { qr: mode === 'qr' || mode === 'hybrid', face: mode === 'face' } });
       setScanStep("result");
       notify(`${p.nom} identifié(e)`);
     }, 1200);
+  };
+  const [faceModalOpen, setFaceModalOpen] = useState(false);
+  const [pendingCandidate, setPendingCandidate] = useState(null);
+
+  const scannerFace = (p) => {
+    setPendingCandidate(p);
+    setFaceModalOpen(true);
+    setScanStep("loading");
+  };
+
+  const scannerHybrid = (p) => {
+    setScanStep("loading");
+    setTimeout(() => {
+      const qrSuccess = Math.random() > 0.4; // demo: 60% chance QR works
+      if (qrSuccess) {
+        setPatient({ ...p, verification: { qr: true, face: false } });
+        setScanStep("result");
+        notify(`${p.nom} identifié(e) via QR (hybride)`);
+      } else {
+        setPendingCandidate(p);
+        setFaceModalOpen(true);
+        // leave scanStep as loading until face modal resolves
+      }
+    }, 900);
   };
   const nouveauScan = () => { setScanStep("idle"); setPatient(null); setQrOuvert(false); };
 
   if (scanStep === "result" && patient) {
     return (
       <div className="pb-6">
+        <RealCameraFaceModal
+          isOpen={faceModalOpen}
+          onClose={() => { setFaceModalOpen(false); setScanStep('idle'); setPendingCandidate(null); }}
+          onVerified={(img) => {
+            const cand = pendingCandidate || patient;
+            const p = { ...cand, photo: img, verification: { qr: false, face: true } };
+            setPatient(p);
+            setScanStep('result');
+            setFaceModalOpen(false);
+            setPendingCandidate(null);
+            notify(`${p.nom} identifié(e) par reconnaissance faciale`);
+          }}
+        />
         <div className="px-5 pt-4 pb-2 flex items-center gap-3">
           <button onClick={nouveauScan} className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 32, height: 32, border: `1px solid ${C.line}` }}><ArrowLeft size={14} color={C.ink} /></button>
           <div><div style={{ fontFamily: serif, fontSize: 19, color: C.navy, fontWeight: 700 }}>Patient identifié</div><div style={{ fontFamily: sans, fontSize: 11, color: C.sub, display: "flex", alignItems: "center", gap: 4 }}><Lock size={9} color={C.green} /> Couverture & dossier — accès instantané</div></div>
@@ -1632,6 +1856,19 @@ function Scanner({ session, notify, go, setPatientActif }) {
 
   return (
     <div className="pb-6">
+      <RealCameraFaceModal
+        isOpen={faceModalOpen}
+        onClose={() => { setFaceModalOpen(false); setScanStep('idle'); setPendingCandidate(null); }}
+        onVerified={(img) => {
+          const cand = pendingCandidate || patientsDemo[0];
+          const p = { ...cand, photo: img, verification: { qr: false, face: true } };
+          setPatient(p);
+          setScanStep('result');
+          setFaceModalOpen(false);
+          setPendingCandidate(null);
+          notify(`${p.nom} identifié(e) par reconnaissance faciale`);
+        }}
+      />
       <div className="px-5 pt-4 pb-2">
         <div style={{ fontFamily: serif, fontSize: 20, color: C.navy, fontWeight: 700 }}>Scanner un patient</div>
         <div style={{ fontFamily: sans, fontSize: 11.5, color: C.sub }}>Accueil, admission & vérification de couverture — en un seul geste</div>
@@ -1640,6 +1877,7 @@ function Scanner({ session, notify, go, setPatientActif }) {
         <div className="flex gap-2 mb-3">
           <button onClick={() => setMode("qr")} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-1.5" style={{ background: mode === "qr" ? C.navy : "white", color: mode === "qr" ? "white" : C.ink, border: `1px solid ${mode === "qr" ? C.navy : C.line}`, fontFamily: sans, fontSize: 12, fontWeight: 700 }}><QrCode size={14} /> QR Code</button>
           <button onClick={() => setMode("face")} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-1.5" style={{ background: mode === "face" ? C.navy : "white", color: mode === "face" ? "white" : C.ink, border: `1px solid ${mode === "face" ? C.navy : C.line}`, fontFamily: sans, fontSize: 12, fontWeight: 700 }}><ScanFace size={14} /> Reconnaissance faciale</button>
+          <button onClick={() => setMode("hybrid")} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-1.5" style={{ background: mode === "hybrid" ? C.navy : "white", color: mode === "hybrid" ? "white" : C.ink, border: `1px solid ${mode === "hybrid" ? C.navy : C.line}`, fontFamily: sans, fontSize: 12, fontWeight: 700 }}><QrCode size={14} />+<ScanFace size={12} /> Hybride</button>
         </div>
 
         {scanStep === "idle" && (
@@ -1648,7 +1886,11 @@ function Scanner({ session, notify, go, setPatientActif }) {
               {mode === "qr" ? <ScanLine size={40} color={C.gold} /> : <ScanFace size={40} color={C.gold} />}
             </div>
             <div style={{ fontFamily: sans, fontSize: 12, color: "#B9C3D6", marginTop: 14, textAlign: "center", maxWidth: 240 }}>{mode === "qr" ? "Scannez le QR affiché dans l'app mobile du patient, sa version PDF imprimée, ou toute impression de sa carte — aucune carte physique n'est obligatoire" : "Positionnez le visage du patient dans le cadre"}</div>
-            <button onClick={() => scanner(patientsDemo[0])} className="mt-5 rounded-xl px-5 py-3 flex items-center justify-center gap-2" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 13 }}>{mode === "qr" ? <QrCode size={15} /> : <ScanFace size={15} />} Scanner maintenant</button>
+            <button onClick={() => {
+              if (mode === 'qr') return scanner(patientsDemo[0]);
+              if (mode === 'face') return scannerFace(patientsDemo[0]);
+              return scannerHybrid(patientsDemo[0]);
+            }} className="mt-5 rounded-xl px-5 py-3 flex items-center justify-center gap-2" style={{ background: C.gold, color: C.navy, fontFamily: sans, fontWeight: 800, fontSize: 13 }}>{mode === "qr" ? <QrCode size={15} /> : mode === 'face' ? <ScanFace size={15} /> : <><QrCode size={13} /><ScanFace size={13} /></>} Scanner maintenant</button>
           </Card>
         )}
         {scanStep === "loading" && (
@@ -1796,11 +2038,11 @@ function Soins({ session, setSession, notify, go, patientActif, initialAction, s
       const patientsMaj = dejaConnu
         ? session.patientsAffilies.map((p) => (p === dejaConnu ? { ...p, dossier: { ...p.dossier, visites: [nouvelleVisite, ...(p.dossier?.visites || [])] } } : p))
         : [...session.patientsAffilies, {
-            nom: form.patientNom, carte: form.patientCarte || "—", police: form.patientPolice || "—", contrat: form.patientContrat || "—",
-            souscripteur: form.patientSouscripteur || "—", formule: "—", taux, photo: "", grade: "—", statutPolice: "Actif", validite: "—",
-            garanties: [], telemedecine: 0,
-            dossier: { constantesVitales: {}, allergies: [], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [], visites: [nouvelleVisite], notes: [] },
-          }];
+          nom: form.patientNom, carte: form.patientCarte || "—", police: form.patientPolice || "—", contrat: form.patientContrat || "—",
+          souscripteur: form.patientSouscripteur || "—", formule: "—", taux, photo: "", grade: "—", statutPolice: "Actif", validite: "—",
+          garanties: [], telemedecine: 0,
+          dossier: { constantesVitales: {}, allergies: [], maladiesChroniques: [], traitementsEnCours: [], antecedentsChirurgicaux: [], antecedentsFamiliaux: [], visites: [nouvelleVisite], notes: [] },
+        }];
 
       setSession({
         ...session,
@@ -3852,34 +4094,34 @@ function Messagerie({ session, setSession, notify, go }) {
         <div className="px-5"><ReclamationsPrestataire session={session} notify={notify} /></div>
       ) : (
         <>
-      <div className="px-5 flex gap-2 mb-3">
-        <button onClick={synchroniser} disabled={syncing} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}>{syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Synchroniser</button>
-        <button onClick={() => setComposeOuvert(!composeOuvert)} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><MessageCircle size={13} /> Nouveau message</button>
-      </div>
-      {composeOuvert && (
-        <div className="px-5 mb-3">
-          <Card className="p-3.5 space-y-2" style={{ background: C.ivory, border: "none" }}>
-            <input style={inputStyle} value={nouveauSujet} onChange={(e) => setNouveauSujet(e.target.value)} placeholder="Objet (ex : Question sur un règlement)" />
-            <textarea style={{ ...inputStyle, minHeight: 70, resize: "none" }} value={nouveauTexte} onChange={(e) => setNouveauTexte(e.target.value)} placeholder="Votre message…" />
-            <label className="flex items-center gap-2 rounded-lg px-3 py-2.5 cursor-pointer" style={{ background: "white", border: `1px solid ${C.line}` }}>
-              <Paperclip size={13} color={C.navy2} />
-              <span style={{ fontFamily: sans, fontSize: 11.5, color: nouveauDocument ? C.ink : C.sub }}>{nouveauDocument || "Joindre un document (optionnel)"}</span>
-              <input type="file" hidden onChange={(e) => setNouveauDocument(e.target.files?.[0]?.name || "")} />
-            </label>
-            <button onClick={demarrerConversation} disabled={!nouveauSujet.trim() || !nouveauTexte.trim()} className="w-full rounded-lg py-2.5" style={{ background: (!nouveauSujet.trim() || !nouveauTexte.trim()) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontSize: 12.5, fontWeight: 700 }}>Envoyer à l'assureur</button>
-          </Card>
-        </div>
-      )}
-      <div className="px-5 space-y-2">
-        {conversations.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun message pour l'instant.</span></Card>}
-        {conversations.map((c) => (
-          <Card key={c.id} onClick={() => setSelected(c.id)} className="p-3.5 flex items-center gap-3 cursor-pointer">
-            <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 38, height: 38, background: C.ivory }}><MessageCircle size={17} color={C.navy2} /></div>
-            <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{c.sujet}</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{c.messages[c.messages.length - 1]?.texte.slice(0, 40)}…</div></div>
-            <StatusPill statut={c.statut} />
-          </Card>
-        ))}
-      </div>
+          <div className="px-5 flex gap-2 mb-3">
+            <button onClick={synchroniser} disabled={syncing} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ border: `1px solid ${C.navy}`, color: C.navy, fontFamily: sans, fontSize: 12, fontWeight: 700 }}>{syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Synchroniser</button>
+            <button onClick={() => setComposeOuvert(!composeOuvert)} className="flex-1 rounded-xl py-2.5 flex items-center justify-center gap-2" style={{ background: C.navy, color: "white", fontFamily: sans, fontSize: 12, fontWeight: 700 }}><MessageCircle size={13} /> Nouveau message</button>
+          </div>
+          {composeOuvert && (
+            <div className="px-5 mb-3">
+              <Card className="p-3.5 space-y-2" style={{ background: C.ivory, border: "none" }}>
+                <input style={inputStyle} value={nouveauSujet} onChange={(e) => setNouveauSujet(e.target.value)} placeholder="Objet (ex : Question sur un règlement)" />
+                <textarea style={{ ...inputStyle, minHeight: 70, resize: "none" }} value={nouveauTexte} onChange={(e) => setNouveauTexte(e.target.value)} placeholder="Votre message…" />
+                <label className="flex items-center gap-2 rounded-lg px-3 py-2.5 cursor-pointer" style={{ background: "white", border: `1px solid ${C.line}` }}>
+                  <Paperclip size={13} color={C.navy2} />
+                  <span style={{ fontFamily: sans, fontSize: 11.5, color: nouveauDocument ? C.ink : C.sub }}>{nouveauDocument || "Joindre un document (optionnel)"}</span>
+                  <input type="file" hidden onChange={(e) => setNouveauDocument(e.target.files?.[0]?.name || "")} />
+                </label>
+                <button onClick={demarrerConversation} disabled={!nouveauSujet.trim() || !nouveauTexte.trim()} className="w-full rounded-lg py-2.5" style={{ background: (!nouveauSujet.trim() || !nouveauTexte.trim()) ? "#C9CDD6" : C.navy, color: "white", fontFamily: sans, fontSize: 12.5, fontWeight: 700 }}>Envoyer à l'assureur</button>
+              </Card>
+            </div>
+          )}
+          <div className="px-5 space-y-2">
+            {conversations.length === 0 && <Card className="p-5 text-center"><span style={{ fontFamily: sans, fontSize: 12, color: C.sub }}>Aucun message pour l'instant.</span></Card>}
+            {conversations.map((c) => (
+              <Card key={c.id} onClick={() => setSelected(c.id)} className="p-3.5 flex items-center gap-3 cursor-pointer">
+                <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 38, height: 38, background: C.ivory }}><MessageCircle size={17} color={C.navy2} /></div>
+                <div className="flex-1"><div style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: C.ink }}>{c.sujet}</div><div style={{ fontFamily: sans, fontSize: 10.5, color: C.sub }}>{c.messages[c.messages.length - 1]?.texte.slice(0, 40)}…</div></div>
+                <StatusPill statut={c.statut} />
+              </Card>
+            ))}
+          </div>
         </>
       )}
     </div>
@@ -3896,11 +4138,50 @@ export default function App() {
   const [tab, setTab] = useState("dashboard");
   const [tabAction, setTabAction] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [historyPrev, setHistoryPrev] = useState([]);
+  const [historyNext, setHistoryNext] = useState([]);
   const [patientActif, setPatientActif] = useState(null);
   const [derogationPrefill, setDerogationPrefill] = useState(null);
   const [soinAutorise, setSoinAutorise] = useState(null);
   const [toast, setToast] = useState(null);
   const notify = (m) => setToast(m);
+
+  const switchSpace = (space) => {
+    notify(`Changement d'espace : ${space}`);
+    // Attempt to open the corresponding local file for developer convenience
+    try {
+      const mapping = {
+        'Assuré': 'NeoGTecHealthCareApp (1).jsx',
+        'Entreprise': 'NeoGTecHealthCare_Entreprise (1).jsx',
+        'Prestataire': 'NeoGTecHealthCare_Prestataire.jsx',
+        'Admin': 'NeoGTecHealthCare_Entreprise (1).jsx'
+      };
+      const path = mapping[space];
+      if (path) window.open(path, '_blank');
+    } catch (e) { /* best-effort */ }
+  };
+
+  const goWithHistory = (target, action) => {
+    setHistoryPrev((h) => [...h, { tab, tabAction }]);
+    setHistoryNext([]);
+    go(target, action);
+  };
+
+  const goBack = () => {
+    const prev = historyPrev[historyPrev.length - 1];
+    if (!prev) return notify('Aucun historique précédent');
+    setHistoryPrev((h) => h.slice(0, -1));
+    setHistoryNext((h) => [{ tab, tabAction }, ...h]);
+    setTab(prev.tab); setTabAction(prev.tabAction);
+  };
+
+  const goForward = () => {
+    const next = historyNext[0];
+    if (!next) return notify('Aucun historique suivant');
+    setHistoryNext((h) => h.slice(1));
+    setHistoryPrev((h) => [...h, { tab, tabAction }]);
+    setTab(next.tab); setTabAction(next.tabAction);
+  };
 
   React.useEffect(() => {
     try {
@@ -3927,14 +4208,14 @@ export default function App() {
     }
   }, [session, view]);
 
-  const startApp = (s) => { 
-    setSession(s); 
-    setView("app"); 
-    setTab("dashboard"); 
+  const startApp = (s) => {
+    setSession(s);
+    setView("app");
+    setTab("dashboard");
     try {
       localStorage.setItem("neogtec_active_session_prestataire", JSON.stringify(s));
-    } catch (e) {}
-    notify("Espace prestataire activé"); 
+    } catch (e) { }
+    notify("Espace prestataire activé");
   };
   const startDemo = () => startApp({
     etablissement: ETABLISSEMENT_DEMO, soins: buildSoins(), derogations: buildDerogationsPrestataire(), reglements: buildReglements(),
@@ -3948,22 +4229,22 @@ export default function App() {
       { id: 3, type: "reglement", titre: "Paiement en retard détecté", detail: "410 000 CDF — escalade envoyée au gestionnaire réseau", gravite: "critique", actionGo: "plus", actionLabel: "Voir le relevé" },
     ],
   });
-  const logout = () => { 
+  const logout = () => {
     try {
       localStorage.removeItem("neogtec_active_session_prestataire");
-    } catch (e) {}
-    setSession(null); 
-    setTab("dashboard"); 
-    setView("signin"); 
+    } catch (e) { }
+    setSession(null);
+    setTab("dashboard");
+    setView("signin");
   };
-  const restartFromScratch = () => { 
+  const restartFromScratch = () => {
     try {
       localStorage.removeItem("neogtec_active_session_prestataire");
-    } catch (e) {}
-    setSession(null); 
-    setSignupData(null); 
-    setTab("dashboard"); 
-    setView("signup"); 
+    } catch (e) { }
+    setSession(null);
+    setSignupData(null);
+    setTab("dashboard");
+    setView("signup");
   };
 
   const go = (target, action) => { setTab(target); setTabAction(action || null); };
@@ -3982,10 +4263,10 @@ export default function App() {
   return (
     <div className="w-full flex-1 flex flex-col md:flex-row h-screen max-h-screen overflow-hidden" style={{ background: C.ivory, fontFamily: sans }}>
       <style>{`@keyframes riseIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} } ::-webkit-scrollbar { display:none; }`}</style>
-      
+
       {/* Desktop Navigation Sidebar */}
       {view === "app" && (
-        <aside 
+        <aside
           className="hidden md:flex flex-col border border-[#1B4A34] bg-[#0D2818] text-white shrink-0 justify-between p-3 my-3 ml-3 rounded-2xl shadow-xl z-20 transition-all duration-300 ease-in-out sticky top-3 h-[calc(100vh-24px)]"
           style={{ width: sidebarCollapsed ? 72 : 256 }}
         >
@@ -4022,11 +4303,10 @@ export default function App() {
                     key={t.id}
                     onClick={() => go(t.id)}
                     title={sidebarCollapsed ? t.label : undefined}
-                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
-                        : 'text-stone-300 hover:bg-white/5 hover:text-white'
-                    }`}
+                    className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3 py-2.5'} rounded-xl text-xs font-semibold transition-all cursor-pointer ${isActive
+                      ? 'bg-[#1B4A34] text-[#EFDFB8] shadow-md font-bold border-l-4 border-[#C6992E]'
+                      : 'text-stone-300 hover:bg-white/5 hover:text-white'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon size={18} className={isActive ? 'text-[#C6992E]' : 'text-stone-400'} />
@@ -4061,24 +4341,7 @@ export default function App() {
 
       {/* Main App Container */}
       <div className="w-full flex-1 flex flex-col relative overflow-hidden bg-white shadow-sm border-x border-stone-200/80 h-full">
-        <div className="flex items-center justify-between px-6 py-3 border-b border-stone-200/80 relative z-20 flex-shrink-0 sticky top-0" style={{ background: C.ivory, color: C.ink, fontFamily: sans, fontSize: 13 }}>
-          <div className="flex items-center gap-3">
-            <span style={{ letterSpacing: 1, fontWeight: 700, color: C.navy, fontSize: 14 }}>NEOGTEC PRESTATAIRE</span>
-            {view === "app" && session?.etablissement?.nom && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#142644]/10 text-[#142644]">
-                {session.etablissement.nom}
-              </span>
-            )}
-          </div>
-          {view === "app" && (
-            <div className="flex items-center gap-3">
-              <button onClick={() => go("plus")} className="relative p-1.5 rounded-lg hover:bg-stone-200 transition-all cursor-pointer">
-                <Bell size={18} color={C.navy} />
-                {derogEnAttente > 0 ? <span className="absolute rounded-full" style={{ top: 2, right: 2, width: 8, height: 8, background: C.red }}></span> : null}
-              </button>
-            </div>
-          )}
-        </div>
+
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 max-w-7xl w-full mx-auto">
           {view === "signup" && <SignUp onDone={(data) => { setSignupData(data); setView("signin"); }} onGoSignIn={() => setView("signin")} />}
@@ -4115,3 +4378,4 @@ export default function App() {
     </div>
   );
 }
+
