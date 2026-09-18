@@ -1,52 +1,221 @@
 /**
- * 📄 Fichier : /server.ts
+ * 📄 Fichier : /src/backend/server.ts
  * 🎯 Objectif : Point d'entrée du serveur backend Express (Architecture Full-Stack).
  * 🔗 Liens : Fournit les API pour /src/App.tsx et gère le middleware Vite en développement.
- * 📅 Version : 1.0.0 | Node.js Runtime
+ * 📅 Version : 2.0.0 | Node.js Runtime avec Services Métier
  */
 
-import express from "express"; // Framework web pour Node.js | 🔗 Fichier lié: package.json
-import path from "path"; // Utilitaire de gestion des chemins de fichiers | 🔗 Module natif: path
-import { createServer as createViteServer } from "vite"; // Serveur de développement Vite pour le HMR | 🔗 Fichier lié: package.json
+import express from "express";
+import path from "path";
+import { createServer as createViteServer } from "vite";
 
-// Fonction asynchrone d'initialisation du serveur applicatif
+// Import des services métier
+import { signup, signin, verifyToken } from "./services/auth.service";
+import { initiatePayment, checkPaymentStatus, handlePaymentWebhook } from "./services/payment.service";
+import { uploadDocument, getUserDocuments, generateContractPDF } from "./services/document.service";
+import { 
+  createContractDraft, 
+  addMemberToDraft, 
+  signContract, 
+  activateContract, 
+  getUserContracts 
+} from "./services/contract.service";
+import { enrollBiometric, verifyBiometric, isEnrolled } from "./services/biometry.service";
+
 async function startServer() {
-  const app = express(); // Instanciation de l'application Express
-  const PORT = 3000; // Port d'écoute standard pour le serveur de production | 🔗 Contrainte système: Port 3000
+  const app = express();
+  const PORT = 3000;
 
-  app.use(express.json()); // Middleware pour le parsing des corps de requêtes JSON
+  app.use(express.json({ limit: '10mb' })); // Augmenté pour uploads de documents
 
-  // --- API ROUTES (Cœur métier) ---
+  // --- API ROUTES AUTHENTIFICATION ---
 
-  // Endpoint de vérification de santé système (Healthcheck)
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "healthy", timestamp: new Date().toISOString() }); // Retourne le status et l'horodatage serveur
+  // POST /api/auth/signup - Inscription utilisateur
+  app.post("/api/auth/signup", async (req, res) => {
+    const result = await signup(req.body);
+    if (result.success) {
+      res.status(201).json(result);
+    } else {
+      res.status(400).json(result);
+    }
   });
 
-  // Mock API pour les métriques de l'assurance (Consommé par le dashboard) | 🔗 Fichier lié: /src/components/Dashboard.tsx
+  // POST /api/auth/signin - Connexion utilisateur
+  app.post("/api/auth/signin", async (req, res) => {
+    const result = await signin(req.body);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(401).json(result);
+    }
+  });
+
+  // GET /api/auth/verify - Vérification token
+  app.get("/api/auth/verify", (req, res) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+      return res.status(401).json({ valid: false, error: 'Token requis' });
+    }
+    const result = verifyToken(token);
+    res.json(result);
+  });
+
+  // --- API ROUTES PAIEMENT ---
+
+  // POST /api/payments/initiate - Initialiser un paiement
+  app.post("/api/payments/initiate", async (req, res) => {
+    const result = await initiatePayment(req.body);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // GET /api/payments/:paymentId/status - Vérifier statut paiement
+  app.get("/api/payments/:paymentId/status", async (req, res) => {
+    const result = await checkPaymentStatus(req.params.paymentId);
+    res.json(result);
+  });
+
+  // POST /api/payments/webhooks/:provider - Webhook fournisseurs
+  app.post("/api/payments/webhooks/:provider", async (req, res) => {
+    const result = await handlePaymentWebhook(req.params.provider, req.body);
+    res.json(result);
+  });
+
+  // --- API ROUTES DOCUMENTS ---
+
+  // POST /api/documents/upload - Téléverser un document
+  app.post("/api/documents/upload", async (req, res) => {
+    const result = await uploadDocument(req.body);
+    if (result.success) {
+      res.status(201).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // GET /api/documents/user/:userId - Documents d'un utilisateur
+  app.get("/api/documents/user/:userId", (req, res) => {
+    const docs = getUserDocuments(req.params.userId, req.query.category as string);
+    res.json(docs);
+  });
+
+  // POST /api/documents/generate-contract - Générer contrat PDF
+  app.post("/api/documents/generate-contract", async (req, res) => {
+    const result = await generateContractPDF(req.body);
+    if (result.success) {
+      res.status(201).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // --- API ROUTES CONTRATS ---
+
+  // POST /api/contracts/draft - Créer brouillon contrat
+  app.post("/api/contracts/draft", async (req, res) => {
+    const result = await createContractDraft(req.body);
+    if (result.success) {
+      res.status(201).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // POST /api/contracts/draft/:draftId/members - Ajouter membre
+  app.post("/api/contracts/draft/:draftId/members", async (req, res) => {
+    const result = await addMemberToDraft(req.params.draftId, req.body);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // POST /api/contracts/draft/:draftId/sign - Signer contrat
+  app.post("/api/contracts/draft/:draftId/sign", async (req, res) => {
+    const result = await signContract(req.params.draftId, req.body.userId);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // POST /api/contracts/:contractId/activate - Activer contrat
+  app.post("/api/contracts/:contractId/activate", async (req, res) => {
+    const result = await activateContract(req.params.contractId, req.body.paymentId);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // GET /api/contracts/user/:userId - Contrats d'un utilisateur
+  app.get("/api/contracts/user/:userId", (req, res) => {
+    const contracts = getUserContracts(req.params.userId, req.query.status as string);
+    res.json(contracts);
+  });
+
+  // --- API ROUTES BIOMETRIE ---
+
+  // POST /api/biometry/enroll - Enrôlement biométrique
+  app.post("/api/biometry/enroll", async (req, res) => {
+    const result = await enrollBiometric(req.body);
+    if (result.success) {
+      res.status(201).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // POST /api/biometry/verify - Vérification biométrique
+  app.post("/api/biometry/verify", async (req, res) => {
+    const result = await verifyBiometric(req.body);
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  });
+
+  // GET /api/biometry/:userId/status - Statut enrôlement
+  app.get("/api/biometry/:userId/status", (req, res) => {
+    const enrolled = isEnrolled(req.params.userId);
+    res.json({ enrolled });
+  });
+
+  // --- ROUTES EXISTANTES ---
+
+  // Healthcheck
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "healthy", timestamp: new Date().toISOString() });
+  });
+
+  // Metrics mock
   app.get("/api/metrics", (req, res) => {
     res.json({
-      activeUsers: 128450, // Donnée simulée : nombre d'assurés
-      pendingClaims: 1240, // Donnée simulée : sinistres en attente
-      revenueToday: "1.2M $" // Donnée simulée : CA du jour
+      activeUsers: 128450,
+      pendingClaims: 1240,
+      revenueToday: "1.2M $"
     });
   });
 
-  // 📂 Endpoint d'intégration B2B : Acquisition de Lead (Tunnel NeoGTec ARCA-RDC)
+  // Lead B2B
   app.post("/api/lead", (req, res) => {
     const { raison_sociale, nb_employes, assureur_actuel, besoins, nom, email_pro, phone, message, website_url_field } = req.body;
 
-    // 1. Protection anti-bot Honeypot
     if (website_url_field) {
       return res.status(400).json({ error: "Spam bot detecté !" });
     }
 
-    // 2. Validation basique des données obligatoires
     if (!raison_sociale || !nb_employes || !nom || !email_pro || !phone || !besoins || besoins.length === 0) {
       return res.status(400).json({ error: "Certains champs obligatoires sont manquants ou incorrects." });
     }
 
-    // 3. Logger dans les logs serveur l'opportunité commerciale
     console.log(`
       📬 [EXPRESS LEAD RECEIVED]
       -----------------------------------------------
@@ -58,8 +227,6 @@ async function startServer() {
       -----------------------------------------------
     `);
 
-    // 4. Assurer la persistence locale de test d'audit logs
-    const savedLeads = [];
     const leadRecord = {
       id: "LD-" + Math.floor(100000 + Math.random() * 900000),
       raison_sociale,
@@ -74,7 +241,6 @@ async function startServer() {
       created_at: new Date().toISOString()
     };
 
-    // Retourner succes
     return res.status(200).json({
       success: true,
       message: "Demande de contrat NeoGTec enregistrée avec succès. Un conseiller va vous contacter.",
@@ -84,28 +250,33 @@ async function startServer() {
 
   // --- MIDDLEWARE VITE / STATIC SERVING ---
 
-  // Configuration différentielle selon l'environnement (Dev vs Prod)
   if (process.env.NODE_ENV !== "production") {
-    // Mode Développement : On utilise le serveur de build Vite en mode middleware
     const vite = await createViteServer({
-      server: { middlewareMode: true }, // Intégration directe dans Express
-      appType: "spa", // Mode Single Page Application
+      server: { middlewareMode: true },
+      appType: "spa",
     });
-    app.use(vite.middlewares); // Injection des middlewares Vite (HMR, transformations TS)
+    app.use(vite.middlewares);
   } else {
-    // Mode Production : On sert les fichiers pré-compilés du dossier 'dist'
-    const distPath = path.join(process.cwd(), 'dist'); // Chemin vers les assets de production
-    app.use(express.static(distPath)); // Service des fichiers statiques (JS, CSS, Images)
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html')); // Fallback SPA : redirection de toutes les routes vers index.html
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  // Lancement effectif de l'écoute réseau
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`); // Log de confirmation au démarrage
+    console.log(`
+    ╔═══════════════════════════════════════════════════════════╗
+    ║  🚀 Serveur NeoGTec démarré sur http://localhost:${PORT}     ║
+    ╠═══════════════════════════════════════════════════════════╣
+    ║  ✅ Auth:        /api/auth/*                              ║
+    ║  ✅ Paiement:    /api/payments/*                          ║
+    ║  ✅ Documents:   /api/documents/*                         ║
+    ║  ✅ Contrats:    /api/contracts/*                         ║
+    ║  ✅ Biométrie:   /api/biometry/*                          ║
+    ╚═══════════════════════════════════════════════════════════╝
+    `);
   });
 }
 
-// Exécution de la fonction de démarrage | 🔗 Entrypoint défini dans package.json sous "dev"
 startServer();
